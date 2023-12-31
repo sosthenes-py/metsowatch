@@ -110,7 +110,7 @@ class Downline(db.Model):
 class Video(db.Model):
     __tablename__ = "videos"
     id = db.Column(db.Integer, primary_key=True)
-    video_id = db.Column(db.String(250), nullable=False)
+    video_id = db.Column(db.String(250), nullable=False, unique=True)
     category = db.Column(db.String(250))
     title = db.Column(db.String(250), default='')
     image_name = db.Column(db.String(250), default='website-default.jpg')
