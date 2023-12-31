@@ -8,12 +8,5 @@
       <jdbc-url>jdbc:postgresql://dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com:5432/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="mydb" uuid="64f6f5bf-6cd5-4be1-85bf-7cce59d4a470">
-      <driver-ref>sqlite.xerial</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\sosso\PycharmProjects\youTube\instance\mydb.db</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>
