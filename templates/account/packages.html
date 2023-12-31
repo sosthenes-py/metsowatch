@@ -1,0 +1,485 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+    .user-ranking::after {
+        opacity: 0.93;
+    }
+    .info-button {
+      position: fixed;
+      top: 25%; /* Adjust as needed */
+      right: 0;
+      transform: translateY(-50%);
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+        z-index: 999;
+    }
+</style>
+
+
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+
+
+
+                     <!--Page Content-->
+
+                     <div class="row">
+                       <div class="col-xl-12">
+                          <div class="site-card">
+                             <div class="" >
+                             
+                                 <div class="user-ranking-mobile">
+                                     {% if current_user.level > 3 %}
+                                          {% set rank_img = 'rank0.svg' %}
+                                     {% else %}
+                                          {% set rank_img = 'rank{}.svg'.format(current_user.level) %}
+                                     {% endif %}
+                                         <div class="icon"><img src="{{ url_for('static', filename='images/') }}{{ rank_img }}" alt=""/></div>
+                                         <div class="name">
+                                            <h4>{% if current_user.level == 0 %}Free Access{% else %}Paid Membership{% endif %} - <span>Level {{ current_user.level }}</span></h4>
+                                            <p>Spendable Balance: $<span class="count">{{ "{:,.2f}".format(current_user.promotion + current_user.earning + current_user.ref_earning) }}</span></p>
+                                         </div>
+                                         <div class="rank-badge"><img src="{{ url_for('static', filename='images/materials/user.png') }}" alt=""/></div>
+                                      </div>
+
+                             </div>
+                             <div class="site-card-body">
+
+                        {% set info = namespace(value=false) %}
+                        {% for addr in current_user.addresses if addr.label == "complete" and addr.upgrade_level > 0 %}
+                             {% set info.value = true %}
+                         {% endfor %}
+{% if info.value %}
+<button class="site-badge badge-pending info-button info-continue"><i class="anticon anticon-info-circle"></i> You have one pending upgrade</button>
+{% endif %}
+
+                                <div class="row justify-content-center">
+                                {% if current_user.level > 0 %}
+                                    {% set locked = "locked-good" %}
+                                    {% set pass = ' <i class="anticon anticon-check-circle"></i>' %}
+                                {% else %}
+                                    {% set locked = "" %}
+                                    {% set pass = '' %}
+                                {% endif %}
+                                   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                      <div class="single-badge {{ locked }}">
+                                         <div class="badge">
+                                            <div class="img"><img src="{{ url_for('static', filename='images/rank0.svg') }}" alt=""></div>
+                                         </div>
+                                         <div class="content">
+                                            <h3 class="title">Free Access {{ pass|safe }}</h3>
+                                              <p class="description">Earning per video: $0.01</p>
+                                               <p class="description">Total Videos: {{ plans[0]['videos'] }}/day</p>
+                                         </div>
+                                      </div>
+                                   </div>
+
+
+                                    {% for plan in plans[1:] %}
+                                        {% if plan['id'] > 3 %}
+                                          {% set rank_img = 'rank0.svg' %}
+                                        {% else %}
+                                          {% set rank_img = 'rank{}.svg'.format(plan['id']) %}
+                                        {% endif %}
+                                        {% if current_user.level < plan['id'] %}
+                                            {% set locked = "locked" %}
+                                            {% set sub = "" %}
+                                            {% set pass = '' %}
+                                        {% else %}
+                                            {% set locked = "locked-good" %}
+                                            {% set sub = "d-none" %}
+                                            {% set pass = ' <i class="anticon anticon-check-circle"></i>' %}
+                                            {% if current_user.level == plan['id'] %}
+                                                {% set locked = '' %}
+                                            {% endif %}
+                                        {% endif %}
+
+
+                                   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                      <div class="single-badge {{ locked }}">
+                                         <div class="badge">
+                                            <div class="img"><img src="{{ url_for('static', filename='images/') }}{{ rank_img }}" alt=""></div>
+                                         </div>
+                                         <div class="content">
+                                            <h3 class="title"> Level {{ plan['id'] }} {{ pass|safe }}</h3>
+                                           <p class="description">Entry Cost: ${{ "{:,}".format(plan['price']) }}</p>
+                                          <p class="description">Earning per video: ${{ "{:,.2f}".format(((profit/100)*plan['price'])/plan['videos']) }}</p>
+                                           <p class="description">Total Videos: {{ plan['videos'] }}/day</p>
+                                             <button class="site-btn grad-btn p-2 py-1 mt-2 subscribe {{ sub }} open-modal" data-level="{{ plan['id'] }}" data-modal="subModal">Subscribe</button>
+                                         </div>
+                                      </div>
+                                   </div>
+
+                                {% endfor %}
+
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+
+                     <!--Page Content-->
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+<style>
+    .modal-li{
+        margin-left: 10px; /* Adjust the margin based on your preference */
+        padding-left: 20px; /* Add padding to the left to make space for the image */
+        background: url('{{ url_for('static', filename='images/li.png') }}') no-repeat left center; /* Set the background image */
+        background-size: 16px 16px; /* Adjust width and height based on your preference */
+        line-height: 1.6;
+    }
+    .double-underline {
+      position: relative;
+      text-decoration: none;
+    }
+
+    .double-underline::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -3px; /* Adjust this value for the distance between the lines */
+      height: 1px;
+      background-color: #ffc300;
+      z-index: -1;
+    }
+
+    .method-block{
+        display: none;
+    }
+</style>
+
+
+    <div id="subModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto; max-height: 70vh">
+                           <h2>Upgrade Summary</h2>
+                            <div class="mb-5 summary-block" style="text-align: left; display: none">
+                                <input type="hidden" id="level">
+                                <ul class="mb-4" style="list-style-position: inside;">
+                                    <li class="modal-li"><b>Current Level Refund:</b>
+                                       &nbsp;&nbsp; ${{ "{:,}".format(plans[current_user.level]['price']) }}
+                                    </li>
+
+                                    <li class="modal-li"><b class="level-fee-text">Upgrade Level Fee:</b>
+                                        &nbsp;&nbsp; <span class="level-fee">$0</span>
+                                    </li>
+
+                                    <li class="modal-li"><b>Current Bal:</b>
+                                        &nbsp;&nbsp;&nbsp;&nbsp; <span class="bal">${{ "{:,.2f}".format(current_user.promotion + current_user.earning + current_user.ref_earning) }}</span>
+                                    </li>
+
+
+
+                                    <li class="mt-5" style="font-size: larger"><b>Net Upgrade Fee:</b>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span class="math"></span>
+                                    </li>
+                                    <li class="" style="font-size: medium"><b>Left Over</b>
+                                        <span class="math-left"></span>
+                                    </li>
+
+                                </ul>
+
+                                <small class="info mt-3"></small>
+
+                            </div>
+
+                           <button class="site-btn btn-danger auto-popup-close-now"><i
+                              class="anticon anticon-close"></i> Close</button>
+                           <button class="site-btn grad-btn proceed"><i
+                              class="anticon anticon-check"></i> Proceed</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+    <div id="payModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto; height: 70vh">
+                           <h2>Upgrade Payment</h2>
+                            <h2 class="special-text method-amt">$0</h2>
+                            <div class="mb-5 summary-block" style="text-align: left;">
+
+                                <div class="col-xl-6 col-md-12 progress-steps-form mb-0">
+                                  <label for="method" class="form-label">Select Payment Method</label>
+                                  <div class="input-group">
+                                     <select id="method" class="nice-select site-nice-select" required="">
+                                        <option selected disabled value="">Select here</option>
+                                         {% for wallet in current_user.addresses if wallet.label == "complete" %}
+                                            <option data-wallet="{{ wallet.wallet }}" data-name="{{ all_coins[wallet.token] }}" value="{{ wallet.token }}">{{ all_coins[wallet.token] }}</option>
+                                         {% endfor %}
+                                     </select>
+                                  </div>
+
+                                <div style="text-align: center" class="method-block">
+                                    <img src="https://chart.googleapis.com/chart?chs=200x200&chld=L%7C2&cht=qr&chl=" id="method-qr">
+
+                                    <h3 class="yellow-color mt-3 fw-bold">
+                                        <span class="method-qty">&#8776; 0</span>&nbsp;
+                                        <span class="site-badge badge-failed" id="method-rate-clock" data-bs-toggle="tooltip" data-bs-placement="top" title="This is a tooltip!" data-bs-original-title="This is the title">
+                                            <i class="anticon anticon-clock-circle"></i>
+                                            <span id="rate-countdown">30:00</span>
+                                        </span>
+                                    </h3>
+                                    <input type="hidden" id="method-amt">
+                                </div>
+                               </div>
+
+
+                            <div class="col-12 mt-4 method-block">
+                              <div class="mobile-ref-url mb-4">
+                                 <div class="all-feature-mobile">
+                                    <div class="title" id="method-name">Wallet Address</div>
+                                    <div class="mobile-referral-link-form">
+                                        <input type="text" value="" id="method-wallet" readonly/>
+                                        <button type="submit" onclick="copy('method-wallet')">
+                                           <span>Copy</span>
+                                        </button>
+                                    </div>
+                                    <p class="referral-joined">
+                                        It is recommended to send slightly more than <span class="method-qty special-text"></span>. Excesses will be refunded to your earnings wallet
+                                    </p>
+                                 </div>
+                              </div>
+                           </div>
+
+
+                            </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+    <div id="doneModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now" onclick="window.location.reload()"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner" style="background: url({{ url_for('static', filename='images/auto-pop.jpg') }}) no-repeat;">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                         <div class="auto-pop-content">
+                           <h2>Congratulations!</h2>
+                             <div style="text-align: center">
+                                    <img width="100em" src="{{ url_for('static', filename='images/rank3.svg') }}" id="done-img">
+                                </div>
+                           <h3 class="mt-4">You successfully upgraded to
+                              <span class="special-text done-level">LEVEL 2 </span>
+                           </h3>
+                           <button class="site-btn grad-btn auto-popup-close-now" onclick="window.location.reload()"><i
+                              class="anticon anticon-check"></i> Got it</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+    $(function(){
+
+        {#open_modal('payModal')#}
+
+        $('.info-continue').click(function (){
+            $('#level').val(10)
+            loadOn()
+            $.ajax({
+                url: "{{ url_for('user_packages') }}",
+                data: {'level': 10, 'action': 'verify'},
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+                    loadOff()
+                    if(data.message !== ""){
+                        notify('info', data.message)
+                    }
+                    if(data.status === "success"){
+                        open_modal('subModal')
+                        $('.summary-block').css('display', 'block')
+                        $('.level-fee').text('$'+data.level_fee)
+                        $('.net').text('$'+data.net)
+                        $('.left-over').text('$'+data.left_over)
+                        $('.math').html(data.math)
+                        $('.math-left').html(data.math_left)
+                        $('.info').html(data.info)
+                        $('.level-fee-text').text('Level '+data.level+' Upgrade Fee:')
+                        $('.bal').text('$'+data.bal)
+                    }
+                },
+                error: function(err1, err2){
+                    loadOff()
+                    notify('error', 'An error occurred. Please try again later')
+                },
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+            })
+        })
+
+        $('.subscribe').click(function (){
+            var level = $(this).data('level')
+            $('#level').val(level)
+            loadOn()
+            $.ajax({
+                url: "{{ url_for('user_packages') }}",
+                data: {'level': level, 'action': 'verify'},
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+                    loadOff()
+                    if(data.message !== ""){
+                        notify('info', data.message)
+                    }
+                    if(data.status === "success"){
+                        $('.summary-block').css('display', 'block')
+                        $('.level-fee').text('$'+data.level_fee)
+                        $('.net').text('$'+data.net)
+                        $('.left-over').text('$'+data.left_over)
+                        $('.math').html(data.math)
+                        $('.math-left').html(data.math_left)
+                        $('.info').html(data.info)
+                        $('.level-fee-text').text('Level '+level+' Upgrade Fee:')
+                        $('.bal').text('$'+data.bal)
+                    }
+                },
+                error: function(err1, err2){
+                    loadOff()
+                    notify('error', 'An error occurred. Please try again later')
+                },
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+            })
+        })
+
+
+        $('.proceed').click(function (){
+            loadOn()
+            $.ajax({
+                url: "{{ url_for('user_packages') }}",
+                data: {'level': $('#level').val(), 'action': 'finish'},
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+                    loadOff()
+                    if(data.status === "success"){
+                        if(data.type === "pay"){
+                            notify(data.status, data.message)
+                            open_modal('payModal')
+                            close_modal('subModal')
+                            $('.method-amt').text('$'+data.amt_to_pay)
+                        }else if(data.type === "done"){
+                            close_modal('subModal')
+                            open_modal('doneModal')
+                            $('#done-img').attr('src', '{{ url_for('static', filename='images/') }}'+data.rank_img)
+                            $('.done-level').text('LEVEL '+$('#level').val())
+                        }
+                    }
+                },
+                error: function(err1, err2){
+                    loadOff()
+                    notify('error', 'An error occurred. Please try again later')
+                },
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+            })
+        })
+
+
+        $('#method').change(function (){
+            var selected = $('#method option:selected')
+            if(selected.val() !== ""){
+                loadOn()
+                $.ajax({
+                url: "{{ url_for('user_packages') }}",
+                data: {'token': selected.val(), 'level': $('#level').val(), 'action': 'fetch_wallet'},
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+                    loadOff()
+                    if(data.status === "error"){
+                        notify('error', data.message)
+                        $('.method-block').css('display', 'none')
+                    }else{
+                        $('.method-qty').html('&#8776; '+data.qty+' '+selected.val().toUpperCase())
+                        startCountdown('rate-countdown', 30, function () {
+                            close_modal('payModal')
+                        })
+
+                        $('.method-block').css('display', 'block')
+                        var addr = selected.data('wallet')
+                        $('#method-qr').attr('src', 'https://chart.googleapis.com/chart?chs=200x200&chld=L%7C2&cht=qr&chl='+addr)
+                        $('#method-name').text(selected.data('name')+' Wallet Address')
+                        $('#method-wallet').val(addr)
+                    }
+                },
+                error: function(err1, err2){
+                    loadOff()
+                    notify('error', 'An error occurred. Please try again later')
+                },
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+            })
+
+            }else{
+                $('.method-block').css('display', 'none')
+            }
+
+        })
+
+
+        $('#method-rate-clock').click(function (){
+            notify('info', 'Time left to refresh given rate')
+        })
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

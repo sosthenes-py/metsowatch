@@ -1,0 +1,244 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+    .modal-l{
+        margin-left: 10px; /* Adjust the margin based on your preference */
+        padding-left: 20px; /* Add padding to the left to make space for the image */
+        background: url('{{ url_for('static', filename='images/li-2.png') }}') no-repeat left center; /* Set the background image */
+        background-size: 16px 16px; /* Adjust width and height based on your preference */
+        line-height: 1.6;
+        color: #003049;
+        margin-bottom: 15px;
+    }
+</style>
+
+
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+
+
+
+                     <!--Page Content-->
+
+                     <div class="row">
+                        <div class="col-xl-12">
+                           <div class="site-card">
+                              <div class="site-card-header">
+                                  <h3 class="title"><a href="{{ url_for('user_create2') }}">My Contents</a></h3>
+                                 <div class="card-header-links">
+                                    <a href="{{ url_for('user_create') }}" class="card-header-link">Upload New Content</a>
+                                 </div>
+                              </div>
+                              <div class="site-card-body content-block">
+                                 <div class="site-transactions">
+                                     {% for content in current_user.contents|reverse %}
+                                    <div class="single" data-id="{{ content.video_id }}" data-title="{{ content.title }}" data-category="{{ content.category }}" data-description="{{ content.description }}" data-date="{{ format_date(content.time, '%d %b %H:%M', 86400) }}" data-status="{{ content.status }}" onclick="open_bottom_modal('videoDetailModal'); update_modal_for_view($(this))">
+                                       <div class="left">
+                                          <div class="icon">
+                                             <img src="{{ url_for('static', filename='uploads/images/{}'.format(content.image_name)) }}">
+                                          </div>
+                                          <div class="content">
+                                             <div class="title">{{ content.title }}</div>
+                                             <div class="date">
+                                                 {% if content.status == 0 %}
+                                                        <span class="yellow-color"><i class="anticon anticon-pause-circle"></i> Pending Review</span>
+                                                 {% elif content.status == 1 %}
+                                                        <span class="green-color"><i class="anticon anticon-play-circle"></i> Active</span>
+                                                 {% else %}
+                                                        <span class="red-color"><i class="anticon anticon-close-circle"></i> Rejected</span>
+                                                 {% endif %}
+                                                 &nbsp;&nbsp;<i class="anticon anticon-eye"></i> {{ "{:,}".format(content.count) }}
+                                                &nbsp;&nbsp;<i class="anticon anticon-credit-card"></i> ${{ "{:,.2f}".format(content.earning) }}
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                     {% endfor %}
+
+                                 {% if not current_user.payout_accounts %}
+                                    <div style="text-align: center !important;">
+                                        <img style="width: 30%; display: inline-block;" src="{{ url_for('static', filename='images/none.png') }}" alt="">
+                                    </div>
+                                 {% endif %}
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+
+                     <!--Page Content-->
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+    <div class="fixed-bottom p-3 bottom-modal" id="videoDetailModal" style="height: 60vh; overflow-x: hidden">
+        <div class="container" id="">
+            <button type="button" class="close-bottom-modal" aria-label="Close" id="">
+              <span aria-hidden="true">&times;</span>
+            </button>
+
+            <div class="mt-3">
+                <h4 class="primary-color"><span class="site-badge badge-success p-2 ps-3 pe-3 video-status">Active</span></h4>
+                <ul class="mt-3" style="list-style-position: inside;">
+
+                    <li class="modal-l"><b>Title:</b>
+                        <span class="video-title"></span>
+                    </li>
+
+                    <li class="modal-l"><b>Category:</b>
+                        <span class="video-category"></span>
+                    </li>
+
+                    <li class="modal-l"><b>Description:</b>
+                        <span class="video-description"></span>
+                    </li>
+
+                    <li class="modal-l"><b>Created:</b>
+                        <span class="video-created"></span>
+                    </li>
+
+                </ul>
+
+                <div style="text-align: center">
+                    <button class="site-btn copy_link"><i class="anticon anticon-copy"></i> Copy Video Link</button>
+                </div>
+
+                <div style="display: inline-block; width: 100%">
+                    <a style="float: left" href="#0" class="site-btn btn-link mt-3 modify-content">Modify content</a>
+
+                    <a style="float: right" href="#0" class="site-btn primary-btn mt-3 open-modal" data-modal="deleteModal" onclick="close_bottom_modal('videoDetailModal')"><i class="anticon anticon-delete"></i> Delete</a>
+                </div>
+
+
+
+            </div>
+
+            </div>
+      </div>
+
+
+
+
+    <div id="deleteModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto;">
+                           <h2>Confirm Action</h2>
+                            <div class="mb-5 summary-block" style="text-align: left;">
+
+                                <p>This content will be <span class="yellow-color fw-bold">permanently deleted</span> from this platform and no user will be able to view it again.</p>
+                                <p>However, you can still create and upload more videos anytime. Proceed?</p>
+                            </div>
+
+                            <button class="site-btn btn-danger auto-popup-close-now"><i
+                              class="anticon anticon-close"></i> Cancel</button>
+                           <button class="site-btn grad-btn delete"><i
+                              class="anticon anticon-check"></i> Delete Content</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+
+    function update_modal_for_view(elem){
+        var title = elem.data('title')
+        var category = elem.data('category')
+        var description = elem.data('description')
+        var date = elem.data('date')
+        var id = elem.data('id')
+        var status = elem.data('status')
+
+        $('.video-title').text(title)
+        $('.video-category').text(category)
+        $('.video-description').text(description)
+        $('.video-created').text(date)
+        $('.modify-content').data('id', id)
+        $('.delete').data('id', id)
+        if(status === 0){
+            $('.video-status').removeClass().addClass('site-badge badge-pending p-2 ps-3 pe-3 video-status').text('Pending review')
+        }else if(status === 1){
+            $('.video-status').removeClass().addClass('site-badge badge-success p-2 ps-3 pe-3 video-status').text('Active')
+        }else{
+            $('.video-status').removeClass().addClass('site-badge badge-failed p-2 ps-3 pe-3 video-status').text('Rejected')
+        }
+    }
+
+    $('.modify-content').click(function (){
+        var id = $(this).data('id')
+        window.location.href= "{{ url_for('user_create') }}/"+id
+    })
+
+    $('.copy_link').click(function (){
+        var video_id = $('.modify-content').data('id')
+        var link = "http://{{ site_domain }}"+"/promotion/watch/"+video_id
+        copy_data(link)
+    })
+
+    $('.delete').click(function (){
+        var video_id = $(this).data('id')
+        loadOn()
+        $.ajax({
+            url: "{{ url_for('user_creator') }}",
+            data: {'video_id': video_id},
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                loadOff()
+                notify(data.status, data.message)
+                if (data.status === "success") {
+                    close_modal('deleteModal')
+                    $('.single').each(function (){
+                        if($(this).data('id') === video_id){
+                            $(this).hide()
+                        }
+                    })
+                }
+            },
+            error: function (err1, err2) {
+                loadOff()
+                notify('error', 'An error occurred. Please try again later')
+            },
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+        })
+    })
+
+    $(function(){
+        {#open_modal('payModal')#}
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

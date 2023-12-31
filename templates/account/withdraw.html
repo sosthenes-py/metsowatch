@@ -1,0 +1,251 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+    .user-ranking::after {
+        opacity: 0.93;
+    }
+    .info-button {
+      position: fixed;
+      top: 25%; /* Adjust as needed */
+      right: 0;
+      transform: translateY(-50%);
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+        z-index: 999;
+    }
+</style>
+
+
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+
+
+
+                     <!--Page Content-->
+
+                     <div class="row">
+                        <div class="col-xl-12">
+                           <div class="site-card">
+                              <div class="site-card-header">
+                                 <h3 class="title">Withdraw Money</h3>
+                                 <div class="card-header-links">
+                                    <a href="{{ url_for('user_settings_withdraw') }}"
+                                       class="card-header-link">Withdrawal Account</a>
+                                 </div>
+                              </div>
+
+                              <div class="site-card-body">
+                                 <div class="progress-steps-form">
+                                 {% if current_user.payout_accounts %}
+                                    <form action="#" method="post" id="withdrawForm">
+                                       <div class="row">
+                                          <div class="col-xl-6 col-md-12 mb-3">
+                                             <label for="exampleFormControlInput1"
+                                                class="form-label">Withdraw Account</label>
+                                             <div class="input-group">
+                                                <select name="acct_id" id="acct_id" class="site-nice-select">
+                                                   <option selected disabled>Withdraw Method</option>
+                                                   {% for acct in current_user.payout_accounts %}
+                                                    <option data-addr="{{ acct.wallet[:10] }}...{{ acct.wallet[-4:] }}" value="{{ acct.account_id }}">{{ acct.token|upper }}-{{ acct.label }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                             </div>
+                                             <div class="input-info-text processing-time"></div>
+                                          </div>
+                                          <div class="col-xl-6 col-md-12">
+                                             <label for="exampleFormControlInput1" class="form-label">Amount</label>
+                                             <div class="input-group">
+                                                <input type="number" name="amt" id="amt"
+                                                   oninput=""
+                                                   class="form-control withdrawAmount" placeholder="Minimum: $10">
+                                             </div>
+                                              <div class="input-info-text withdrawAmountRange"><i class="anticon anticon-info-circle"></i> A withdrawal charge of ${{ withdrawal_fee }} applies.</div>
+                                          </div>
+
+
+                                       <div class="col-xl-6 col-md-12 mt-3">
+                                             <label for="exampleFormControlInput1"
+                                                class="form-label">Deduct From</label>
+                                             <div class="input-group">
+                                                <select name="deduct_from" id="deduct_from" class="site-nice-select">
+                                                   <option selected value="earning">Earnings Wallet &#8776; ${{ "{:,.2f}".format(current_user.earning) }}</option>
+                                                    <option value="ref_earning">Ref Bonus &#8776; ${{ "{:,.2f}".format(current_user.ref_earning) }}</option>
+                                                    <option value="all">Earnings + Bonus &#8776; ${{ "{:,.2f}".format(current_user.earning + current_user.ref_earning) }}</option>
+                                                </select>
+                                             </div>
+                                          </div>
+
+                                       {% if current_user.twofa_status %}
+                                           <div class="col-xl-6 col-md-12">
+                                             <label for="exampleFormControlInput1" class="form-label">Enter 2FA Code</label>
+                                             <div class="input-group">
+                                                <input type="text" name="twofa_code" class="form-control withdrawAmount" placeholder="Code from your Authenticator App">
+                                             </div>
+                                          </div>
+                                        {% endif %}
+
+
+
+                                       <div class="transaction-list table-responsive with_details" style="display: none">
+                                          <div class="user-panel-title">
+                                             <h3>Withdrawal Details</h3>
+                                          </div>
+                                          <table class="table">
+                                             <tbody class="selectDetailsTbody">
+                                                <tr class="detailsCol">
+                                                   <td><strong>Amount</strong></td>
+                                                   <td><span class="withdrawAmount detail-amt">0</span> USD</td>
+                                                </tr>
+                                                <tr class="detailsCol">
+                                                   <td><strong>Wallet Address</strong></td>
+                                                   <td><span class="withdrawAmount detail-addr"></span></td>
+                                                </tr>
+
+                                                <tr class="detailsCol">
+                                                   <td><strong>Currency</strong></td>
+                                                   <td><span class="withdrawAmount"></span> USDT TRC20</td>
+                                                </tr>
+                                             </tbody>
+                                          </table>
+                                       </div>
+                                       <div class="buttons mt-5">
+                                          <button type="submit" id="proceed" class="site-btn blue-btn">
+                                          Withdraw Now<i class="anticon anticon-double-right"></i>
+                                          </button>
+                                       </div>
+                                       </div>
+                                    </form>
+                                 {% else %}
+                                    <div class="row">
+                                        <div class="col">
+                                           <div class="alert site-alert alert-dismissible fade show primary-bg" role="alert">
+                                              <div class="content">
+                                                 <div class="icon"><i class="anticon anticon-warning"></i></div>
+                                                 <strong>You don't have any withdrawal accounts yet. <br>Click on the button above to create one</strong>
+                                              </div>
+
+                                           </div>
+                                        </div>
+                                     </div>
+                                 {% endif %}
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+
+                     <!--Page Content-->
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+    <div id="doneModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now" onclick="window.location.href='{{ url_for("user_wallet") }}'" ><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner" style="background: url({{ url_for('static', filename='images/auto-pop.jpg') }}) no-repeat;">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                         <div class="auto-pop-content">
+                           <h2>Withdrawal Success!</h2>
+                             <div style="text-align: center">
+                                    <img width="100em" src="{{ url_for('static', filename='images/withdraw-success.png') }}" id="done-img">
+                                </div>
+                           <h3 class="mt-4 info">A net total of <span class="special-text fw-bold">$'+data.amt+'</span> is on its way to your wallet! Should arrive within minutes!
+                           </h3>
+                           <button class="site-btn grad-btn auto-popup-close-now" onclick="window.location.href='{{ url_for("user_wallet") }}'"><i
+                              class="anticon anticon-check"></i> Got it</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+    $(function(){
+
+        {#open_modal('doneModal')#}
+
+        $('#acct_id').change(function (){
+            var selected = $('#acct_id option:selected')
+            if(selected.val() !== ""){
+                $('.detail-addr').text(selected.data('addr'))
+                $('.with_details').css('display', 'block')
+            }else{
+                $('.method-block').css('display', 'none')
+            }
+
+        })
+
+        $('#amt').keyup(function (){
+            var amt = validateDouble($(this).val())
+            $(this).val(amt)
+            $('.detail-amt').text(number_format(amt, 2))
+        })
+
+        $('#proceed').click(function (){
+            event.preventDefault();
+            var acct_id = $('#acct_id').val()
+            var amt = $('#amt').val()
+            var with_fee = Number("{{ withdrawal_fee }}")
+            if(acct_id === "" || amt === "" || amt === 0){
+                notify('warning', 'Please check your input')
+            }else if(amt < 10) {
+                notify('warning', 'Minimum you can withdraw is $'+(with_fee+1))
+            }else{
+                loadOn()
+               var formData = $('#withdrawForm').serialize()
+                $.ajax({
+                    url: "{{ url_for('user_withdraw') }}",
+                    data: formData,
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        notify(data.status, data.message)
+                       if(data.status === "success"){
+                           open_modal('doneModal')
+                           $('.info').html('A net total of <span class="special-text fw-bold">$'+data.amt+'</span> is on its way to your wallet! Should arrive within minutes.')
+                       }
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'An error occurred. Please try again later')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+            }
+        })
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

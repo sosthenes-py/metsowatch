@@ -1,0 +1,252 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+    <title> - We Digital</title>
+{% endblock %}
+
+{% block search_block %}
+
+    <div class="position-relative search-bar-box">
+        <input id="order_search" type="text" class="form-control" placeholder="Type to search...">
+        <span class="position-absolute top-50 search-show translate-middle-y">
+            <button class="btn btn-primary search_btn">Search</button>
+        </span>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+		<!--start page wrapper -->
+		<div class="page-wrapper">
+			<div class="page-content">
+				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+					<div class="col">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Total Revenue</p>
+										<h4 class="my-1">$
+                                        -
+                                        </h4>
+									</div>
+									<div class="widgets-icons bg-light-success text-success ms-auto"><i class='bx bxs-wallet'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Total Customers</p>
+										<h4 class="my-1">
+                                            {% if current_user.role == "admin" %}
+                                                {{ members.__len__() }}
+                                            {% else %}
+                                                {{ '-' }}
+                                            {% endif %}
+                                        </h4>
+									</div>
+									<div class="widgets-icons bg-light-warning text-warning ms-auto"><i class='bx bxs-group'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-12">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">CRM Access</p>
+										<h4 class="my-1">-</h4>
+									</div>
+									<div class="widgets-icons bg-light-danger text-danger ms-auto"><i class='bx bxs-binoculars'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--end row-->
+
+
+			<!--end row-->
+
+				<div class="card radius-10 mt-4">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div>
+								<h5 class="mb-0">Recent Signups</h5>
+							</div>
+
+							<div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
+							</div>
+						</div>
+						<hr/>
+						<div class="table-responsive">
+							<table class="table align-middle mb-0">
+								<thead class="table-light">
+									<tr>
+										        <th>Username</th>
+												<th>Time</th>
+									</tr>
+								</thead>
+								<tbody id="members">
+								    <tr><td style="font-weight: bold">Fetching Recent Signups ...</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--end page wrapper -->
+
+		<input type="hidden" id="general_username">
+
+
+
+
+
+
+
+	<script>
+	    $(function(){
+	        const success_audio = new Audio("{{ url_for('static', filename='admin/audio/correct.mp3') }}");
+	        const error_audio = new Audio("{{ url_for('static', filename='admin/audio/wrong.mp3') }}");
+
+
+	         var overlay= $("#overlay");
+            var loader= $("#loader");
+
+            function loadOn(){
+                overlay.css('display', 'block');
+                loader.css('display', 'block');
+            }
+            function loadOff(){
+                overlay.css('display', 'none');
+                loader.css('display', 'none');
+            }
+
+            function notify(status, message){
+                if(status === "success" || status ==="info"){
+                    success_audio.play();
+                }else{
+                    error_audio.play();
+                }
+                toastr[status](message)
+            }
+
+
+            $.ajax({
+                url: "{{ url_for('admin_get_signup_history') }}",
+                type: "POST",
+                data: {'key': '*'},
+                dataType: "json",
+                success: function (data){
+                    $("#members").html(data.content);
+                },
+                error: function (jqXHR, errorThrown){
+                    alert(JSON.stringify(jqXHR)+', Err: -'+errorThrown)
+
+                },
+               headers: {
+                   'X-CSRFToken': getCSRFToken()
+               }
+            })
+
+
+        	 $("#login_as").click(function(){
+		            var user= $("#general_username").val();
+		            var url= "https://"+site_domain+"/admin-signin?username="+user;
+		            $.post('{{ url_for('admin_login_as') }}', {
+		                login_as: "set",
+		                username: user
+		            }, function(data, status){
+		                if(data=== "success"){
+		                    notify('error', 'Action could not be completed')
+		                }
+		            })
+		        })
+
+
+	        $("#order_search").keyup(function(){
+	            var key= $(this).val().toLowerCase();
+	            if(key !== ""){
+	                $('.trs').each(function (){
+                        const name = $(this).data('code').toLowerCase()
+                        const fullname = $(this).data('fullname').toLowerCase()
+                        if(name.startsWith(key) || fullname.startsWith(key)){
+                            $(this).show();
+                         }else{
+                            $(this).hide();
+                         }
+                    })
+	            }else{
+                    $('.trs').show()
+                }
+	        })
+
+
+
+	       $('body').on('click', '.trs', function(){
+                var row= $(this);
+                var fullname= row.data('fullname');
+                var email= row.data('email');
+                var reg_date= row.data('reg_date');
+                var registered= row.data('registered');
+                var code= row.data('code');
+
+                $(".details_fullname").val(fullname).data('id', id);
+                $(".details_email").val(email).data('id', id);
+                $(".details_reg_date").val(reg_date);
+
+                $(".details_registered").text(registered);
+                $(".details_text_fname").text(fullname);
+
+                $("#general_username").val(code);
+                $('.details_trans_loader').show()
+
+
+                $(".details_trans").html('<li  class="list-group-item d-flex justify-content-between align-items-center flex-wrap"><h6  class="mb-0">Loading </h6><span  class="text-secondary">...</span><span  class="text-secondary"></span></li>');
+                // HANDLE TRANSACTION HISTORY FETCH
+               $.ajax({
+                   url: "{{ url_for('admin_get_user_trans') }}",
+                   data: {'get_user_trans': 'set', 'username': code},
+                   dataType: 'json',
+                   type: 'post',
+                   success: function (data){
+                       $('.details_trans_loader').hide()
+                        $(".details_trans").html(data.return);
+                   },
+                   headers: {
+                       'X-CSRFToken': getCSRFToken()
+                   }
+               })
+
+            })
+
+
+
+
+	        $('body').on('mouseover', '.trs, .tax_trs, .transfer_trs, .deposit_trs, .with_trs, .agents_trs', function(){
+	            $(this).css({'background':'#E2EDFF', 'color':'#267DFD', 'cursor':'pointer'})
+	        })
+	        $('body').on('mouseout', '.trs, .tax_trs, .transfer_trs, .deposit_trs, .with_trs, .agents_trs', function(){
+	            $(this).css({'background':'white', 'color':'black', 'cursor':'pointer'})
+	        })
+
+
+
+	    })
+	</script>
+
+
+
+
+{% endblock %}

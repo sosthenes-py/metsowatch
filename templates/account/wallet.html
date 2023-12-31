@@ -1,0 +1,517 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+    .user-ranking::after {
+        opacity: 0.93;
+    }
+
+</style>
+
+
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+                     <!--Page Content-->
+
+                     <div class="mobile-screen-show">
+                        <div class="row">
+                           <div class="col-12">
+                              <div class="user-ranking-mobile">
+                                 <div class="icon"><img src="{{ url_for('static', filename='images/materials/user.png') }}" alt=""/></div>
+                                 <div class="name">
+                                    <h4>Hi, {{ current_user.email.split('@')[0] }}</h4>
+                                    <p>{% if current_user.level == 0 %}Free Access{% else %}Paid Membership{% endif %} - <span>Level {{ current_user.level }}</span></p>
+                                 </div>
+                              {% if current_user.level > 3 %}
+                                  {% set rank_img = 'rank0.svg' %}
+                                {% else %}
+                                  {% set rank_img = 'rank{}.svg'.format(current_user.level) %}
+                                {% endif %}
+                                 <div class="rank-badge"><img src="{{ url_for('static', filename='images/') }}{{ rank_img }}" alt=""/></div>
+                              </div>
+
+
+                              <div class="user-wallets-mobile">
+                                 <img src="{{ url_for('static', filename='images/wallet-shadow.png') }}" alt="" class="wallet-shadow">
+                                 <div class="head">All Wallets in USD</div>
+                                 <div class="one">
+                                    <div class="balance">
+                                        <span class="symbol">$</span><span class="count">{{ "{:,.2f}".format(current_user.earning).split('.')[0] }}</span>.<span
+                                          class="after-dot count">{{ "{:,.2f}".format(current_user.earning).split('.')[1] }} </span>
+                                    </div>
+                                    <div class="wallet">Earnings Wallet</div>
+                                 </div>
+                                 <div class="one p-wal">
+                                    <div class="balance">
+                                        <span class="symbol">$</span><span class="count">{{ "{:,.2f}".format(current_user.promotion).split('.')[0] }}</span>.<span
+                                          class="after-dot count">{{ "{:,.2f}".format(current_user.promotion).split('.')[1] }} </span>
+                                    </div>
+                                    <div class="wallet">Promotion Wallet</div>
+                                 </div>
+                                 <div class="info">
+                                     <i icon-name="info"></i>You Have Earned <span class="count">{{ "{:,.2f}".format(this_week_earning) }}</span> USD This Week
+                                 </div>
+                              </div>
+
+                           </div>
+
+
+                           <div class="col-12">
+                              <div class="mob-shortcut-btn">
+                                 <a data-modal="howItWorksModal" class="open-modal" href="#0"><i icon-name="book"></i> How it works</a>
+                                 <a href="{{ url_for('user_packages') }}"><i icon-name="box"></i> Packages</a>
+                                 <a href="{{ url_for('user_withdraw') }}"><i icon-name="send"></i> Withdraw</a>
+                              </div>
+                           </div>
+
+
+                           <div class="col-12">
+
+
+                              <!-- all navigation -->
+                              <div class="all-feature-mobile mb-3 mobile-screen-show">
+                                 <div class="title">All Navigations</div>
+                                 <div class="contents row">
+
+                                    <div class="col-4">
+                                       <div class="single">
+                                          <a href="{{ url_for('user_videos') }}" >
+                                             <div class="icon"><img src="{{ url_for('static', filename='images/materials/schema.png') }}" alt="">
+                                             </div>
+                                             <div class="name">Videos</div>
+                                          </a>
+                                       </div>
+                                    </div>
+
+                                     <div class="col-4">
+                                          <div class="single">
+                                             <a href="{{ url_for('user_packages') }}">
+                                                <div class="icon"><img src="{{ url_for('static', filename='images/materials/profile.png') }}"
+                                                   alt="">
+                                                </div>
+                                                <div class="name">Upgrade</div>
+                                             </a>
+                                          </div>
+                                       </div>
+
+                                     <div class="col-4">
+                                       <div class="single">
+                                          <a href="{{ url_for('user_transactions') }}">
+                                             <div class="icon"><img src="{{ url_for('static', filename='images/materials/transactions.png') }}" alt="">
+                                             </div>
+                                             <div class="name">Transactions</div>
+                                          </a>
+                                       </div>
+                                    </div>
+
+                                     <div class="col-4">
+                                          <div class="single">
+                                             <a href="{{ url_for('user_referral') }}">
+                                                <div class="icon"><img src="{{ url_for('static', filename='images/materials/referral.png') }}"
+                                                   alt="">
+                                                </div>
+                                                <div class="name">Referral</div>
+                                             </a>
+                                          </div>
+                                       </div>
+
+                                    <div class="col-4">
+                                       <div class="single">
+                                          <a href="{{ url_for('user_creator') }}">
+                                             <div class="icon"><img src="{{ url_for('static', filename='images/materials/schema-log.png') }}" alt="">
+                                             </div>
+                                             <div class="name">Content Creating</div>
+                                          </a>
+                                       </div>
+                                    </div>
+
+                                     <div class="col-4">
+                                          <div class="single">
+                                             <a href="{{ url_for('user_settings_general') }}">
+                                                <div class="icon"><img src="{{ url_for('static', filename='images/materials/settings.png') }}"
+                                                   alt="">
+                                                </div>
+                                                <div class="name">Settings</div>
+                                             </a>
+                                          </div>
+                                       </div>
+
+
+                                 </div>
+                                 <div class="moretext">
+                                    <div class="row contents">
+
+                                        <div class="col-4">
+                                       <div class="single">
+                                          <a href="{{ url_for('user_transactions_name', name='deposit') }}">
+                                             <div class="icon"><img src="{{ url_for('static', filename='images/materials/deposit-log.png') }}" alt="">
+                                             </div>
+                                             <div class="name">Deposit Logs</div>
+                                          </a>
+                                       </div>
+                                    </div>
+
+                                       <div class="col-4">
+                                          <div class="single">
+                                             <a href="{{ url_for('user_transactions_name', name='earning') }}">
+                                                <div class="icon"><img src="{{ url_for('static', filename='images/materials/transfer-log.png') }}"
+                                                   alt="">
+                                                </div>
+                                                <div class="name">Earnings Log</div>
+                                             </a>
+                                          </div>
+                                       </div>
+
+                                       <div class="col-4">
+                                          <div class="single">
+                                             <a href="{{ url_for('user_transactions_name', name='withdraw') }}">
+                                                <div class="icon"><img src="{{ url_for('static', filename='images/materials/withdraw-log.png') }}"
+                                                   alt="">
+                                                </div>
+                                                <div class="name">Withdrawal Logs</div>
+                                             </a>
+                                          </div>
+                                       </div>
+
+
+                                       <div class="col-12">
+                                          <div class="single">
+                                             <a href="mailto:support@{{ site_domain }}">
+                                                <div class="icon"><img src="{{ url_for('static', filename='images/materials/support-ticket.png') }}"
+                                                   alt="">
+                                                </div>
+                                                <div class="name">Support Ticket</div>
+                                             </a>
+                                          </div>
+                                       </div>
+
+                                    </div>
+                                 </div>
+                                 <div class="centered">
+                                    <button class="moreless-button site-btn-sm grad-btn">Load more</button>
+                                 </div>
+                              </div>
+
+
+                              <!-- all Statistic -->
+                              <div class="all-feature-mobile mb-3 mobile-screen-show">
+                                 <div class="title">All Statistic</div>
+                                 <div class="row">
+                                    <div class="col-12">
+                                       <div class="all-cards-mobile">
+                                          <div class="contents row">
+                                             <div class="col-12">
+                                                <div class="single-card">
+                                                   <div class="icon"><i class="anticon anticon-credit-card"></i></div>
+                                                   <div class="content">
+                                                      <div class="amount">$<span
+                                                              class="count">{{ "{:,.2f}".format(current_user.earning + current_user.ref_earning) }}</span></div>
+                                                      <div class="name">Withdrawable Balance</div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                             <div class="col-12">
+                                                <div class="single-card">
+                                                   <div class="icon"><i class="anticon anticon-video-camera"></i></div>
+                                                   <div class="content">
+                                                      <div class="amount">$<span
+                                                         class="count">{{ "{:,.2f}".format(current_user.earning) }}</span>
+                                                      </div>
+                                                      <div class="name">Earnings Wallet</div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                             <div class="col-12">
+                                                <div class="single-card">
+                                                   <div class="icon"><i class="anticon anticon-lock"></i></div>
+                                                   <div class="content">
+                                                      <div class="amount">$<span
+                                                         class="count">{{ "{:,.2f}".format(current_user.promotion) }}</span>
+                                                      </div>
+                                                      <div class="name">Promotion Wallet</div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+
+                                          <div class="moretext-2">
+                                             <div class="contents row">
+
+                                                <div class="col-12">
+                                                   <div class="single-card">
+                                                      <div class="icon"><i class="anticon anticon-gift"></i></div>
+                                                      <div class="content">
+                                                         <div class="amount"> $<span
+                                                            class="count">{{ "{:,.2f}".format(current_user.ref_earning) }}</span>
+                                                         </div>
+                                                         <div class="name">Referral Bonus</div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+
+                                                 {% set all_deposit = namespace(value=0) %}
+                                                 {% set all_withdraw = namespace(value=0) %}
+                                                 {% set all_earning = namespace(value=0) %}
+
+                                                 {% for history in current_user.history %}
+                                                    {% if history.name == "deposit" %}
+                                                        {% set all_deposit.value = all_deposit.value + history.amt %}
+                                                    {% endif %}
+
+                                                    {% if history.name == "earning" %}
+                                                        {% set all_earning.value = all_earning.value + history.amt %}
+                                                    {% endif %}
+
+                                                    {% if history.name == "withdraw" %}
+                                                        {% set all_withdraw.value = all_withdraw.value + history.amt %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                <div class="col-12">
+                                                   <div class="single-card">
+                                                      <div class="icon"><i class="anticon anticon-inbox"></i></div>
+                                                      <div class="content">
+                                                         <div class="amount">$<span
+                                                            class="count">{{ "{:,.2f}".format(all_deposit.value) }}</span>
+                                                         </div>
+                                                         <div class="name">All Deposits</div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-12">
+                                                   <div class="single-card">
+                                                      <div class="icon"><i class="anticon anticon-inbox"></i></div>
+                                                      <div class="content">
+                                                         <div class="amount"> $<span
+                                                            class="count">{{ "{:,.2f}".format(all_earning.value) }}</span>
+                                                         </div>
+                                                         <div class="name">All Earnings</div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-12">
+                                                   <div class="single-card">
+                                                      <div class="icon"><i class="anticon anticon-money-collect"></i></div>
+                                                      <div class="content">
+                                                         <div class="amount"> $<span
+                                                            class="count">{{ "{:,.2f}".format(all_withdraw.value) }}</span>
+                                                         </div>
+                                                         <div class="name">All Withdrawals</div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                   <div class="single-card">
+                                                      <div class="icon"><i class="anticon anticon-question"></i></div>
+                                                      <div class="content">
+                                                         <div class="amount">$<span class="count">0</span>
+                                                         </div>
+                                                         <div class="name">Total Tickets</div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="centered">
+                                             <button class="moreless-button-2 site-btn-sm grad-btn">Load more</button>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+
+
+
+                              <!-- Recent Transactions -->
+                              <div class="all-feature-mobile mobile-transactions mb-3 mobile-screen-show">
+                                 <div class="title">Recent Activities</div>
+                                 <div class="contents">
+
+                                     {% for history in current_user.history[-7:]|reverse %}
+                                     {% set sign = "+" %}
+                                     {% set fee_class = "d-none" %}
+                                     {% if history.name == "withdraw" %}
+                                         {% set name = "Payout" %}
+                                         {% set sign = "-" %}
+                                         {% set fee_class = "" %}
+                                     {% elif history.name == "deposit" %}
+                                         {% set name = "Subscription" %}
+                                     {% elif history.name == "earning" %}
+                                         {% set name = "Earning <span class='yellow-color'>x{}</span>".format(history.stack) if history.stack > 1 else "Earning" %}
+
+                                         {% if history.detail and 'video' in history.detail %}
+                                             {% set name = "Creator Earning <span class='yellow-color'>x{}</span>".format(history.stack) if history.stack > 1 else "Creator Earning" %}
+                                         {% endif %}
+                                     {% elif history.name == "ref_earning" %}
+                                         {% set name = "Referral Bonus" %}
+                                     {% else %}
+                                         {% set name = "System" %}
+                                     {% endif %}
+
+                                     {% if history.status == 0 %}
+                                         {% set status_text = "Pending" %}
+                                         {% set status_class = "pending" %}
+                                     {% elif history.status == 1 %}
+                                         {% set status_text = "Completed" %}
+                                         {% set status_class = "success" %}
+                                     {% else %}
+                                         {% set status_text = "Failed" %}
+                                         {% set status_class = "failed" %}
+                                     {% endif %}
+
+                                    <div class="single-transaction">
+                                       <div class="transaction-left">
+                                          <div class="transaction-des">
+                                             <div class="transaction-title fw-bold">
+                                                 {{ name|safe }}
+                                             </div>
+                                             <div class="transaction-id">{{ history.tx_id }}</div>
+                                             <div class="transaction-date">
+                                             {{ format_date(history.time, '%d %b %H:%M', 86400) }}
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <div class="transaction-right">
+                                          <div class="transaction-amount ">
+                                             {{ sign }}{{ "{:,.2f}".format(history.amt) }} USD
+                                          </div>
+                                          <div class="transaction-fee sub {{ fee_class }}">-{{ "{:.2f}".format(history.fee) }} USD Fee </div>
+
+                                          <div class="transaction-status site-badge badge-{{ status_class }}">{{ status_text }}</div>
+                                       </div>
+                                    </div>
+
+                                     {% endfor %}
+
+
+
+                                 {% if not current_user.history %}
+
+                                     <div style="text-align: center !important;">
+                                        <img style="width: 30%; display: inline-block;" src="{{ url_for('static', filename='images/none.png') }}" alt="">
+                                    </div>
+
+                                 {% endif %}
+
+
+                                 </div>
+                              </div>
+
+
+                           </div>
+
+
+
+                           <div class="col-12">
+                              <div class="mobile-ref-url mb-4">
+                                 <div class="all-feature-mobile">
+                                    <div class="title">Referral URL</div>
+                                    <div class="mobile-referral-link-form">
+                                       <input type="text" value="http://{{ site_domain }}{{ url_for('ref_receive', code=current_user.code) }}" id="refLink" readonly/>
+                                       <button type="submit" onclick="copyRef()">
+                                       <span id="copy">Copy</span>
+                                       </button>
+                                    </div>
+                                    <p class="referral-joined">
+                                        {% set direct_refs = namespace(value=0) %}
+                                        {% for down in current_user.downlines if down.level == 1 %}
+                                            {% set direct_refs.value = direct_refs.value + 1 %}
+                                        {% endfor %}
+                                        {{ direct_refs.value }}
+                                        {% if direct_refs.value != 1 %} people have {% else %} person has {% endif %} joined directly using your link
+                                    </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <!--Page Content-->
+
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+    <div id="howItWorksModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto; height: 70vh">
+                           <h2>How It Works</h2>
+                            <div style="text-align: left;">
+                                <ul style="list-style-position: inside;">
+                                    <li style="list-style-type: disc; margin-bottom: 10px;"><b>Explore Diverse Contents:</b>
+                                    <p>Start earning by clicking the <span class="special-text">VIDEOS</span> button on the home page to access a curated selection of videos tailored for your account on a daily basis.</p>
+                                    </li>
+
+                                    <li style="list-style-type: disc; margin-bottom: 10px;"><b>Earn Effortlessly:</b>
+                                    <p>Engage with the content and complete videos to earn. Your rewards are designed to align with your current subscription level, ensuring a fair rewarding experience.</p>
+                                    </li>
+
+                                    <li style="list-style-type: disc; margin-bottom: 10px;"><b>Content Creating:</b>
+                                    <p>We have made it possible for users to also create and upload videos to our platform, so they earn when other users watch the videos. As a content creator, you earn {{ video_creator_bonus }}% of your viewers' earning each time they watch your video. Click <u><span class="special-text" onclick="window.location.href='{{ url_for('user_creator') }}'">here</span></u> to go to content creating. </p>
+                                    </li>
+
+                                    <li style="list-style-type: disc; margin-bottom: 10px;"><b>Upgrade Flexibility:</b>
+                                    <p>Elevate your earning potential by upgrading your subscription package at any time. Enjoy the flexibility to choose a plan that matches your evolving preferences and goals. Click <u><span class="special-text" onclick="window.location.href='{{ url_for('user_packages') }}'">here</span></u> to view available packages.</p>
+                                    </li>
+
+                                    <li style="list-style-type: disc; margin-bottom: 10px;"><b>Crediting Limits:</b>
+                                        <p>Each subscription level comes with a predefined maximum limit for credited videos. Once you reach the maximum video limit for your subscription level, the system automatically stops crediting your account to ensure fair and equitable credit distribution, until the next day. See <u><span class="special-text" onclick="window.location.href='{{ url_for('user_packages') }}'">packages</span></u> for more info</p>
+                                    </li>
+
+                                    <li style="list-style-type: disc; margin-bottom: 10px;"><b>About The Promotion Wallet:</b>
+                                    <p>For now, we are giving out a promotion bonus of ${{ promotion_bonus }} for every direct referral you get up to $5. At the moment, the promotion balance is not directly withdrawable but can be used for upgrades. During an upgrade, the promotion balance is automatically added to your earnings wallet.</p>
+                                    </li>
+
+                                    <li style="list-style-type: disc; margin-bottom: 10px;"><b>Our Customer Success Team:</b>
+                                    <p>We are available 24/7 to attend to everyone. Just open a ticket or emil us, we reply within 5 minutes.</p>
+                                    </li>
+
+
+
+                                </ul>
+                            </div>
+
+                           <button class="site-btn grad-btn auto-popup-close-now"><i
+                              class="anticon anticon-check"></i> Got it</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+    $(function(){
+
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

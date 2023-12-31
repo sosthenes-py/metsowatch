@@ -1,0 +1,393 @@
+
+    {% block title %}
+    {% endblock %}
+        	<!--favicon-->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+	<link rel="icon" href="{{ url_for('static', filename='admin/images/favicon.png') }}" type="image/png" />
+	<!--plugins-->
+	<link href="{{ url_for('static', filename='admin/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />
+	<link href="{{ url_for('static', filename='admin/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}" rel="stylesheet" />
+	<link href="{{ url_for('static', filename='admin/plugins/metismenu/css/metisMenu.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='admin/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
+
+
+    <link href="{{ url_for('static', filename='admin/plugins/Drag-And-Drop/dist/imageuploadify.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='admin/plugins/fancy-file-uploader/fancy_fileupload.css') }}" rel="stylesheet" />
+
+
+	<!-- loader-->
+	<link href="{{ url_for('static', filename='admin/css/pace.min.css') }}" rel="stylesheet" />
+	<!-- Bootstrap CSS -->
+	<link href="{{ url_for('static', filename='admin/css/bootstrap.min.css') }}" rel="stylesheet" />
+	<link href="{{ url_for('static', filename='admin/css/app.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='admin/css/icons.css') }}" rel="stylesheet">
+	<!-- Theme Style CSS -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/dark-theme.css') }}" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/semi-dark.css') }}" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/header-colors.css') }}" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.bootstrap5.min.css" integrity="sha512-Ars0BmSwpsUJnWMw+KoUKGKunT7+T8NGK0ORRKj+HT8naZzLSIQoOSIIM3oyaJljgLxFi0xImI5oZkAWEFARSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- toastr js -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/toastr.min.css') }}">
+
+
+	 <script src="{{ url_for('static', filename='admin/js/jquery-3.6.0.min.js') }}"></script>
+
+	 <style>
+     #loader{
+      position: fixed;
+      text-align:center;
+      width: 100%;
+      height: 100%;
+      top: 50%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10000;
+      cursor: pointer;
+      display:none;
+      justify-content: center;
+      margin-top:-50px;
+    }
+
+     #overlay{
+      position: fixed;
+      text-align:center;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #001219;
+      opacity: 0.5;
+      z-index: 100000;
+      cursor: not-allowed;
+      display:none;
+      justify-content: center;
+    }
+     th {
+        white-space: nowrap; /* Prevent text from wrapping */
+        overflow: hidden;    /* Hide any overflowing text */
+        text-overflow: ellipsis; /* Optionally, add ellipsis for long text */
+    }
+     td{
+         white-space: nowrap;
+     }
+     td input {
+        width: auto; /* Allow the input to expand to fit its content */
+        box-sizing: border-box; /* Include padding and border in the width calculation */
+    }
+     table{
+        font-size: 14px;
+     }
+    .actions{
+        cursor: pointer;
+    }
+    </style>
+</head>
+
+<body>
+ <div id="loader">
+     <img src="{{ url_for('static', filename='admin/css/ajax-loader.gif') }}" alt="" width="40em">
+ </div>
+ <div id="overlay"></div>
+
+
+	<!--wrapper-->
+	<div class="wrapper">
+		<!--sidebar wrapper -->
+		<div class="sidebar-wrapper" data-simplebar="true">
+			<div class="sidebar-header">
+				<div>
+					<img src="{{ url_for('static', filename='admin/images/logo.png') }}" class="logo-icon" alt="logo icon">
+				</div>
+			</div>
+			<!--navigation-->
+			<ul class="metismenu" id="menu">
+				<li>
+					<a href="javascript:;" class="has-arrow">
+						<div class="parent-icon"><i class="bx bx-home-circle"></i>
+						</div>
+						<div class="menu-title">Dashboard</div>
+					</a>
+					<ul>
+						<li> <a href="{{ url_for('admin_dashboard_page') }}"><i class="bx bx-right-arrow-alt"></i>Home</a>
+						</li>
+					</ul>
+
+					<ul>
+						<li> <a href="{{ url_for('admin_deposit_page') }}"><i class="bx bx-right-arrow-alt"></i>Deposits</a>
+						</li>
+					</ul>
+
+					<ul>
+						<li> <a href="{{ url_for('admin_withdraw_page') }}"><i class="bx bx-right-arrow-alt"></i>Withdrawals</a>
+						</li>
+					</ul>
+
+                    <ul>
+						<li> <a href="{{ url_for('admin_videos') }}"><i class="bx bx-right-arrow-alt"></i>Videos</a>
+						</li>
+					</ul>
+
+
+					<ul>
+						<li> <a href="{{ url_for('admin_members_page') }}"><i class="bx bx-right-arrow-alt"></i>All Members</a>
+						</li>
+					</ul>
+				</li>
+
+				<li>
+					<a href="javascript:;" class="has-arrow">
+						<div class="parent-icon"><i class="bx bx-category"></i>
+						</div>
+						<div class="menu-title">Application</div>
+					</a>
+					<ul>
+						<li> <a href="#0"><i class="bx bx-right-arrow-alt"></i>Email</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="{{ url_for('admin_logout') }}">
+						<div class="parent-icon"><i class="bx bx-user-circle"></i>
+						</div>
+						<div class="menu-title">Logout</div>
+					</a>
+				</li>
+
+
+			</ul>
+			<!--end navigation-->
+		</div>
+		<!--end sidebar wrapper -->
+		<!--start header -->
+		<header>
+			<div class="topbar d-flex align-items-center">
+				<nav class="navbar navbar-expand">
+					<div class="mobile-toggle-menu"><i class="bx bx-menu"></i>
+					</div>
+					<div class="search-bar flex-grow-1">
+                        {% block search_block %}
+
+                        {% endblock %}
+
+					</div>
+					<div class="top-menu ms-auto">
+						<ul class="navbar-nav align-items-center">
+
+
+							<li class="nav-item dropdown dropdown-large">
+
+								<div class="dropdown-menu dropdown-menu-end">
+									<a href="javascript:;">
+										<div class="msg-header">
+											<p class="msg-header-title">Notifications</p>
+											<p class="msg-header-clear ms-auto">Marks all as read</p>
+										</div>
+									</a>
+									<div class="header-notifications-list">
+
+
+
+									</div>
+									<a href="javascript:;">
+										<div class="text-center msg-footer">View All Notifications</div>
+									</a>
+								</div>
+							</li>
+							<li class="nav-item dropdown dropdown-large">
+
+								<div class="dropdown-menu dropdown-menu-end">
+									<a href="javascript:;">
+										<div class="msg-header">
+											<p class="msg-header-title">Messages</p>
+											<p class="msg-header-clear ms-auto">Marks all as read</p>
+										</div>
+									</a>
+									<div class="header-message-list">
+
+									</div>
+									<a href="javascript:;">
+										<div class="text-center msg-footer">View All Messages</div>
+									</a>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="user-box dropdown">
+						<a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<img src="{{ url_for('static', filename='admin/images/avatars/user.png') }}" class="user-img" alt="user avatar">
+							<div class="user-info ps-3">
+								<p class="user-name mb-0">{{ current_user.fname }}</p>
+								<p class="designattion mb-0">{{ current_user.role.title() }}</p>
+							</div>
+						</a>
+					</div>
+				</nav>
+			</div>
+		</header>
+		<!--end header -->
+    </div>
+{% block content %}
+
+{% endblock %}
+
+    	<!--start overlay-->
+		<div class="overlay toggle-icon"></div>
+		<!--end overlay-->
+		<!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i class="bx bxs-up-arrow-alt"></i></a>
+		<!--End Back To Top Button-->
+		<footer class="page-footer">
+			<p class="mb-0">WE-DIGITAL Copyright © 2021. All right reserved.</p>
+		</footer>
+	</div>
+	<!--end wrapper-->
+	<!--start switcher-->
+	<div class="switcher-wrapper">
+		<div class="switcher-btn"> <i class="bx bx-cog bx-spin"></i>
+		</div>
+		<div class="switcher-body">
+			<div class="d-flex align-items-center">
+				<h5 class="mb-0 text-uppercase">Theme Customizer</h5>
+				<button type="button" class="btn-close ms-auto close-switcher" aria-label="Close"></button>
+			</div>
+			<hr/>
+			<h6 class="mb-0">Theme Styles</h6>
+			<hr/>
+			<div class="d-flex align-items-center justify-content-between">
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="flexRadioDefault" id="lightmode" checked>
+					<label class="form-check-label" for="lightmode">Light</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="flexRadioDefault" id="darkmode">
+					<label class="form-check-label" for="darkmode">Dark</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="flexRadioDefault" id="semidark">
+					<label class="form-check-label" for="semidark">Semi Dark</label>
+				</div>
+			</div>
+			<hr/>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" id="minimaltheme" name="flexRadioDefault">
+				<label class="form-check-label" for="minimaltheme">Minimal Theme</label>
+			</div>
+			<hr/>
+			<h6 class="mb-0">Header Colors</h6>
+			<hr/>
+			<div class="header-colors-indigators">
+				<div class="row row-cols-auto g-3">
+					<div class="col">
+						<div class="indigator headercolor1" id="headercolor1"></div>
+					</div>
+					<div class="col">
+						<div class="indigator headercolor2" id="headercolor2"></div>
+					</div>
+					<div class="col">
+						<div class="indigator headercolor3" id="headercolor3"></div>
+					</div>
+					<div class="col">
+						<div class="indigator headercolor4" id="headercolor4"></div>
+					</div>
+					<div class="col">
+						<div class="indigator headercolor5" id="headercolor5"></div>
+					</div>
+					<div class="col">
+						<div class="indigator headercolor6" id="headercolor6"></div>
+					</div>
+					<div class="col">
+						<div class="indigator headercolor7" id="headercolor7"></div>
+					</div>
+					<div class="col">
+						<div class="indigator headercolor8" id="headercolor8"></div>
+					</div>
+				</div>
+			</div>
+
+			<hr/>
+			<h6 class="mb-0">Sidebar Backgrounds</h6>
+			<hr/>
+			<div class="header-colors-indigators">
+				<div class="row row-cols-auto g-3">
+					<div class="col">
+						<div class="indigator sidebarcolor1" id="sidebarcolor1"></div>
+					</div>
+					<div class="col">
+						<div class="indigator sidebarcolor2" id="sidebarcolor2"></div>
+					</div>
+					<div class="col">
+						<div class="indigator sidebarcolor3" id="sidebarcolor3"></div>
+					</div>
+					<div class="col">
+						<div class="indigator sidebarcolor4" id="sidebarcolor4"></div>
+					</div>
+					<div class="col">
+						<div class="indigator sidebarcolor5" id="sidebarcolor5"></div>
+					</div>
+					<div class="col">
+						<div class="indigator sidebarcolor6" id="sidebarcolor6"></div>
+					</div>
+					<div class="col">
+						<div class="indigator sidebarcolor7" id="sidebarcolor7"></div>
+					</div>
+					<div class="col">
+						<div class="indigator sidebarcolor8" id="sidebarcolor8"></div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+
+
+	<!--end switcher-->
+
+
+	<!-- Bootstrap JS -->
+	<script src="{{ url_for('static', filename='admin/js/bootstrap.bundle.min.js') }}"></script>
+	<!--plugins-->
+	<script src="{{ url_for('static', filename='admin/plugins/simplebar/js/simplebar.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='admin/plugins/metismenu/js/metisMenu.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='admin/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
+	<script src="{{ url_for('static', filename='admin/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='admin/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+
+
+{#    FILE UPLOADS#}
+    <script src="{{ url_for('static', filename='admin/plugins/fancy-file-uploader/jquery.ui.widget.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/plugins/fancy-file-uploader/jquery.fileupload.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/plugins/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/plugins/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/js/custom-uploadify.js') }}"></script>
+
+
+
+
+	 <!-- toastr js -->
+    <script src="{{ url_for('static', filename='admin/js/toastr.min.js') }}"></script>
+
+
+	<script src="{{ url_for('static', filename='admin/js/index.js') }}"></script>
+	<!--app JS-->
+	<script src="{{ url_for('static', filename='admin/js/app.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='admin/js/pace.min.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js" integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script>
+    function getCSRFToken() {
+        return $('meta[name=csrf-token]').attr('content');
+    }
+</script>
+
+
+</body>
+
+
+</html>

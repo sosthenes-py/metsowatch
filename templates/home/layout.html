@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8"/>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <meta name="csrf-token" content="{{ csrf_token() }}">
+      <meta name="keywords" content="METSOWATCH">
+      <meta name="description" content="METSOWATCH">
+      <link rel="canonical" href=""/>
+      <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon"/>
+      <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap.min.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/datatables.min.css') }}"/>
+
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"/>
+       <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-toast.min.css') }}"/>
+      <title>METSO</title>
+      <style>
+         .site-head-tag {
+         margin: 0;
+         padding: 0;
+         }
+
+         #loader{
+      position: fixed;
+      text-align:center;
+      width: 100%;
+      height: 100%;
+      top: 50%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10000;
+      cursor: pointer;
+      display:none;
+      justify-content: center;
+      margin-top:-50px;
+    }
+
+     #overlay{
+      position: fixed;
+      text-align:center;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: black;
+      opacity: 0.6;
+      z-index: 100000;
+      cursor: not-allowed;
+      display:none;
+      justify-content: center;
+    }
+      </style>
+   </head>
+
+
+
+
+{% block content %}
+
+{% endblock %}
+
+
+      <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery-migrate.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/scrollUp.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/waypoints.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery.counterup.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/lucide.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/magnific-popup.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/aos.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/datatables.min.js') }}" type="text/javascript" charset="utf8"></script>
+      <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/nice-toast.min.js') }}"></script>
+
+
+{% block script %}
+
+{% endblock %}

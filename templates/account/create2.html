@@ -1,0 +1,174 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+    .dark-theme .progress-steps-form .input-group .site-nice-select {
+        background: transparent;
+    }
+</style>
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+
+
+
+                     <!--Page Content-->
+
+                     <div class="row">
+                        <div class="col-xl-12">
+
+
+                           <div class="site-card">
+                              <div class="site-card-header">
+                                 <h3 class="title">Upload New Video</h3>
+                                  <div class="card-header-links">
+                                    <a href="{{ url_for('user_creator') }}" class="card-header-link">My Contents</a>
+                                 </div>
+                              </div>
+                              <div class="site-card-body">
+                                 <form method="POST" id="myForm" enctype="multipart/form-data">
+
+                                     <div class="progress-steps-form">
+                                        <div class="row">
+
+
+                                        <div class="col-xl-6 col-md-12">
+                                                <div class="single-field">
+                                                    <label for="title" class="form-label">YouTube URL</label>
+                                                    <div class="input-group">
+                                                        <input id="url" type="url" class="form-control"  name="url" placeholder="Enter url" value=""/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-xl-6 col-md-12">
+                                                <label for="category" class="form-label">Video Category</label>
+                                                <div class="input-group">
+                                                    <select id="category" name="category" class="site-nice-select">
+                                                        <option {% if video and not video.category %}selected{% endif %} value="">None</option>
+                                                        <option {% if video and video.category == "music" %}selected{% endif %} value="music">Music</option>
+                                                        <option {% if video and video.category == "sports" %}selected{% endif %} value="sports">Sports</option>
+                                                        <option {% if video and video.category == "comedy" %}selected{% endif %} value="comedy">Comedy</option>
+                                                        <option {% if video and video.category == "gaming" %}selected{% endif %} value="gaming">Gaming</option>
+                                                        <option {% if video and video.category == "lifestyle" %}selected{% endif %} value="lifestyle">Lifestyle</option>
+                                                        <option {% if video and video.category == "science and tech" %}selected{% endif %} value="science and tech">Science & Tech</option>
+                                                        <option {% if video and video.category == "politics" %}selected{% endif %} value="politics">Politics</option>
+                                                        <option {% if video and video.category == "fashion" %}selected{% endif %} value="fashion">Fashion</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                     <div class="col-xl-6 col-md-12 mt-3">
+                                         <button type="submit" class="site-btn blue-btn" id="sbmt">{% if video %}Modify{% else %}Upload{% endif %} Content</button>
+                                     </div>
+
+
+                                </form>
+                              </div>
+                           </div>
+
+
+
+
+                        </div>
+                     </div>
+
+                     <!--Page Content-->
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+    <div id="doneModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now" onclick="window.location.href='{{ url_for("user_creator") }}'" ><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner" style="background: url({{ url_for('static', filename='images/auto-pop.jpg') }}) no-repeat;">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                         <div class="auto-pop-content">
+                           <h2>Upload Success!</h2>
+                             <div style="text-align: center">
+                                    <img width="150em" src="{{ url_for('static', filename='images/video-review.png') }}" id="done-img">
+                                </div>
+                             <h3 class="mt-4 info">Your content has been uploaded for review. You'll start earning on each view once it's approved.</h3>
+                             <h3 class="info">Thank you for contributing to our platform!</h3>
+                           <button class="site-btn grad-btn auto-popup-close-now" onclick="window.location.href='{{ url_for("user_creator") }}'"><i
+                              class="anticon anticon-check"></i> Okay</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+
+    function submit(){
+        event.preventDefault()
+           var url = '{% if not video %}{{ url_for('user_create2') }}{% else %}{{ url_for('user_create_patch', video_id=video.video_id) }}{% endif %}'
+           var formData = new FormData($('#myForm')[0]);
+           loadOn()
+           $.ajax({
+               url: url,
+               data: formData,
+               type: "POST",
+               processData: false,
+               contentType: false,
+               success: function (data){
+                   loadOff()
+                   if(data.status === "success"){
+                       open_modal('doneModal')
+                       $('#myForm input').val('')
+                       $('#cover_label').css('background-image', 'url()')
+                       $('#video_label').css('background-image', 'url()')
+                   }else{
+                       notify(data.status, data.message)
+                   }
+               },
+               error: function (){
+                   loadOff()
+                   notify('error', 'An error occurred')
+               },
+               headers: {
+                   'X-CSRFToken': getCSRFToken()
+               },
+           })
+    }
+
+$(function(){
+
+        {#open_modal('doneModal')#}
+
+       $('#sbmt').click(function (){
+           submit()
+       })
+
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

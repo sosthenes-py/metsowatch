@@ -1,0 +1,443 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+
+    .nav-pills .nav-link {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .nav-pills .nav-link i {
+    margin-right: 5px; /* Adjust the margin as needed */
+  }
+  .nav-item .active{
+      background: linear-gradient(
+        95deg,
+        #059dff 15%,
+        #6549d5 45%,
+        #e33fa1 75%,
+        #fb5343
+    ) 95%/200% 100% !important;
+  }
+</style>
+
+
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+
+
+
+                     <!--Page Content-->
+
+                     <div class="row">
+                        <div class="col-xl-12">
+
+
+                            <div class="site-card">
+                                <div class="site-card-header">
+                                    <h3 class="title">Referral URL
+                                        </h3>
+                                    <span class="primary-bg p-2 ps-3 pe-3 rounded-pill total_bonus"> Total Bonus: $0</span>
+                                </div>
+                                <div class="site-card-body">
+                                    <div class="referral-link">
+                                        <div class="referral-link-form">
+                                            <input type="text" value="http://{{ site_domain }}{{ url_for('ref_receive', code=current_user.code) }}" id="refLink" readonly>
+                                            <button type="submit" onclick="copyRef()">
+                                                <i class="anticon anticon-copy"></i>
+                                                <span id="copy">Copy Url</span>
+                                            </button>
+                                        </div>
+                                         <p class="referral-joined">
+                                            {% set direct_refs = namespace(value=0) %}
+                                            {% for down in current_user.downlines if down.level == 1 %}
+                                                {% set direct_refs.value = direct_refs.value + 1 %}
+                                            {% endfor %}
+                                            {{ direct_refs.value }}
+                                            {% if direct_refs.value != 1 %} people have {% else %} person has {% endif %} joined directly using your link
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                        <div class="col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                <div class="site-tab-bars overflow-auto">
+                                   <ul class="nav nav-pills flex-nowrap" id="pills-tab" role="tablist">
+                                      <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link level active"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-1"
+                                            type="button"
+                                            data-item="1"
+                                            ><i class="fas fa-users"></i>Level 1</a>
+                                      </li>
+                                      <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link level"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-2"
+                                            type="button"
+                                            data-item="2"
+                                            ><i class="fas fa-users"></i>Level 2</a>
+                                      </li>
+
+                                       <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link level"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-3"
+                                            type="button"
+                                            data-item="3"
+                                            ><i class="fas fa-users"></i>Level 3</a>
+                                      </li>
+
+                                       <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link level"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-3"
+                                            type="button"
+                                            data-item="4"
+                                            ><i class="fas fa-users"></i>Level 4</a>
+                                      </li>
+
+
+                                      <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link level"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-4"
+                                            type="button"
+                                            data-item="5"
+                                            ><i class="fas fa-users"></i>Level 5</a>
+                                      </li>
+
+                                       <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link level"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-4"
+                                            type="button"
+                                            data-item="6"
+                                            ><i class="fas fa-users"></i>Level 6</a>
+                                      </li>
+
+                                   </ul>
+                                </div>
+
+                        </div>
+
+
+
+                           <div class="site-card">
+                               <div class="site-card-header">
+                                  <h3 class="title title-h">Referral Tree</h3>
+                                  <div class="col-sm-6">
+                                      <span class="nav-link primary-bg white-color">
+                                          <i icon-name="network"></i> {% if upline is not none %}{{ upline.email.split('@')[0] }}{% endif %}
+                                      </span>
+                                  </div>
+                               </div>
+
+
+                               <section class="management-hierarchy">
+                                   <div class="hv-container">
+                                      <div class="hv-wrapper">
+                                         <!-- tree component -->
+                                         <div class="hv-item pt-3" id="tree">
+
+                                         </div>
+                                      </div>
+                                   </div>
+                                </section>
+                               <div class="site-card-body" style="text-align: center">
+                                   <button class="special-bg site-badge tree-bonus" style="width: 90%">Total Links: 0 &nbsp;&nbsp;Total Bonus: $0</button>
+                               </div>
+
+
+                            </div>
+
+
+
+
+                        <div class="site-card">
+                              <div class="site-card-header">
+                                 <h3 class="title">All Referral Logs</h3>
+                                 <div class="card-header-links">
+                                    <a href="#0" class="card-header-link count-details" style="text-transform: lowercase">
+                                    </a>
+                                 </div>
+                              </div>
+                              <div class="site-card-body">
+                                  <!-- Recent Transactions -->
+                              <div class="all-feature-mobile mobile-transactions mb-3 mobile-screen-show">
+                                 <div class="contents">
+
+
+                                 </div>
+                              </div>
+
+                              <div class="centered mb-5">
+                                <button class="site-btn-sm grad-btn load-more" data-page="1" data-name="all">Load more</button>
+                            </div>
+
+                              </div>
+                           </div>
+
+
+
+                        </div>
+                     </div>
+
+                     <!--Page Content-->
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+    <div id="searchModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto;">
+                           <h2>Search Direct Referrals</h2>
+                            <div class="mb-3 summary-block" style="text-align: left;">
+
+                                <form id="add-form">
+                                    <div class="col-xl-6 col-md-12 ">
+
+                                        <div class="site-input-groups">
+                                            <div class="input-group joint-input">
+                                                <input id="search-input" type="text" class="form-control" placeholder="Search by email" >
+                                                <span class="input-group-text site-btn grad-btn" id="search-btn"><i class="anticon anticon-search"></i></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+<style>
+    .modal-li{
+        margin-left: 10px; /* Adjust the margin based on your preference */
+        padding-left: 20px; /* Add padding to the left to make space for the image */
+        background: url('{{ url_for('static', filename='images/li.png') }}') no-repeat left center; /* Set the background image */
+        background-size: 16px 16px; /* Adjust width and height based on your preference */
+        line-height: 1.6;
+    }
+    .my-input{
+        background: #003049;
+        color: white;
+        border-color: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+    }
+    .my-input:focus{
+        background: #003049;
+        color: white;
+    }
+</style>
+
+
+
+    <div id="addModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto;">
+                           <h2>New Account</h2>
+                            <div class="mb-5 summary-block" style="text-align: left;">
+
+                                <form id="add-form">
+                                    <div class="col-xl-6 col-md-12 progress-steps-form mb-0">
+                                      <label for="method" class="form-label fw-bold" style="color: #003049">Select Method</label>
+                                      <div class="input-group">
+                                         <select id="method" name="method" class="nice-select site-nice-select" required="">
+                                            <option selected value="usdt">USDT TRC20</option>
+                                         </select>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-12 ">
+                                        <label for="" class="form-label fw-bold" style="color: #003049">Method Name:</label>
+                                        <div class="input-group">
+                                            <input type="text" name="name" class="form-control my-input" placeholder="eg. My Withdraw Account 1" id="add-name">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-12 mt-3">
+                                        <label for="" class="form-label fw-bold" style="color: #003049">USDT TRC20 Wallet:</label>
+                                        <div class="input-group">
+                                            <input type="text" name="wallet" class="form-control my-input" placeholder="Wallet Address" id="add-wallet">
+                                            <input name="action" value="add" type="hidden">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <button class="site-btn btn-danger auto-popup-close-now"><i
+                              class="anticon anticon-close"></i> Close</button>
+                           <button class="site-btn grad-btn proceed"><i
+                              class="anticon anticon-check"></i> Add Wallet</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+    $(function(){
+
+        {#open_modal('payModal')#}
+
+        $('.level').click(function (){
+            var level = $(this).data('item')
+            fetch('{{ current_user.code }}', level, true)
+        })
+
+        fetch('{{ current_user.code }}', 1, true)
+        fetch_log(0, false)
+
+        function fetch(id, level=1, tapped=false, q=''){
+            loadOn()
+            $.ajax({
+                    url: "{{ url_for('user_referral') }}",
+                    data: {'action': 'fetch', 'id': id, 'level': level, q: q},
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        $('#tree').html(data.tree)
+                        $('.tree-bonus').html('Total Links: '+data.links+' &nbsp;&nbsp;Total Bonus: $'+data.bonus)
+                        if(!tapped){
+                            $('.level').removeClass('active').
+                            each(function (){
+                                if($(this).data('item') === data.level){
+                                    $(this).toggleClass('active')
+                                }
+                            })
+                        }
+                        if(q !== ""){
+                            $('.title-h').text('Search Result').addClass('special-text')
+                        }else{
+                            $('.title-h').text('Referral Tree').removeClass('special-text')
+                        }
+
+                        if(data['status'] === "error"){
+                            notify(data.status, data.message)
+                        }
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'End of list')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+        }
+
+
+        function fetch_log(page, more){
+            loadOn()
+            $.ajax({
+                    url: "{{ url_for('user_referral') }}",
+                    data: {'page': page, 'action': 'fetch_log'},
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        if(more){
+                            $('.contents').append(data.content)
+                        }else{
+                            $('.contents').html(data.content)
+                        }
+                        $('.load-more').data({'page': data.page,}).css('display', data.load_more)
+                        $('.count-details').text(data.count_details)
+                        $('.total_bonus').text('Total Bonus: $'+data.total_bonus)
+                        if(data['status'] === "error"){
+                            notify(data.status, data.message)
+                        }
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'End of list')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+        }
+
+
+        $('body').on('click', '.child', function (){
+            var id = $(this).data('id')
+            fetch(id, 1, false)
+        })
+
+        $('#search-btn').click(function (){
+            var key = $('#search-input').val()
+            fetch('{{ current_user.code }}', 1, true, key)
+            close_modal('searchModal')
+        })
+
+        $('.load-more').click(function (){
+            var page = $(this).data('page')
+            fetch_log(page, true)
+        })
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

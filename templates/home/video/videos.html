@@ -1,0 +1,668 @@
+{% extends 'home/video/layout.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/plyr.css') }}">
+
+<style>
+
+  .nav-pills .nav-link {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .nav-pills .nav-link i {
+    margin-right: 5px; /* Adjust the margin as needed */
+  }
+
+  .user-balance-card{
+      height: 180px;
+  }
+
+.video-cards {
+    position: relative;
+}
+
+.default2 {
+    position: absolute;
+    bottom: -20px;
+    right: 0;
+    padding: 5px 10px;
+    font-size: 13px;
+    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+    color: #fff;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: lowercase;
+}
+
+.user-balance-card {
+    position: relative; /* Ensure the parent has a position other than static */
+}
+
+    .watch-timer {
+      position: absolute;
+      top: 17px; /* Adjust top position as needed */
+      left: 25px; /* Adjust right position as needed */
+      font-weight: bold; /* Make it bolder */
+      font-size: 1rem; /* Adjust font size as needed */
+      cursor: pointer;
+    }
+
+    .plyr{
+        margin-top: 60px;
+    }
+
+    .video-card-img {
+        position: relative;
+        /* Other styles for video-card-img */
+
+    }
+
+    .play-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /* Customize the play button appearance */
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #fff; /* Example color */
+    }
+
+    .play-button:hover {
+        background: #3498db !important; /* Color on hover */
+    }
+
+    .play-button i {
+        font-size: 21px; /* Example font size */
+    }
+
+    .video-alert{
+        background-color: #ef476f !important;
+        border-radius: 0 0 2px 3px;
+        display: none;
+    }
+
+</style>
+
+
+    <div class="page-container">
+    <div class="main-content" style="padding: calc(60px + 0px) 0 20px !important;">
+        <div class="section-gap">
+            <div class="container-fluid">
+
+
+                <!--Page Content-->
+
+                <div class="row">
+                    <div class="col-xl-12" >
+
+                        <div class="col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <div class="site-tab-bars overflow-auto">
+                                <ul class="nav nav-pills flex-nowrap" id="pills-tab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-1"
+                                                type="button"
+                                                data-item=""
+                                        ><i class="fas fa-compass"></i>All</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-2"
+                                                type="button"
+                                                data-item="music"
+                                        ><i class="fas fa-headphones"></i>Music</a>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-3"
+                                                type="button"
+                                                data-item="sports"
+                                        ><i class="fas fa-football-ball"></i>Sports</a>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-3"
+                                                type="button"
+                                                data-item="comedy"
+                                        ><i class="fas fa-grin-squint-tears"></i>Comedy</a>
+                                    </li>
+
+
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-4"
+                                                type="button"
+                                                data-item="gaming"
+                                        ><i class="fas fa-gamepad"></i>Gaming</a>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-5"
+                                                type="button"
+                                                data-item="lifestyle"
+                                        ><i class="fas fa-network-wired"></i>Lifestyle</a>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-5"
+                                                type="button"
+                                                data-item="science and tech"
+                                        ><i class="fas fa-robot"></i>Science & Tech</a>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-3"
+                                                type="button"
+                                                data-item="politics"
+                                        ><i class="fas fa-gavel"></i>Politics</a>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                                href="#0"
+                                                class="nav-link category"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-3"
+                                                type="button"
+                                                data-item="fashion"
+                                        ><i class="fas fa-tshirt"></i>Fashion</a>
+                                    </li>
+
+                                </ul>
+                            </div>
+
+                        </div>
+
+
+                        <input type="hidden" id="next_get_token">
+                        <input type="hidden" id="next_search_token">
+                        <div class="side-wallet-box default-wallet mb-0" style="min-height: 80vh;">
+                            <div class="all_videos">
+                                {% for _ in range(25) %}
+                                    <div class="mb-5 video-cards">
+                                        <div class="user-balance-card video-card-img"
+                                             style="background-position: center; background-size: cover;">
+                                            <div class="wallet-name">
+                                                <div class="default reward">00:00</div>
+                                                <div class="default2">$0.00</div>
+                                            </div>
+                                        </div>
+                                        <h6 class="title"></h6>
+                                        <div class="actions">
+                                            <a href="#0" class="user-sidebar-btn" data-id="123456"><i
+                                                    class="anticon anticon-eye"></i>Video Details</a>
+                                            <a href="#0" class="user-sidebar-btn red-btn share"><i
+                                                    class="anticon anticon-share-alt"></i>Share</a>
+                                        </div>
+                                    </div>
+
+                                {% endfor %}
+                            </div>
+                            <div class="centered mb-5">
+                                <button class="site-btn-sm grad-btn load-more">Load more</button>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <!--Page Content-->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<style>
+    .modal-li{
+        margin-left: 10px; /* Adjust the margin based on your preference */
+        padding-left: 20px; /* Add padding to the left to make space for the image */
+        background: url('{{ url_for('static', filename='images/li.png') }}') no-repeat left center; /* Set the background image */
+        background-size: 16px 16px; /* Adjust width and height based on your preference */
+        line-height: 1.6;
+        color: #003049;
+        margin-bottom: 5px;
+    }
+    .modal-l{
+        margin-left: 10px; /* Adjust the margin based on your preference */
+        padding-left: 20px; /* Add padding to the left to make space for the image */
+        background: url('{{ url_for('static', filename='images/li-2.png') }}') no-repeat left center; /* Set the background image */
+        background-size: 16px 16px; /* Adjust width and height based on your preference */
+        line-height: 1.6;
+        color: #003049;
+        margin-bottom: 15px;
+    }
+
+
+</style>
+
+
+
+
+    <div id="searchModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto;">
+                           <h2>Search Contents</h2>
+                            <div class="mb-3 summary-block" style="text-align: left;">
+
+                                <form id="add-form">
+                                    <div class="col-xl-6 col-md-12 ">
+
+                                        <div class="site-input-groups">
+                                            <div class="input-group joint-input">
+                                                <input id="search-input" type="text" class="form-control" placeholder="content title, description" >
+                                                <span class="input-group-text site-btn grad-btn" id="search-btn"><i class="anticon anticon-search"></i></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+    <div class="fixed-bottom p-3 bottom-modal" id="watchModal">
+        <div class="container" id="watch-container">
+            <div class="top-part">
+                <span class="site-badge primary-bg watch-timer" id="watch-timer">$0.000</span>
+                <button type="button" class="close-bottom-modal" aria-label="Close" id="stop-watch-timer">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div id="video-container">
+                <video id="my-video" class="plyr" controls style="object-fit: contain;">
+                    <source class="plyr-source" src="{{ url_for('static', filename='videos/video.mp4') }}" type="video/mp4">
+                    <!-- Additional video sources can be added here for cross-browser compatibility -->
+                </video>
+            </div>
+            <span class="site-alert video-alert"></span>
+
+
+            <div class="mt-3">
+                <h4 class="primary-color">Instructions:</h4>
+                <ul class="mt-2" style="list-style-position: inside;">
+
+                    <li class="modal-li"><b>Do not speed up or drag the player, else earnings will be lost!</b>
+                                    </li>
+
+                                    <li class="modal-li"><b>If you already have an account, click here to <u><a class="special-text fw-bold" href="{{ url_for('user_videos') }}">login to your account</a></u>.</b>
+                                    </li>
+
+                                    <li class="modal-li"><b>As a new user, you will receive a video bonus of ${{ new_user_video_reward }} once this video ends.</b>
+                                    </li>
+
+                                    <li class="modal-li"><b>You can open a free account with us to learn and even earn more while watching and creating videos.</b>
+                                    </li>
+
+                                </ul>
+
+            </div>
+
+
+            </div>
+
+      </div>
+
+
+
+    <div class="fixed-bottom p-3 bottom-modal" id="videoDetailModal" style="height: 50vh">
+        <div class="container" id="">
+            <button type="button" class="close-bottom-modal" aria-label="Close" id="">
+              <span aria-hidden="true">&times;</span>
+            </button>
+
+            <div class="mt-3">
+                <h4 class="primary-color">Video Details:</h4>
+                <ul class="mt-3" style="list-style-position: inside;">
+
+                    <li class="modal-l"><b>Title:</b>
+                        <span class="video-title"></span>
+                    </li>
+
+                    <li class="modal-l"><b>Category:</b>
+                        <span class="video-category"></span>
+                    </li>
+
+                    <li class="modal-l"><b>Description:</b>
+                        <span class="video-description"></span>
+                    </li>
+
+                    <li class="modal-l"><b>Created:</b>
+                        <span class="video-created"></span>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            </div>
+
+      </div>
+
+
+
+    <div id="doneModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now" ><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner" style="background: url({{ url_for('static', filename='images/auto-pop.jpg') }}) no-repeat;">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                         <div class="auto-pop-content">
+                           <h2>Congratulations!</h2>
+                             <div style="text-align: center">
+                                    <img width="150em" src="{{ url_for('static', filename='images/video-review.png') }}" id="done-img">
+                                </div>
+                             <h3 class="mt-4 info">You have earned a bonus of ${{ new_user_video_reward }} for completing this video.</h3>
+                             <h3 class="info">Click on the button below to create your account and claim this bonus.</h3>
+                           <button class="site-btn grad-btn auto-popup-close-now" onclick="window.location.href='{{ url_for("register") }}'"><i
+                              class="anticon anticon-check"></i> Create Account</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/plyr.js') }}"></script>
+
+<script>
+    $(function(){
+
+        function fetch(cat=''){
+            loadOn()
+            $.ajax({
+                    url: "{{ url_for('home_videos', target=target) }}",
+                    data: {'page_token': 1, 'category': cat, 'action': 'cat'},
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        $('.all_videos').html(data['html_content'])
+                        $('.load-more').data({'page_token': data['page_token'], 'q': cat})
+                        if(data['status'] === "error"){
+                            notify(data.status, data.message)
+                        }
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'An error occurred. Please try again later')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+        }
+
+
+        function search(search_data, more=false, page_token=1){
+            loadOn()
+            $.ajax({
+                    url: "{{ url_for('home_videos', target=target) }}",
+                    data: {'page_token': page_token, 'search_term': search_data, 'action': 'search'},
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        $('.load-more').data({'page_token': data['page_token'], 'q': search_data})
+                        if(more){
+                            $('.all_videos').append(data['html_content'])
+                        }else{
+                            $('.all_videos').html(data['html_content'])
+                            $('html, body').animate({ scrollTop: 0 }, 'slow');
+                        }
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'An error occurred. Please try again later')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+        }
+
+
+
+        if(localStorage.getItem('video_category') !== null){
+            var cat = localStorage.getItem('video_category')
+            $('.category').each(function (){
+                if($(this).data('item') === cat){
+                    $(this).addClass('active')
+                }
+            })
+            fetch(cat)
+        }else{
+            $('.category').each(function (){
+                if($(this).data('item') === ''){
+                    $(this).addClass('active')
+                }
+            })
+        }
+
+
+        $('.category').click(function (){
+            var id = $(this).data('item')
+            localStorage.setItem('video_category', id)
+            fetch(id)
+        })
+
+        $('#search-btn').click(function (){
+            var key = $('#search-input').val()
+            close_modal('searchModal')
+            search(key)
+        })
+
+        $('.load-more').click(function (){
+            var page_token = $(this).data('page_token')
+            var q = $(this).data('q')
+            search(q, true, page_token)
+        })
+
+
+        $('body').on('click', '.video-details', function (){
+            var title = $(this).data('title')
+            var desc = $(this).data('description')
+            var created = $(this).data('created')
+            var cat = $(this).data('category')
+
+            $('.video-title').text(title)
+            $('.video-description').text(desc)
+            $('.video-created').text(created)
+            $('.video-category').text(cat)
+        })
+
+        var target = "{{ target }}"
+        if(target !== "None"){
+            search(target, false, 1)
+            $('.category').removeClass('active')
+        }else{
+            fetch('')
+        }
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+
+   <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+          if (typeof Plyr !== 'undefined') {
+              const player = new Plyr('#my-video');
+              player.speed = 1
+              if (player) {
+                // Add event listeners, customize settings, etc.
+
+                  // Add event listeners
+                player.on('play', event => {
+                  startEarning(player)
+                });
+
+                player.on('seeking', event => {
+                  $('#watch-timer').data('reward', '0')
+                });
+
+                player.on('ratechange', event => {
+                    if(player.currentTime > 1){
+                        player.pause()
+                        $('.video-alert').css('display', 'block').text('Player speed has been reset to normal')
+                    }
+                });
+
+                player.on('enterpictureinpicture', event => {
+                  $('.video-alert').css('display', 'block').text('Please exit Picture in Picture mode to continue')
+                });
+
+
+                player.on('ended', event => {
+                    $('#stop-watch-timer').css('display', 'block')
+                    calculate_earning()
+                });
+
+                function changeVideo(newVideoSource) {
+                    player.source = {
+                        type: 'video',
+                        sources: [
+                            {
+                                src: newVideoSource,
+                                type: 'video/mp4',
+                            },
+                        ],
+                    };
+                }
+
+
+              } else {
+                notify('error', 'Failed to initialize Player. Please try using a different browser')
+              }
+            } else {
+              notify('error', 'Player library not found. Please try using a different browser')
+            }
+
+
+          {#FIRST CHECK IF THERES TARGET#}
+          var target = "{{ target }}"
+          if (target !== "None") {
+              var target_name = "{{ target_video.video_name }}"
+              var level = Number("{{ current_user.level }}")
+              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) if current_user.is_authenticated else new_user_video_reward }}
+
+              $('#watch-timer').data({
+                  'total_sec': 0,
+                  'sec_left': 0,
+                  'rewarded': 0,
+                  'reward': reward,
+                  'videoId': target
+              }).text('$0.000')
+              var new_video_source = '{{ url_for('static', filename='uploads/videos/') }}' + target_name
+              changeVideo(new_video_source)
+              $('#watchModal').slideToggle()
+          }
+
+
+          $('body').on('click', '.watch-video', function () {
+              var videoId = $(this).data('id')
+              var video_name = $(this).data('video_name')
+              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) if current_user.is_authenticated else new_user_video_reward }}
+
+              $('#watch-timer').data({
+                  'total_sec': 0,
+                  'sec_left': 0,
+                  'rewarded': 0,
+                  'reward': reward,
+                  'videoId': videoId
+              }).text('$0.000')
+              var new_video_source = '{{ url_for('static', filename='uploads/videos/') }}' + video_name
+              changeVideo(new_video_source)
+          })
+
+      });
+
+    </script>
+
+
+
+    <script>
+        (function ($) {
+            'use strict';
+            // To top
+            $.scrollUp({
+                scrollText: '<i class="fas fa-caret-up"></i>',
+                easingType: 'linear',
+                scrollSpeed: 500,
+                animation: 'fade'
+            });
+        })(jQuery);
+    </script>
+
+
+
+{% endblock %}
+
+

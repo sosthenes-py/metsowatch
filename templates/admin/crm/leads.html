@@ -1,0 +1,1636 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+    <title>Leads - QTradePro</title>
+{% endblock %}
+
+{% block search_block %}
+
+
+{% endblock %}
+
+{% block content %}
+
+  <script>
+        var overlay= $("#overlay");
+        var loader= $("#loader");
+
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+
+    </script>
+
+    <style>
+    .user-online:after, .user-offline:after {
+        content: "";
+        position: absolute;
+        bottom: 1px;
+        right: 1px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px #fff;
+    }
+    .user-online:after{
+        background: #16e15e;
+    }
+    .user-offline:after{
+        background: #6C757D;
+    }
+    .user-online, .user-offline{
+        position: relative;
+    }
+    </style>
+
+    <div class="wrapper">
+
+
+
+    <!--start page wrapper -->
+		<div class="page-wrapper">
+			<div class="page-content">
+				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+					<div class="col-xl-3">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Today's Leads</p>
+										<h4 class="my-1 new_leads">0</h4>
+									</div>
+									<div class="widgets-icons bg-light-success text-success ms-auto"><i class='bx bx-minus-back'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Today's Conversions</p>
+										<h4 class="my-1 new_converts">0</h4>
+									</div>
+									<div class="widgets-icons bg-light-warning text-warning ms-auto"><i class='bx bx-minus-back'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Total Leads</p>
+										<h4 class="my-1 total_leads">0</h4>
+									</div>
+									<div class="widgets-icons bg-light-danger text-danger ms-auto"><i class='bx bx-intersect'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                    <div class="col-xl-3">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Total Conversions</p>
+										<h4 class="my-1 total_converts">0</h4>
+									</div>
+									<div class="widgets-icons bg-light-danger text-danger ms-auto"><i class='bx bx-intersect'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--end row-->
+
+
+
+
+                <div class="card mt-4">
+					<div class="card-body">
+                        <div class="d-flex align-items-center">
+							<div>
+								<h5 class="mb-0">Leads</h5>
+							</div>
+
+							<div class="ms-auto mb-2"><a data-bs-toggle='modal' data-bs-target='#AddLeadModal' class="btn btn-primary radius-30 mt-2 mt-lg-0"><i class="bx bxs-plus-square"></i>Add New Lead</a></div>
+
+						</div>
+						<div class="table-responsive">
+							<table id="example2" class="table table-striped table-bordered">
+								<thead>
+									<tr>
+                                        <th>Lead ID</th>
+                                        <th>Lead Name</th>
+                                        <th>Country</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Lead Source</th>
+                                        <th>Lead Owner</th>
+									</tr>
+								</thead>
+
+                                <tbody id="leads">
+								    <tr><td colspan="12" style="font-weight: bold">fetching leads...</td></tr>
+								</tbody>
+
+							</table>
+						</div>
+					</div>
+				</div>
+
+
+
+
+
+			</div>
+		</div>
+		<!--end page wrapper -->
+
+		<input type="hidden" id="general_username">
+
+
+
+		<!--MODAL FOR LEAD PROFILE-->
+
+
+		<div  id="LeadModal" tabindex="-1" class="modal fade show" style="display: none;" aria-modal="true" role="dialog">
+		    <div  class="modal-dialog modal-xl modal-dialog-scrollable">
+		        <div  class="modal-content">
+		            <div  class="modal-header">
+		                <h5  class="modal-title">Profile</h5>
+		                <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close" id="close_user"></button>
+		                </div>
+
+
+			                 <div  class="modal-body">
+
+
+
+
+
+            			    <div  class="page-content">
+                           <router-outlet ></router-outlet>
+                           <app-user-profile >
+                              <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                                 <div class="breadcrumb-title pe-3">Lead Profile</div>
+                                 <div class="ps-3">
+                                    <nav aria-label="breadcrumb">
+                                       <ol class="breadcrumb mb-0 p-0">
+                                          <li class="breadcrumb-item"><a href="#"><i class="bx bx-home-alt"></i></a></li>
+                                          <li aria-current="page" class="breadcrumb-item active"><span class="details_salute_top"></span> <span class="details_code">110000001</span></li>
+                                       </ol>
+                                    </nav>
+                                 </div>
+
+                                 <!---------------TOP ACTIONS------------------->
+                                 <div class="ms-auto">
+                                    <div class="btn-group">
+                                       <button data-bs-toggle="dropdown" type="button" class="btn btn-primary">More Actions</button><button type="button" data-bs-toggle="dropdown" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split"><span class="visually-hidden">Toggle Dropdown</span></button>
+                                       <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                          <a href="#" class="dropdown-item text-primary" data-bs-toggle='modal' data-bs-target='#ConvertModal'><i class="lni lni-thumbs-up"></i> Convert </a>
+
+                                          <div class="dropdown-divider"></div>
+
+                                          {% if current_user.role == 'admin' %}
+                                          <a href="#0" class="dropdown-item text-primary assign" style="font-weight: bold" data-bs-toggle='modal' data-bs-target='#AssignModal'><i class="lni lni-network"></i> Assign To Agent</a>
+                                              <div class="dropdown-divider"></div>
+                                           {% endif %}
+
+                                          <a href="#" class="dropdown-item text-primary timeline" style="font-weight: bold" data-bs-toggle='modal' data-bs-target='#TimelineModal'><i class="lni lni-video"></i> Timeline</a>
+                                          <a href="#" class="dropdown-item" style="color: red; font-weight: bold" data-bs-toggle='modal' data-bs-target='#EraseUserModal'><i class="lni lni-trash"></i> Delete</a>
+                                       </div>
+                                    </div>
+                                 </div>
+
+
+                              </div>
+                              <div class="container">
+                                 <div class="main-body">
+                                    <div class="row">
+                                       <div class="col-lg-4">
+                                          <div class="card">
+                                             <div class="card-body">
+
+
+                                                 <!--------------------AVATAR AND USER NAMES---------------------->
+                                                <div class="d-flex flex-column align-items-center text-center">
+                                                   <img src="{{ url_for('static', filename='admin/images/avatars/user.png') }}" alt="Admin" width="110" class="rounded-circle p-1 bg-primary details_avatar">
+                                                   <div class="mt-3">
+                                                      <p class="mb-1 created" style="text-transform: capitalize; font-weight: bold">Created By: <span></span></p>
+                                                      <p class="font-size-sm fw-bold status_html">Lead Status : <span class='badge rounded-pill'></span></p>
+                                                      <p class="font-size-sm modified">Last Modified: </p>
+                                                      <a class="email_href" href=""><button class="btn btn-primary m-1"><i class="fadeIn animated bx bx-email"></i> Email</button></a>
+
+                                                       <button type="button" class="btn btn-dark view_note" data-bs-toggle='modal' data-bs-target='#NoteModal'>Notes <span class="badge bg-secondary notes-count">0</span></button>
+                                                   </div>
+                                                </div>
+
+
+                                             </div>
+                                          </div>
+                                       </div>
+
+
+
+
+                                       <!--------------------MAIN PROFILE---------------------->
+                                       <div class="col-lg-8">
+                                          <div class="card">
+                                             <div class="card-body">
+
+                        {#                         SALUTE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Salute</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="form-control details_salute details_salute_show select2">
+                                                               <option value="None">None</option>
+                                                               <option value="Mr">Mr.</option>
+                                                               <option value="Mrs">Mrs.</option>
+                                                               <option value="Ms">Ms.</option>
+                                                               <option value="Dr">Dr.</option>
+                                                               <option value="Prof">Prof.</option>
+                                                           </select>
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="salute" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         FULLNAME#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Full Name</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Full Name" aria-label="Fullname" aria-describedby="button-addon2" class="form-control details_fullname">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="fullname" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         TITLE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-briefcase-alt"></i> Title</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Title" aria-label="" aria-describedby="button-addon2" class="form-control details_title">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="title" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                            EMAIL#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-mail-send"></i> Email</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="email" placeholder="Email Address" aria-label="Email" aria-describedby="button-addon2" class="form-control details_email">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="email" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         PHONE#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-phone"></i> Phone</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="tel" placeholder="Phone" aria-label="Phone" aria-describedby="button-addon2" class="form-control details_phone">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="phone" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                        SOURCE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-sitemap"></i> Lead Source</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="form-control details_source details_source_show select2">
+                                                               <option value="None">None</option>
+                                                               <option value="Advertisement">Advertisement</option>
+                                                               <option value="Cold call">Cold call</option>
+                                                               <option value="Employee Referral">Employee Referral</option>
+                                                               <option value="External Referral">External Referral</option>
+                                                               <option value="Online Store">Online Store</option>
+                                                               <option value="Twitter">Twitter</option>
+                                                               <option value="Partner">Partner</option>
+                                                               <option value="Facebook">Facebook</option>
+                                                               <option value="Web Research">Web Research</option>
+                                                               <option value="Chat">Chat</option>
+                                                           </select>
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="source" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                        REVENUE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="bx bx-money"></i> Revenue [$]</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="number" placeholder="Revenue" aria-label="Revenue" aria-describedby="button-addon2" class="form-control details_revenue">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="revenue" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                 {#RATING#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-trending-up"></i> Rating</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="form-control details_rating details_rating_show select2">
+                                                               <option value="None">None</option>
+                                                               <option value="Acquired">Acquired</option>
+                                                               <option value="Active">Active</option>
+                                                               <option value="Market Failed">Market Failed</option>
+                                                               <option value="Project Canceled">Project Canceled</option>
+                                                               <option value="Shut Down">Shut Down</option>
+                                                           </select>
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="rating" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                        {#                         COMPANY#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-building"></i> Company</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Company" aria-label="Company" aria-describedby="button-addon2" class="form-control details_company">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="company" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         WEBSITE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-globe"></i> Website</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Website" aria-label="" aria-describedby="button-addon2" class="form-control details_website">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="website" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         EMAIL-2#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-mail-send"></i> Secondary Email</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="email" placeholder="Secondary Email Address" aria-label="Email" aria-describedby="button-addon2" class="form-control details_email2">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="email2" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         MOBILE#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-phone"></i> Mobile</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Mobile" aria-label="Mobile" aria-describedby="button-addon2" class="form-control details_mobile">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="mobile" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                        INDUSTRY#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-buildings"></i> Industry</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="form-control details_industry details_industry_show select2">
+                                                               <option value="None">None</option>
+                                                               <option value="ASP(Application Service Provider)">ASP (Application Service Provider)</option>
+                                                               <option value="Data/Telecom OEM">Data/Telecom OEM</option>
+                                                               <option value="ERP (Enterprise Resource Planning)">ERP (Enterprise Resource Planning)</option>
+                                                               <option value="Government/Military">Government/Military</option>
+                                                               <option value="Large Enterprise">Large Enterprise</option>
+                                                               <option value="MSP (Management Service Provider)">MSP (Management Service Provider)</option>
+                                                               <option value="ManagementISV">ManagementISV</option>
+                                                               <option value="Optical Networking">Optical Networking</option>
+                                                               <option value="Service Provider">Service Provider</option>
+                                                               <option value="Storage Equipment">Storage Equipment</option>
+                                                               <option value="Storage Service Provider">Storage Service Provider</option>
+                                                               <option value="Systems Integration">Systems Integration</option>
+                                                               <option value="Wireless Industry">Wireless Industry</option>
+                                                           </select>
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="industry" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                             {# STATUS#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-stats"></i> Lead Status</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="form-control details_status details_status_show select2" data-key="status">
+                                                               <option value="None">None</option>
+                                                               <option value="No Answer">No Answer</option>
+                                                               <option value="Callback">Callback</option>
+                                                               <option value="FTD">FTD</option>
+                                                               <option value="Low Potential">Low Potential</option>
+                                                               <option value="Junk Lead">Junk Lead</option>
+                                                               <option value="Disabled">Disabled</option>
+                                                               <option value="Not Interested">Not Interested</option>
+                                                               <option value="Not Qualified">Not Qualified</option>
+                                                               <option value="Wrong Number">Wrong Number</option>
+                                                               <option value="Invalid Language">Invalid Language</option>
+                                                               <option value="Invalid Country">Invalid Country</option>
+                                                               <option value="Wrong Person/Info">Wrong Person/Info</option>
+                                                               <option value="No Credit Card/Bank Account">No Credit Card/Bank Account</option>
+                                                               <option value="Under 18">Under 18</option>
+                                                               <option value="Duplicate">Duplicate</option>
+                                                           </select>
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="status" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <hr class="my-4">
+
+
+                          {#                         COUNTRY#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="lni lni-map-marker"></i> Country</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="form-control select2 details_country details_country_show">
+                                                                <option value="None">None</option>
+                                                               {% for long, short in countries.items() %}
+                                                               <option value="{{ long }}-{{ short }}">{{ long }}</option>
+                                                               {% endfor %}
+                                                           </select>
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="country" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                        {#                         CITY#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-current-location"></i> City</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="State" aria-label="State" aria-describedby="button-addon2" class="form-control details_city">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="city" data-table="members">Save</button>
+                                                        </div>
+                                                   </div>
+                                                </div>
+
+
+                        {#                        STREET#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="lni lni-map-marker"></i> Street</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Street" aria-label="Country" aria-describedby="button-addon2" class="form-control details_street">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_save" data-key="street" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         ZIP#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="bx bx-map-alt"></i> Zip Code</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Zip Code" aria-label="Country" aria-describedby="button-addon2" class="form-control details_zip">
+                                                           <button type="button" id="button-addon2" class="btn btn-outline-primary details_zip" data-key="zip" data-table="members">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                             </div>
+                                          </div>
+
+
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </app-user-profile>
+                           <!--container-->
+                           <div  class="overlay" ng-reflect-ng-class="[object Object]"></div>
+                        </div>
+
+
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!--MODAL FOR ADD LEAD-->
+
+
+		<div  id="AddLeadModal" tabindex="-1" class="modal fade show" style="display: none;" aria-modal="true" role="dialog">
+		    <div  class="modal-dialog modal-xl modal-dialog-scrollable">
+		        <div  class="modal-content">
+		            <div  class="modal-header">
+		                <h5  class="modal-title">Add New Lead</h5>
+		                <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close" id="close_user"></button>
+		                </div>
+
+
+                    <div  class="modal-body">
+
+
+            			    <div  class="page-content">
+                           <app-user-profile >
+
+                              <div class="container">
+                                 <div class="main-body">
+                                    <form class="row" id="add_lead_block">
+
+
+
+                                       <!--------------------MAIN PROFILE---------------------->
+
+
+                                       <div class="col-lg-6">
+                                          <div class="card">
+                                             <div class="card-body">
+
+                        {#                         SALUTE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Salute</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="add form-control details_salute_add select2" data-key="salute">
+                                                               <option value="None">None</option>
+                                                               <option value="Mr">Mr.</option>
+                                                               <option value="Mrs">Mrs.</option>
+                                                               <option value="Ms">Ms.</option>
+                                                               <option value="Dr">Dr.</option>
+                                                               <option value="Prof">Prof.</option>
+                                                           </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         FULLNAME#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Full Name</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3 has-validation">
+                                                           <input type="text" placeholder="Full Name" aria-label="Fullname" aria-describedby="button-addon2" class="add form-control details_fullname" data-key="fullname">
+                                                           <div class="invalid-feedback">
+                                                              This field is required
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         TITLE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-briefcase-alt"></i> Title</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Title" aria-label="" aria-describedby="button-addon2" class="add form-control details_title" data-key="title">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                            EMAIL#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-mail-send"></i> Email</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3 has-validation">
+                                                           <input type="email" placeholder="Email Address" aria-label="Email" aria-describedby="button-addon2" class="add form-control details_email details_email_add" data-key="email">
+                                                           <div class="invalid-feedback email-feedback">
+                                                              This field is required
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         PHONE#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-phone"></i> Phone</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Phone" aria-label="Phone" aria-describedby="button-addon2" class="add form-control details_phone_add" data-key="phone">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <hr class="my-4">
+
+
+                     {#                         COUNTRY#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="lni lni-map-marker"></i> Country</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3 has-validation">
+                                                           <select class="add form-control select2 details_country_add" data-key="country">
+                                                                <option value="">None</option>
+                                                               {% for long, short in countries.items() %}
+                                                               <option value="{{ long }}-{{ short }}">{{ long }}</option>
+                                                               {% endfor %}
+                                                           </select>
+                                                       <div class="invalid-feedback">
+                                                              This field is required
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                        {#                         CITY#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-current-location"></i> City</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="State" aria-label="State" aria-describedby="button-addon2" class="add form-control details_city" data-key="city">
+                                                        </div>
+                                                   </div>
+                                                </div>
+
+
+                        {#                        STREET#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="lni lni-map-marker"></i> Street</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Street" aria-label="Country" aria-describedby="button-addon2" class="add form-control details_street" data-key="street">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         ZIP#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="lni lni-map-marker"></i> Zip Code</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Zip Code" aria-label="Country" aria-describedby="button-addon2" class="add form-control details_zip" data-key="zip">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                             </div>
+                                          </div>
+
+
+                                       </div>
+
+
+                                        <div class="col-lg-6">
+                                          <div class="card">
+                                             <div class="card-body">
+
+
+                                                 {#                        SOURCE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-sitemap"></i> Lead Source</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="add form-control details_source_add select2" data-key="source">
+                                                               <option value="None">None</option>
+                                                               <option value="Advertisement">Advertisement</option>
+                                                               <option value="Cold call">Cold call</option>
+                                                               <option value="Employee Referral">Employee Referral</option>
+                                                               <option value="External Referral">External Referral</option>
+                                                               <option value="Online Store">Online Store</option>
+                                                               <option value="Twitter">Twitter</option>
+                                                               <option value="Partner">Partner</option>
+                                                               <option value="Facebook">Facebook</option>
+                                                               <option value="Web Research">Web Research</option>
+                                                               <option value="Chat">Chat</option>
+                                                           </select>
+                                                           <div class="invalid-feedback">
+                                                              This field is required
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                        REVENUE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="bx bx-money"></i> Revenue [$]</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="number" placeholder="Revenue" aria-label="Revenue" aria-describedby="button-addon2" class="add form-control details_revenue" data-key="revenue">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                        {#                         RATING#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-trending-up"></i> Rating</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="add form-control details_rating_add select2" data-key="rating">
+                                                               <option value="None">None</option>
+                                                               <option value="Acquired">Acquired</option>
+                                                               <option value="Active">Active</option>
+                                                               <option value="Market Failed">Market Failed</option>
+                                                               <option value="Project Canceled">Project Canceled</option>
+                                                               <option value="Shut Down">Shut Down</option>
+                                                           </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         COMPANY#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-building"></i> Company</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Company" aria-label="Fullname" aria-describedby="button-addon2" class="add form-control details_company" data-key="company">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         WEBSITE#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-globe"></i> Website</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Website" aria-label="" aria-describedby="button-addon2" class="add form-control details_website" data-key="website">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                         EMAIL-2#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-mail-send"></i> Secondary Email</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="email" placeholder="Secondary Email Address" aria-label="Email" aria-describedby="button-addon2" class="add form-control details_email2" data-key="email2">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                 {# STATUS#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-stats"></i> Lead Status</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3 has-validation">
+                                                           <select class="add form-control details_status_add select2" data-key="status">
+                                                               <option value="None">None</option>
+                                                               <option value="No Answer">No Answer</option>
+                                                               <option value="Callback">Callback</option>
+                                                               <option value="FTD">FTD</option>
+                                                               <option value="Low Potential">Low Potential</option>
+                                                               <option value="Junk Lead">Junk Lead</option>
+                                                               <option value="Disabled">Disabled</option>
+                                                               <option value="Not Interested">Not Interested</option>
+                                                               <option value="Not Qualified">Not Qualified</option>
+                                                               <option value="Wrong Number">Wrong Number</option>
+                                                               <option value="Invalid Language">Invalid Language</option>
+                                                               <option value="Invalid Country">Invalid Country</option>
+                                                               <option value="Wrong Person/Info">Wrong Person/Info</option>
+                                                               <option value="No Credit Card/Bank Account">No Credit Card/Bank Account</option>
+                                                               <option value="Under 18">Under 18</option>
+                                                               <option value="Duplicate">Duplicate</option>
+                                                           </select>
+                                                           <div class="invalid-feedback">
+                                                              This field is required
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                        {#                         MOBILE#}
+                                                <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-phone"></i> Mobile</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <input type="text" placeholder="Mobile" aria-label="Mobile" aria-describedby="button-addon2" class="add form-control details_mobile" data-key="mobile">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                        {#                        INDUSTRY#}
+                                                 <div class="row mb-3">
+                                                   <div class="col-sm-3">
+                                                      <h6 class="mb-0"><i class="fadeIn animated bx bx-buildings"></i> Industry</h6>
+                                                   </div>
+                                                   <div class="col-sm-9 text-secondary">
+                                                       <div class="input-group mb-3">
+                                                           <select class="add form-control details_industry_add select2" data-key="industry">
+                                                               <option value="None">None</option>
+                                                               <option value="ASP(Application Service Provider)">ASP (Application Service Provider)</option>
+                                                               <option value="Data/Telecom OEM">Data/Telecom OEM</option>
+                                                               <option value="ERP (Enterprise Resource Planning)">ERP (Enterprise Resource Planning)</option>
+                                                               <option value="Government/Military">Government/Military</option>
+                                                               <option value="Large Enterprise">Large Enterprise</option>
+                                                               <option value="MSP (Management Service Provider)">MSP (Management Service Provider)</option>
+                                                               <option value="ManagementISV">ManagementISV</option>
+                                                               <option value="Optical Networking">Optical Networking</option>
+                                                               <option value="Service Provider">Service Provider</option>
+                                                               <option value="Storage Equipment">Storage Equipment</option>
+                                                               <option value="Storage Service Provider">Storage Service Provider</option>
+                                                               <option value="Systems Integration">Systems Integration</option>
+                                                               <option value="Wireless Industry">Wireless Industry</option>
+                                                           </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                             </div>
+                                          </div>
+
+
+                                       </div>
+
+
+                                        <div class="col-lg-4 text-right mt-3">
+                                            <div class="btn btn-primary" id="add_lead">Add Lead</div>
+                                        </div>
+
+
+                                    </form>
+                                 </div>
+                              </div>
+                           </app-user-profile>
+                           <!--container-->
+                           <div  class="overlay" ng-reflect-ng-class="[object Object]"></div>
+                        </div>
+
+
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+	 	<!--MODAL FOR LEAD TIMELINE-->
+
+		<div  id="TimelineModal" tabindex="-1" class="modal fade show bg-primary" aria-modal="true" role="dialog" style="display: none;">
+		    <div  class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+		        <div  class="modal-content bg-light">
+                    <div  class="modal-header">
+                        <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                    </div>
+		          <div  class="modal-body">
+
+
+                 <div class="container py-2 timeline-block">
+
+                 </div>
+
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+	<!--ERASE LEAD DIALOG	-->
+		<div  id="EraseUserModal" tabindex="-1" class="modal fade" aria-hidden="true" style="display: none;">
+			        <div  class="modal-dialog modal-lg modal-dialog-centered">
+			            <div  class="modal-content bg-danger">
+			                <div  class="modal-header">
+			                    <h5  class="mb-0 text-light">Delete Account</h5>
+			                    <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+			                 </div>
+			                 <div  class="modal-body text-white"><p >You are about to delete the account <b class="details_code"></b>. </p>
+			                 <p >All information associated to this lead's profile will be permanently deleted. <b>This operation can not be undone.</b> Proceed?</p>
+			                 </div>
+
+			                 <div  class="modal-footer"><button  type="button" data-bs-dismiss="modal" class="btn btn-light">Close</button><button  data-bs-dismiss="modal" type="button" class="btn btn-dark top_actions" data-action="erase">Yes, delete!</button></div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+	<!--NOTES MODAL	-->
+		<div  id="NoteModal" tabindex="-1" class="modal fade" aria-hidden="true" style="display: none;">
+			        <div  class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+			            <div  class="modal-content bg-primary">
+			                <div  class="modal-header">
+			                    <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+			                 </div>
+			                 <div  class="modal-body">
+
+
+            			    <div class="card">
+            					<div class="card-body">
+            						<h4 class="mb-0">Notes</h4>
+            						<hr>
+
+            						<div class="row gy-3">
+            							<div class="col-md-10">
+            							    <textarea id="new-task" placeholder="Enter new note here..." class="form-control" rows=2></textarea>
+            							</div>
+            							<div class="col-md-2 text-end d-grid">
+            								<button type="button" class="btn btn-primary" id="sbmt-task">Add Note</button>
+            							</div>
+            						</div>
+
+
+
+            						<div class="form-row mt-3" id="show-tasks">
+
+            							</div>
+
+
+
+
+            					</div>
+            				</div>
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+    <!--CONVERT MODAL	-->
+		<div  id="ConvertModal" tabindex="-1" class="modal fade bg-primary" aria-hidden="true" style="display: none;">
+			        <div  class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+			            <div  class="modal-content">
+			                <div  class="modal-header">
+			                    <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+			                 </div>
+
+			                 <div  class="modal-body">
+                                 <h4 class="mb-0">Convert Lead</h4>
+            			    <div class="card">
+							<div class="card-body">
+								<p>- This lead will be converted to a member.</p>
+                                <p>- The owner of this lead, <b class="created_by"></b> will continue to have access to this user once converted. (The super admin remains in charge of assigning privileges)</p>
+                                <p>- All other agents who have access to this lead will be relieved.</p>
+
+                                <div class="form-check form-check-success">
+                                    <input class="form-check-input" type="checkbox" id="convert_check" checked="">
+                                    <label class="form-check-label" id="convert_label" for="flexCheckCheckedSuccess">
+                                      Send a password-set email to this user
+                                    </label>
+							    </div>
+                                <button class="btn col-12 btn-primary mt-2 convert">Convert <span class="details_code"></span></button>
+							</div>
+
+						</div>
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+	<!--ASSIGN MODAL-->
+
+	<div  id="AssignModal" tabindex="-1" class="modal fade" aria-hidden="true" style="display: none;">
+			        <div  class="modal-dialog modal-lg modal-dialog-scrollable">
+			            <div  class="modal-content bg-primary">
+			                <div  class="modal-header">
+			                    <h5  class="mb-0 text-light">Assign <span class="details_code"></span> to an agent</h5>
+			                    <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+			                 </div>
+			                 <div  class="modal-body">
+
+
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table mb-0">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th scope="col">Agent</th>
+                                            <th scope="col">Total Assigned</th>
+                                            <th scope="col">Assign</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="assign_body">
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+    <script>
+      $(document).ready(function() {
+        $('.select2').selectize();
+		} );
+
+    </script>
+
+
+	<script>
+	    $(function(){
+	        var site_domain= "";
+	        const success_audio = new Audio("{{ url_for('static', filename='admin/audio/correct.mp3') }}");
+	        const error_audio = new Audio("{{ url_for('static', filename='admin/audio/wrong.mp3') }}");
+
+
+	         var overlay= $("#overlay");
+            var loader= $("#loader");
+            var loader_trans= $("#loader-trans");
+
+            function loadOn(){
+                overlay.css('display', 'block');
+                loader.css('display', 'block');
+            }
+            function loadOff(){
+                overlay.css('display', 'none');
+                loader.css('display', 'none');
+            }
+
+
+            function notify(status, message){
+                if(status === "success" || status === "info"){
+                    success_audio.play();
+                }else{
+                    error_audio.play();
+                }
+                toastr[status](message)
+            }
+
+
+            function start(refresh=false){
+                $.ajax({
+                    url: "{{ url_for('admin_get_leads') }}",
+                    type: "POST",
+                    data: {'key': '*'},
+                    dataType: "json",
+                    async: false,
+                    success: function (data){
+                        if(refresh){
+                            $('#example2').DataTable().destroy()
+                        }
+                        setTimeout(function (){
+                            $("#leads").html(data.content);
+                            $('.new_leads').text(data.new_leads)
+                            $('.total_leads').text(data.total_leads)
+                            $('.new_converts').text(data.new_converts)
+                            $('.total_converts').text(data.total_converts)
+                            var table = $('#example2').DataTable( {
+                                lengthChange: false,
+                                buttons: [ 'copy', 'excel', 'pdf', 'print'],
+                                order: [[0, 'desc']]
+                            } );
+                            table.buttons().container().appendTo( '#example2_wrapper .col-md-6:eq(0)' );
+                        }, 10)
+
+                    },
+                    error: function (jqXHR, errorThrown){
+                        notify('error', 'An error occurred. Page will be refreshed in 3s')
+                        setTimeout(function(){
+                            {#window.location.update()#}
+                        }, 3000)
+                    }
+                })
+            }
+
+
+            start();
+
+
+	        $("#order_search").keyup(function(){
+	            var key= $(this).val().toLowerCase();
+	            if(key !== ""){
+	                $('.trs').each(function (){
+                        const email = $(this).data('email').toLowerCase()
+                        const fullname = $(this).data('fullname').toLowerCase()
+                        const by = $(this).data('created_by').toLowerCase()
+                        if(fullname.startsWith(key) || by.startsWith(key) || email.startsWith(key)){
+                            $(this).show();
+                         }else{
+                            $(this).hide();
+                         }
+                    })
+	            }else{
+                    $('.trs').show()
+                }
+	        })
+
+
+            $('#add_lead').click(function() {
+                var required_fields = ['country', 'fullname', 'email'];
+                var correct = true;
+                var formdata = new FormData($('#add_lead_block')[0]); // Initialize FormData with the form element
+
+                $('#add_lead_block .add').each(function() {
+                    var key = $(this).data('key');
+                    formdata.append(key, $(this).val());
+
+                    if ($.inArray(key, required_fields) !== -1 && $(this).val() === "") {
+                        console.log($(this).val())
+                        correct = false;
+                        $(this).addClass('is-invalid');
+                        $(this).removeClass('is-valid');
+                    } else if ($(this).val() !== "") {
+                        $(this).addClass('is-valid');
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+
+                if (correct) {
+                    $.ajax({
+                        url: '{{ url_for('admin_add_lead') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: formdata,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if (data.err === 1) {
+                                notify('error', data.msg);
+                                $('.email-feedback').text(data.msg);
+                                $('.details_email_add').addClass('is-invalid');
+                                $('.details_email_add').removeClass('is-valid');
+                            } else {
+                                notify('success', data.msg);
+                                start(refresh=true);
+                                $('#AddLeadModal').modal('hide')
+                            }
+                        },
+                        error: function(jqXHR, errorThrown) {
+                            notify('error', errorThrown);
+                        }
+                    });
+                }
+            });
+
+
+
+
+	       $('body').on('click', '.trs', function(){
+                var row= $(this);
+                var fullname= row.data('fullname');
+                var country= row.data('country');
+                var email= row.data('email');
+                var phone= row.data('phone');
+                var creator= row.data('creator');
+                var created= row.data('created');
+                var created_by= row.data('created_by');
+                var city= row.data('state');
+                var status_html= row.data('status_html');
+                var status= row.data('status');
+                var code= row.data('code');
+                var id= row.data('id');
+                var revenue= row.data('revenue');
+                var street= row.data('street');
+                var modified= row.data('modified');
+                var title= row.data('title');
+                var source= row.data('source');
+                var salute= row.data('salute');
+                var rating= row.data('rating');
+                var industry= row.data('industry');
+                var zip= row.data('zip');
+                var notes_count = row.data('notes_count')
+                var attachment_count = row.data('attachment_count')
+
+                $(".details_fullname").val(fullname);
+                $(".details_email").val(email);
+                $(".details_city").val(city);
+                $(".details_phone").val(phone);
+                $('.details_code').text(fullname)
+                $('.notes-count').text(notes_count)
+                $('.attachment_count').text(attachment_count)
+                $('.details_salute_top').text(salute+'.')
+               $('.created_by').text(created_by)
+
+                $(".details_country_show")[0].selectize.setValue(country)
+                $(".details_salute_show")[0].selectize.setValue(salute)
+                $(".details_source_show")[0].selectize.setValue(source)
+                $(".details_industry_show")[0].selectize.setValue(industry)
+                $(".details_rating_show")[0].selectize.setValue(rating)
+               $(".details_status_show")[0].selectize.setValue(status)
+
+                $(".details_street").val(street);
+                $(".details_title").val(title);
+                $(".details_revenue").val(revenue);
+                $('.details_zip').val(zip)
+                $(".created").html('Created By: <span class="fw-normal">'+ creator + '</span>');
+                if(modified === '01 Jan @ 01:00'){
+                    $(".modified").html('<span class="fw-bold">Modified:</span> None');
+                }else{
+                    $(".modified").html('<span class="fw-bold">Modified:</span> '+ modified);
+                }
+
+                $('.status_html').html('Lead Status: '+ status_html)
+                $('.email_href').attr('href', 'mailto:'+email)
+                $("#general_username").val(code);
+
+
+            })
+
+
+
+
+
+            $('body').on('click', '.top_actions', function(){
+                var action= $(this).data('action');
+                loadOn();
+                $.post('{{ url_for('admin_lead_top_action') }}', {
+                    username: $("#general_username").val(),
+                    action: action
+                }, function(data, status){
+                    loadOff();
+                    if(data.err === 0){
+                        notify('success', data.msg)
+                        start(refresh=true)
+            	        if(action === "erase"){
+                    	     $("#LeadModal").modal('hide')
+                    	 }
+                    }else{
+                        notify('error', data.msg)
+                    }
+                }, "JSON")
+            })
+
+
+
+
+	        $(".details_save").click(function(){
+	            var key= $(this).data('key');
+	            var id= $(".details_"+key).data('id');
+	            var username= $("#general_username").val();
+	            var value= $(".details_"+key).val();
+	            loadOn();
+	            $.post('{{ url_for('admin_lead_save_action') }}', {
+	                id: id,
+	                value: value,
+	                key: key,
+	                username: username
+	            }, function(data, status){
+                    loadOff();
+	                if(data.err === 1){
+	                    notify('warning', data.msg)
+	                }else if(data.err === 2){
+	                    notify('error', data.msg)
+	                }else{
+                        if(data.msg !== ""){
+                            notify('success', data.msg)
+                            start(refresh=true)
+                            $('#LeadModal').modal('hide')
+                        }
+	                }
+	            }, "JSON")
+	        })
+
+
+
+            {#CONVERT#}
+            $('.convert').click(function(){
+                if($('#convert_check').is(':checked')){
+                    var check = 1
+                }else{
+                    var check = 2
+                }
+                $.ajax({
+                    url: "{{ url_for('admin_lead_convert') }}",
+                    dataType: "json",
+                    type: "POST",
+                    data: {'lead': $('#general_username').val(), 'check': check},
+                    error: function(){
+                        notify('error', 'Please try again')
+                    },
+                    success: function(data){
+                        if(data.err === 1){
+                            notify('error', data.msg)
+                        }else{
+                            notify('success', data.msg)
+                            start(refresh=true);
+                            $('#ConvertModal').modal('hide')
+                            $('#LeadModal').modal('hide')
+                        }
+                    }
+                })
+            })
+
+            $('#convert_check').change(function(){
+                if($(this).is(':checked')){
+                    $('#convert_label').text('Send a password-set email to this user')
+                }else{
+                    $('#convert_label').text('A default password of 1234 will be set')
+                }
+            })
+
+            {#TIMELINE#}
+            $('.timeline').click(function(){
+                $.ajax({
+                    url: '{{ url_for('admin_lead_get_timeline') }}',
+                    type: 'POST',
+                    data: {'lead': $('#general_username').val()},
+                    error: function(){
+                        notify('error', 'An error occurred. Please try again')
+                    },
+                    success: function(data){
+                        $('.timeline-block').html(data)
+                    }
+
+                })
+            })
+
+
+
+
+	       // TASK BLOCK
+	        $("#sbmt-task").click(function(){
+	            var username= $("#general_username").val();
+		           var input= $("#new-task").val();
+		           if(input === ""){
+		               toastr["warning"]('Input cannot be empty');
+		           }else{
+		               loadOn();
+    		           $.post('{{ url_for('admin_lead_tasks') }}', {
+    		               tasks: "set",
+    		               action: "add",
+    		               input: input,
+    		               username: username
+    		           }, function(data, status){
+    		               loadOff();
+    		               if(data.err === 0){
+    		                   notify('success', data.msg);
+    		                   $("#show-tasks").html(data.tasks)
+    		                   $("#new-task").val('');
+    		               }else{
+    		                   notify('error', data.msg)
+    		               }
+    		           }, "JSON")
+		           }
+		       })
+
+
+		       $("body").on('change', '.task-status', function(){
+		           var username= $("#general_username").val();
+		           var id= $(this).data('id');
+		           $.post('{{ url_for('admin_lead_tasks') }}', {
+    		               tasks: "set",
+    		               action: "status",
+    		               username: username,
+    		               id: id
+    		           }, function(data, status){
+    		               loadOff();
+    		               if(data.err === 0){
+    		                   notify('success', data.msg);
+    		                   $("#show-tasks").html(data.tasks)
+    		               }else{
+    		                   notify('error', data.msg)
+    		               }
+    		           }, "JSON")
+		       })
+
+
+		       $("body").on('click', '.delete-task', function(){
+		           var username= $("#general_username").val();
+		           var id= $(this).data('id');
+		           $.post('{{ url_for('admin_lead_tasks') }}', {
+    		               tasks: "set",
+    		               action: "delete",
+    		               username: username,
+    		               id: id
+    		           }, function(data, status){
+    		               loadOff();
+    		               if(data.err === 0){
+    		                   notify('success', data.msg);
+    		                   $("#show-tasks").html(data.tasks)
+    		               }else{
+    		                   notify('error', data.msg)
+    		               }
+    		           }, "JSON")
+		       })
+
+
+		       $("body").on('blur', '.old-task', function(){
+		           var username= $("#general_username").val();
+		           var id= $(this).data('id');
+		           var input= $(this).val();
+		           if(input !== ""){
+    		           $.post('{{ url_for('admin_lead_tasks') }}', {
+        		               tasks: "set",
+        		               action: "edit",
+        		               username: username,
+        		               id: id,
+        		               input: input
+        		           }, function(data, status){
+        		               if(data.err === 0){
+        		                   if(data.msg !== ""){
+        		                       notify('success', data.msg);
+        		                        $("#show-tasks").html(data.tasks)
+        		                   }
+        		               }else{
+        		                   notify('error', data.msg)
+        		               }
+        		           }, "JSON")
+		           }else{
+		               toastr["error"]("Input cannot be empty. Note was not saved");
+		           }
+		       })
+
+
+		       $("body").on('click', '.view_note', function(){
+		           var username= $("#general_username").val();
+		           $.post('{{ url_for('admin_lead_tasks') }}', {
+    		               tasks: "set",
+    		               action: "",
+    		               username: username
+    		           }, function(data, status){
+    		               loadOff();
+    		               if(data.err === 0){
+    		                   notify('success', data.msg);
+    		                   $("#show-tasks").html(data.tasks)
+    		               }else{
+    		                   notify('error', data.msg)
+    		               }
+    		           }, "JSON")
+		       })
+
+
+
+
+
+	       // ASSIGN
+	       $(".assign").click(function(){
+	           var username= $("#general_username").val();
+	           $("#assign_body").html('<tr colspan=3><td style="font-weight: bold">Loading agents ...</td></tr>');
+    	        $.post('{{ url_for('admin_lead_assign') }}', {
+    	            assign: "set",
+    	            username: username
+    	        }, function(data, status){
+    	            $("#assign_body").html(data);
+    	        })
+	       })
+
+
+	       $("body").on('change', '.assign_check', function(){
+	           var username= $("#general_username").val();
+	           var agent_id= $(this).data('agent_id');
+	           $.post('{{ url_for('admin_lead_assign_check') }}', {
+    	            username: username,
+    	            agent_id: agent_id
+    	        }, function(data){
+    	            $("#assign_body").html(data);
+    	            notify('success', 'Action success!');
+    	        })
+	       })
+
+
+
+
+	        $('body').on('mouseover', '.trs, .tax_trs, .transfer_trs, .deposit_trs, .with_trs, .agents_trs, .invest_trs', function(){
+	            $(this).css({'background':'#E2EDFF', 'color':'#267DFD', 'cursor':'pointer'})
+	        })
+	        $('body').on('mouseout', '.trs, .tax_trs, .transfer_trs, .deposit_trs, .with_trs, .agents_trs, .invest_trs', function(){
+	            $(this).css({'background':'white', 'color':'black', 'cursor':'pointer'})
+	        })
+
+
+	    })
+	</script>
+
+
+
+
+    </div>
+{% endblock %}

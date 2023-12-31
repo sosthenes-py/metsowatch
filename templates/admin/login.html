@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!--plugins-->
+	<link href="{{ url_for('static', filename='admin/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />
+	<link href="{{ url_for('static', filename='admin/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}" rel="stylesheet" />
+	<link href="{{ url_for('static', filename='admin/plugins/metismenu/css/metisMenu.min.css') }}" rel="stylesheet" />
+	<!-- loader-->
+	<link href="{{ url_for('static', filename='admin/css/pace.min.css') }}" rel="stylesheet" />
+	<script src="{{ url_for('static', filename='admin/js/pace.min.js') }}"></script>
+	<!-- Bootstrap CSS -->
+	<link href="{{ url_for('static', filename='admin/css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='admin/css/app.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='admin/css/icons.css') }}" rel="stylesheet">
+	<title>QTrade - SIGN IN - WE-DIGITAL</title>
+</head>
+
+<body class="bg-login">
+	<!--wrapper-->
+	<div class="wrapper">
+		<div class="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
+			<div class="container-fluid">
+				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+					<div class="col mx-auto">
+						<div class="mb-4 text-center">
+							<img src="{{ url_for('static', filename='admin/images/logo.png') }}" width="180" alt="" />
+						</div>
+                    <div>
+                        <h3 class="text-center">Login to panel</h3>
+                    </div>
+						<div class="card">
+							<div class="card-body">
+								<div class="border p-4 rounded">
+
+                                {% for cat, flash in get_flashed_messages(with_categories=true) %}
+                                <span class="text-{{ cat }}">{{ flash }}</span>
+                                {% endfor %}
+
+									<div class="form-body">
+										<form method="post" action="{{ url_for('admin_login') }}" class="row g-3" novalidate>
+                                        {{ form.csrf_token }}
+											<div class="col-12">
+												<label for="inputEmailAddress" class="form-label">Email Address</label>
+												{{ form.email(class="form-control") }}
+											</div>
+											<div class="col-12">
+												<label for="inputChoosePassword" id="pass" class="form-label">Enter Password</label>
+												<div class="input-group" id="show_hide_password">
+                                                    {{ form.password(class="form-control border-end-0") }} <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
+												</div>
+											</div>
+
+
+											<div id="msg">
+											    {% if form.errors %}
+                                                {% for err, cat in form.errors.items() %}
+                                                    <p class="text-danger fw-bold">{{ cat }}</p>
+                                                {% endfor %}
+                                                {% endif %}
+											</div>
+											<div class="col-12">
+												<div class="d-grid">
+													<button type="submit" class="btn btn-primary"><i class="bx bxs-lock-open"></i>Sign in</button>
+
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--end row-->
+			</div>
+		</div>
+	</div>
+	<!--end wrapper-->
+	<!-- Bootstrap JS -->
+	<script src="{{ url_for('static', filename='admin/js/bootstrap.bundle.min.js') }}"></script>
+	<!--plugins-->
+	<script src="{{ url_for('static', filename='admin/js/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='admin/plugins/simplebar/js/simplebar.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='admin/plugins/metismenu/js/metisMenu.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='admin/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
+	<!--Password show & hide js -->
+	<script>
+		$(document).ready(function () {
+			$("#show_hide_password a").on('click', function (event) {
+				event.preventDefault();
+				if ($('#show_hide_password input').attr("type") == "text") {
+					$('#show_hide_password input').attr('type', 'password');
+					$('#show_hide_password i').addClass("bx-hide");
+					$('#show_hide_password i').removeClass("bx-show");
+				} else if ($('#show_hide_password input').attr("type") == "password") {
+					$('#show_hide_password input').attr('type', 'text');
+					$('#show_hide_password i').removeClass("bx-hide");
+					$('#show_hide_password i').addClass("bx-show");
+				}
+			});
+		});
+	</script>
+
+	<!--app JS-->
+	<script src="{{ url_for('static', filename='admin/js/app.js') }}"></script>
+</body>
+
+</html>

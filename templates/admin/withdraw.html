@@ -1,0 +1,121 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+    <title>Withdrawals - We Digital</title>
+{% endblock %}
+
+{% block search_block %}
+
+    <div class="position-relative search-bar-box">
+        <input id="order_search" type="text" class="form-control" placeholder="Type to search...">
+        <span class="position-absolute top-50 search-show translate-middle-y">
+            <button class="btn btn-primary search_btn">Search</button>
+        </span>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div class="page-wrapper">
+			<div class="page-content">
+
+				<!--end row-->
+
+				<div class="card radius-10">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div>
+								<h5 class="mb-0">Withdrawals History</h5>
+							</div>
+
+							<div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
+							</div>
+						</div>
+						<hr/>
+						<div class="table-responsive">
+							<table class="table align-middle mb-0" id="withdraw-table">
+								<thead class="table-light">
+									<tr>
+									            <th>S/N</th>
+										        <th>Username</th>
+												<th>Amount</th>
+												<th>Coin</th>
+												<th>Wallet</th>
+												<th>Created</th>
+												<th>Status</th>
+									</tr>
+								</thead>
+								<tbody id="withdrawal_history" style="padding-bottom: 4em !important">
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--end page wrapper -->
+
+
+
+
+
+   <script>
+	    $(function(){
+
+            var overlay= $("#overlay");
+        var loader= $("#loader");
+
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+
+        function notify(status, message){
+            toastr[status](message)
+        }
+
+
+            $.ajax({
+                url: "{{ url_for('admin_get_with_history') }}",
+                type: "POST",
+                data: {'key': '*'},
+                dataType: "",
+                success: function (data){
+                    $("#withdrawal_history").html(data);
+                    var table = $('#withdraw-table').DataTable( {
+                        lengthChange: false,
+                        buttons: [ 'copy', 'excel', 'pdf', 'print']
+                    });
+                    table.buttons().container().appendTo( '#example2_wrapper .col-md-6:eq(0)' );
+                },
+                error: function (jqXHR, errorThrown){
+                    alert(JSON.stringify(jqXHR)+', Err: -'+errorThrown)
+                },
+               headers: {
+                   'X-CSRFToken': getCSRFToken()
+               }
+            })
+
+
+
+
+
+            $('body').on('mouseover', '.with_trs', function(){
+	            $(this).css({'background':'#E2EDFF', 'color':'#267DFD', 'cursor':'pointer'})
+	        })
+	        $('body').on('mouseout', '.with_trs', function(){
+	            $(this).css({'background':'white', 'color':'black', 'cursor':'pointer'})
+	        })
+
+
+	    })
+	</script>
+
+{% endblock %}

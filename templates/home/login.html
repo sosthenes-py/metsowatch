@@ -1,0 +1,176 @@
+{% extends 'home/layout.html' %}
+
+{% block content %}
+    <style>
+    .password {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+
+    #eye-icon {
+      color: #888;
+    }
+    </style>
+<body class="light-theme">
+<div id="loader">
+         <img src="{{ url_for('static', filename='images/loader.gif') }}" alt="" width="100em">
+     </div>
+    <div id="overlay"></div>
+<section class="section-style site-auth">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-8 col-md-12">
+                    <div class="auth-content p-4">
+                        <div class="logo">
+                            <a href="{{ url_for('home_page') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt=""/></a>
+                        </div>
+                        <div class="title">
+                            <h2> Access your account</h2>
+                            <p>Enter your account details</p>
+                        </div>
+
+
+                        <div class="site-auth-form">
+                            <form method="POST" action="" class="row" id="form">
+
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                    <div class="single-field">
+                                        <label class="box-label" for="email">Email Address<span
+                                                class="required-field">*</span></label>
+                                        {{ form.email(class="box-input", id="email") }}
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                    <div class="single-field">
+                                        <label class="box-label" for="password">Password<span
+                                                class="required-field">*</span></label
+                                        >
+                                        <div class="password">
+                                            {{ form.password(class="box-input", id="pass") }}
+                                          <span class="toggle-password" >
+                                            <i class="fa fa-eye" id="eye-icon"></i>
+                                          </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="col-xl-12 mt-4">
+                                    <button type="submit" id="sbmt" class="site-btn grad-btn w-100">
+                                        Access Account
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="singnup-text">
+                                <p>New to the program? <a
+                                        href="{{ url_for('register') }}">Create account</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+
+
+{% block script %}
+
+
+<script>
+$(function (){
+        var overlay= $("#overlay");
+        var loader= $("#loader");
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+        function getCSRFToken() {
+            return $('meta[name=csrf-token]').attr('content');
+        }
+
+        function notify(status, msg){
+            if(status === "success"){
+                $.niceToast.success(msg);
+            }else if(status === "error"){
+                $.niceToast.error(msg);
+            }else if(status === "warning"){
+                $.niceToast.warning(msg);
+            }else if(status === "info"){
+                $.niceToast.info(msg);
+            }
+        }
+
+        function togglePasswordVisibility() {
+          const passwordInput = document.getElementById('pass');
+          const eyeIcon = document.getElementById('eye-icon');
+
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+
+          // Toggle eye icon color
+          const iconClass = type === 'password' ? 'fa-eye' : 'fa-eye-slash';
+          eyeIcon.className = `fa ${iconClass}`;
+        }
+
+        $('.toggle-password').click(function (){
+            togglePasswordVisibility()
+        })
+
+
+
+    $('#sbmt').click(function (){
+        event.preventDefault()
+        var data = $('#form').serialize()
+        var url = "{{ url_for('login') if next is none else url_for('login', next=next) }}"
+        loadOn()
+        $.ajax({
+                url: url,
+                data: data,
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+                    loadOff()
+                    notify(data.status, data.message)
+                    if(data.status === "success"){
+                        $('#email').html('')
+                        $('#pass').val('')
+                        $('#sbmt').text('Redirecting...')
+                        setTimeout(function (){
+                            window.location.href = data.next
+                        }, 2000)
+                    }
+                },
+                error: function(err1, err2){
+                    loadOff()
+                    notify('error', 'An error occurred. Please try again later')
+                },
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+            })
+    })
+
+
+})
+</script>
+
+{% endblock %}

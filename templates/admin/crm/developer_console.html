@@ -1,0 +1,457 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+    <title>Developer Console - We Digital</title>
+{% endblock %}
+
+{% block search_block %}
+
+    <div class="position-relative search-bar-box">
+        <input id="order_search" type="text" class="form-control" placeholder="Type to search...">
+        <span class="position-absolute top-50 search-show translate-middle-y">
+            <button class="btn btn-primary search_btn">Search</button>
+        </span>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+  <script>
+        var overlay= $("#overlay");
+        var loader= $("#loader");
+
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+
+    </script>
+
+    <div class="wrapper">
+        <div class="page-wrapper">
+			<div class="page-content">
+
+                <div class="card">
+
+                    <div class="ms-auto mb-2 mt-3 me-3"><a data-bs-toggle='modal' data-bs-target='#AddModal' class="btn btn-primary radius-30 mt-2 mt-lg-0"><i class="bx bxs-plus-square"></i>Add New Client</a></div>
+
+
+					<div class="card-body">
+						<div class="list-group" id="clients_block">
+
+							<a href="javascript:;" class="list-group-item list-group-item-action active" aria-current="true">
+								<div class="d-flex w-100 justify-content-between">
+									<h5 class="mb-1 text-white">No client has been setup</h5>
+								</div>
+							</a>
+
+						</div>
+					</div>
+				</div>
+
+            </div>
+        </div>
+
+        <input id="general_client_id" type="hidden">
+
+
+        <!--MODAL FOR ADD-->
+
+
+		<div  id="AddModal" tabindex="-1" class="modal fade show" style="display: none;" aria-modal="true" role="dialog">
+		    <div  class="modal-dialog modal-lg">
+		        <div  class="modal-content">
+		            <div  class="modal-header">
+		                <h5  class="modal-title">Add New Client</h5>
+		                <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close" id="close_user"></button>
+		                </div>
+
+                    <div class="modal-body">
+
+
+                        <div class="card">
+                            <div class="card-body">
+
+
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Client Type <span
+                                                class="text-danger">*</span>
+                                        </h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <div class="input-group mb-3 has-validation">
+                                            <select class="form-control" id="add_type">
+                                                <option value="self client">Self Client</option>
+
+                                                <option disabled>Client Based Applications</option>
+                                                <option disabled>Mobile Based Applications</option>
+                                                <option disabled>Server Based Application</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Client Name <span
+                                                class="text-danger">*</span>
+                                        </h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <div class="input-group mb-3">
+                                            <input type="text" id="add_name" placeholder="Stock Supervision App"
+                                                   class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-lg-12 text-right mt-3">
+                                    <div class="btn btn-primary" id="add">Add Client</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+        <!--MODAL FOR VIEW-->
+
+
+		<div  id="ViewModal" tabindex="-1" class="modal fade show" style="display: none;" aria-modal="true" role="dialog">
+		    <div  class="modal-dialog modal-lg modal-dialog-scrollable">
+		        <div  class="modal-content">
+		            <div  class="modal-header">
+		                <h5  class="modal-title client_name"></h5>
+		                <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close" id="close_user"></button>
+
+                         <div class="ms-auto mb-2 mt-3 me-3"><a data-bs-toggle='modal' data-bs-target='#StatModal' class="btn btn-primary radius-30 mt-2 mt-lg-0 view_stat"><i class="bx bxs-chart"></i>See Stats</a></div>
+
+
+		                </div>
+
+                     <div class="modal-body">
+
+
+                        <div class="card">
+                            <div class="card-body">
+
+
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Client ID
+                                        </h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control client_id" readonly>
+                                            <button data-by="id" class="btn btn-outline-secondary copy" type="button">Copy</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0"><i class="fadeIn animated bx bx-user"></i> Client Secret
+                                        </h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control client_secret" readonly>
+                                            <button data-by="secret" class="btn btn-outline-secondary copy" type="button">Copy</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+           <!--MODAL FOR STATS-->
+
+
+		<div  id="StatModal" tabindex="-1" class="modal fade show bg-primary" style="display: none;" aria-modal="true" role="dialog">
+		    <div  class="modal-dialog modal-xl modal-dialog-scrollable ">
+		        <div  class="modal-content">
+		            <div  class="modal-header">
+		                <h5  class="modal-title client_name"></h5>
+		                <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close" id="close_user"></button>
+
+		                </div>
+
+                     <div class="modal-body">
+
+
+                         <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+					<div class="col-xl-4">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Today's Calls</p>
+										<h4 class="my-1 today_call">0</h4>
+									</div>
+									<div class="widgets-icons bg-light-success text-success ms-auto"><i class='bx bx-minus-back'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-4">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Yesterday's Calls</p>
+										<h4 class="my-1 yesterday_call">0</h4>
+									</div>
+									<div class="widgets-icons bg-light-warning text-warning ms-auto"><i class='bx bx-minus-back'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-4">
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<p class="mb-0 text-secondary">Total Calls</p>
+										<h4 class="my-1 total_call">0</h4>
+									</div>
+									<div class="widgets-icons bg-light-danger text-danger ms-auto"><i class='bx bx-intersect'></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+                    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+	<!--ERASE DIALOG	-->
+        <div id="EraseModal" tabindex="-1" class="modal fade" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-danger">
+                    <div class="modal-header">
+                        <h5 class="mb-0 text-light">Delete Client</h5>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                    </div>
+                    <div class="modal-body text-white"><p>You are about to delete this client <b
+                            class="details_code"></b>. </p>
+                        <p>This will end all processes initiated using this client.</p>
+                        <p>You may always come back to create a new client. <b>Proceed to delete client?</b></p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" data-bs-dismiss="modal" class="btn btn-light">Close</button>
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-dark trash_client">Yes, delete!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+	    $(function(){
+	        var site_domain= "";
+	        const success_audio = new Audio("{{ url_for('static', filename='admin/audio/correct.mp3') }}");
+	        const error_audio = new Audio("{{ url_for('static', filename='admin/audio/wrong.mp3') }}");
+
+
+	         var overlay= $("#overlay");
+            var loader= $("#loader");
+            var loader_trans= $("#loader-trans");
+
+            function loadOn(){
+                overlay.css('display', 'block');
+                loader.css('display', 'block');
+            }
+            function loadOff(){
+                overlay.css('display', 'none');
+                loader.css('display', 'none');
+            }
+
+
+            function notify(status, message){
+                if(status === "success" || status === "info"){
+                    success_audio.play();
+                }else{
+                    error_audio.play();
+                }
+                toastr[status](message)
+            }
+
+
+            function start(){
+                $.ajax({
+                    url: "{{ url_for('admin_crm_view_client') }}",
+                    type: "POST",
+                    data: {'view': ''},
+                    error: function (errorThrown) {
+                        notify('error', errorThrown)
+                    },
+                    success: function (data) {
+                        $('#clients_block').html(data)
+                    }
+                })
+            }
+            start()
+
+
+            $("#add").click(function(){
+                var type = $('#add_type').val()
+                var name = $('#add_name').val()
+                if(name === ""){
+                    notify('warning', 'Please enter client name')
+                }else{
+                    loadOn()
+                    $.ajax({
+                        url: "{{ url_for('admin_crm_add_client') }}",
+                        dataType: "json",
+                        type: "POST",
+                        data: {
+                            type: type,
+                            name: name
+                        },
+                        error: function(){
+                            loadOff()
+                            notify('error', 'Try again')
+                        },
+                        success: function(data){
+                            loadOff()
+                            if(data.err === 1){
+                                notify('error', data.msg)
+                            }else{
+                                notify('success', data.msg)
+                                $('#add_name').val('')
+                                start()
+                                $('#AddModal').modal('hide')
+                            }
+                        }
+                    })
+                }
+            })
+
+
+            $('body').on('click', '.trs', function(){
+                var client_id = $(this).data('client_id')
+                var name = $(this).data('name')
+                var client_secret = $(this).data('client_secret')
+                $('#general_client_id').val(client_id)
+
+                $('.client_name').text(name)
+                $('.client_id').val(client_id)
+                $('.client_secret').val(client_secret)
+            })
+
+            $("html").on('click', '.copy', function(){
+                var by = $(this).data('by')
+                var copy = $('.client_'+by).val()
+                navigator.clipboard.writeText(copy)
+                notify('info', 'copied')
+            })
+
+
+            $('body').on('click', '.trash_client', function(){
+                loadOn()
+                    $.ajax({
+                        url: "{{ url_for('admin_crm_delete_client') }}",
+                        dataType: "json",
+                        type: "POST",
+                        data: {
+                            client_id: $('#general_client_id').val()
+                        },
+                        error: function(){
+                            loadOff()
+                            notify('error', 'Try again')
+                        },
+                        success: function(data){
+                            loadOff()
+                            if(data.err === 1){
+                                notify('error', data.msg)
+                            }else{
+                                notify('success', data.msg)
+                                start()
+                                $('#AddModal').modal('hide')
+                            }
+                        }
+                    })
+            })
+
+
+            $('.view_stat').click(function () {
+                loadOn()
+                setTimeout(function () {
+                    $.ajax({
+                        url: "{{ url_for('admin_crm_client_stat') }}",
+                        dataType: "json",
+                        type: "POST",
+                        data: {
+                            client_id: $('#general_client_id').val()
+                        },
+                        error: function () {
+                            loadOff()
+                            notify('error', 'Try again')
+                        },
+                        success: function (data) {
+                            loadOff()
+                            if (data.err === 1) {
+                                notify('error', data.msg)
+                            } else {
+                                $('.today_call').text(data.today_call)
+                                $('.yesterday_call').text(data.yesterday_call)
+                                $('.total_call').text(data.total_call)
+                            }
+                        }
+                    })
+                }, 1000)
+            })
+
+
+	    })
+	</script>
+
+
+
+
+    </div>
+{% endblock %}

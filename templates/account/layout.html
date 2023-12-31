@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8"/>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <meta name="csrf-token" content="{{ csrf_token() }}">
+      <meta name="keywords" content="{{ site_name }}">
+      <link rel="canonical" href=""/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap.min.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/datatables.min.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"/>
+       <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-toast.min.css') }}"/>
+      <style>
+         .site-head-tag {
+         margin: 0;
+         padding: 0;
+         }
+
+         #loader{
+      position: fixed;
+      text-align:center;
+      width: 100%;
+      height: 100%;
+      top: 50%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10000;
+      cursor: pointer;
+      display:none;
+      justify-content: center;
+      margin-top:-50px;
+    }
+
+     #overlay{
+      position: fixed;
+      text-align:center;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #001219;
+      opacity: 0.5;
+      z-index: 100000;
+      cursor: not-allowed;
+      display:none;
+      justify-content: center;
+    }
+
+     .special-text{
+            background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+     .special-bg{
+          background: linear-gradient(
+            95deg,
+            #059dff 15%,
+            #6549d5 45%,
+            #e33fa1 75%,
+            #fb5343
+        ) 95%/200% 100% !important;
+      }
+
+     .bottom-modal{
+        height: 85vh;
+        background-color: white;
+        border-radius: 1.5em 1.5em 0 0;
+        display: none;
+        overflow-y: auto;
+         z-index: 5000000;
+        }
+    .close-bottom-modal {
+      position: absolute;
+      top: 0px; /* Adjust top position as needed */
+      right: 25px; /* Adjust right position as needed */
+      font-weight: bold; /* Make it bolder */
+      font-size: 3rem; /* Adjust font size as needed */
+      cursor: pointer;
+        color: #ef476f;
+        background: transparent;
+        padding: 0;
+    }
+      </style>
+
+       {% if page == "videos" %}
+
+            {% if target is not none %}
+                <title>Watch & Create Videos On {{ site_name }} To Earn For Free!</title>
+                <meta name="description" content="{{ target_video.title }}">
+                <link rel="shortcut icon" href="{{ url_for('static', filename='uploads/images/{}'.format(target_video.image_name)) }}" type="image/x-icon"/>
+                <link rel="icon" href="{{ url_for('static', filename='uploads/images/{}'.format(target_video.image_name)) }}" type="image/x-icon"/>
+            {% endif %}
+
+       {% else %}
+           <title>{{ site_name }}</title>
+           <meta name="description" content="Create, Watch, Earn, Repeat. Unlocking Your Earnings, One Video At A Time!">
+            <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon"/>
+            <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon"/>
+       {% endif %}
+
+   </head>
+
+<body class="dark-theme">
+     <div id="loader">
+         <img src="{{ url_for('static', filename='images/loader.gif') }}" alt="" width="100em">
+     </div>
+    <div id="overlay"></div>
+
+
+      <!--Full Layout-->
+      <div class="panel-layout">
+         <!--Header-->
+         <div class="panel-header">
+            <div class="logo">
+               <a href="https://hyiprio.tdevs.co">
+               <img class="logo-unfold" src="https://hyiprio.tdevs.co/assets/global/images/gfRumZOy2KeS4XHeuBFB.png" alt="Logo"/>
+               <img class="logo-fold" src="https://hyiprio.tdevs.co/assets/global/images/gfRumZOy2KeS4XHeuBFB.png" alt="Logo"/>
+               </a>
+            </div>
+            <div class="nav-wrap">
+               <div class="nav-left">
+                  <button class="sidebar-toggle">
+                  <i class="anticon anticon-arrow-left"></i>
+                  </button>
+                  <div class="mob-logo">
+                     <a href="https://hyiprio.tdevs.co">
+                     <img src="https://hyiprio.tdevs.co/assets/global/images/gfRumZOy2KeS4XHeuBFB.png" alt="Site Name"/>
+                     </a>
+                  </div>
+               </div>
+               <div class="nav-right">
+
+                   <div class="single-nav-right user-notifications">
+                     <button type="button" class="item notification-dot" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i icon-name="bell-ring" class="bell-ring"></i>
+                        <div class="number primary-bg">{{ current_user.notifications|count }}</div>
+                     </button>
+                     <div class="dropdown-menu dropdown-menu-end notification-pop">
+                        <div class="noti-head">Notifications <span>{{ current_user.notifications|count }}</span></div>
+                        <div class="all-noti">
+
+                        {% set new_notif = namespace(value='false') %}
+                       {% for notif in current_user.notifications|reverse %}
+                            {% if notif.status == 0 %}
+                                {% set new_notif.value = 'true' %}
+                            {% endif %}
+                           {% if notif.status == 0 %}
+                                {% set new_badge = "" %}
+                           {% else %}
+                                {% set new_badge = "d-none" %}
+                           {% endif %}
+
+                           <div class="single-noti">
+                              <a href="#0" class="">
+                                 <div class="icon">
+                                    <i icon-name="{{ notif_cat[notif.category] }}"></i>
+                                 </div>
+                                 <div class="content">
+                                    <div class="main-cont">
+                                       <span>{{ notif.category|title }}</span> <span class="site-badge badge-pending p-1 py-0 {{ new_badge }} primary-color notif-badge" style="text-transform: lowercase !important;">new</span> <br>
+                                        {{ notif.body }}
+                                    </div>
+                                    <div class="time">{{ format_date(notif.time, '%d %b, %y %H:%M', 172800) }}</div>
+                                 </div>
+                              </a>
+                           </div>
+
+                        {% endfor %}
+
+                        </div>
+                        <div class="noti-footer mt-3">
+                           <a class="noti-btn-1 me-1 w-100 notif-mark-all"
+                              href="#0">Mark All as Read</a>
+                           <a class="noti-btn-2 ms-1 w-100"
+                              href="#0">See all Notifications</a>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="single-nav-right">
+
+
+
+                      {% if page == "videos" or page == "transactions" or page == "referral" %}
+                            <div class="single-right">
+                                <button style="width: 6em !important; border-radius: 0 3em 3em 0"
+                                   type="button"
+                                   class="item open-modal"
+                                   aria-expanded="false"
+                                   data-modal="searchModal"
+                                   >
+                                <i class="anticon anticon-search"></i>
+                                </button>
+                             </div>
+
+
+                      {% else %}
+                     <div class="single-right">
+                        <button
+                           type="button"
+                           class="item"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false"
+                           >
+                        <i class="anticon anticon-user"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                           <li>
+                              <a href="#0" class="dropdown-item" type="button"><i
+                                 class="anticon anticon-video-camera"></i>Earnings: ${{ "{:,.2f}".format(current_user.earning) }}</a>
+                           </li>
+                           <li>
+                              <a href="#0" class="dropdown-item" type="button">
+                              <i class="anticon anticon-gift"></i>Ref Bonus: ${{ "{:,.2f}".format(current_user.ref_earning) }}
+                              </a>
+                           </li>
+                           <li>
+
+                           </li>
+                           <li class="logout mt-3">
+                               <a href="{{ url_for('logout') }}" class="dropdown-item"><i
+                                    class="anticon anticon-logout"></i>Logout</a>
+                           </li>
+                        </ul>
+                     </div>
+                      {% endif %}
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!--/Header-->
+
+
+
+
+         <!-- Show in 575px in Mobile Screen -->
+         <div class="mobile-screen-show">
+            <div class="bottom-appbar">
+               <a href="{{ url_for('user_wallet') }}" class="{% if page == "wallet" %}active{% endif %}">
+               <i icon-name="layout-dashboard"></i>
+               </a>
+               <a href="{{ url_for('user_videos') }}" class="{% if page == "videos" %}active{% endif %}">
+               <i icon-name="eye"></i>
+               </a>
+               <a href="{{ url_for('user_packages') }}" class="{% if page == "packages" %}active{% endif %}">
+               <i icon-name="box"></i>
+               </a>
+               <a href="{{ url_for('user_referral') }}" class="{% if page == "referral" %}active{% endif %}">
+               <i icon-name="gift"></i>
+               </a>
+               <a href="{{ url_for('user_settings_general') }}" class="{% if page == "settings" %}active{% endif %}">
+               <i icon-name="settings"></i>
+               </a>
+            </div>
+         </div>
+         <!-- Show in 575px in Mobile Screen End -->
+
+
+        <!-- Automatic Popup -->
+{#         <div id="auto-popup" class="auto-popup-section">#}
+{#            <div class="auto-popup-dialog animated fadeInUp">#}
+{#               <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>#}
+{#               <div class="auto-popup-dialog-inner"#}
+{#                  style="background: url({{ url_for('static', filename='images/auto-pop.jpg') }}) no-repeat;">#}
+{#                  <div class="row">#}
+{#                     <div class="col-md-12 col-12">#}
+{#                        <div class="auto-pop-content">#}
+{#                           <h2>Congratulation!</h2>#}
+{#                           <h3>You got a Signup Bonus#}
+{#                              <span>500 USD</span>#}
+{#                           </h3>#}
+{#                           <button class="site-btn grad-btn auto-popup-close-now"><i#}
+{#                              class="anticon anticon-check"></i> Got it</button>#}
+{#                        </div>#}
+{#                     </div>#}
+{#                  </div>#}
+{#               </div>#}
+{#            </div>#}
+{#         </div>#}
+         <!-- /Automatic Popup End -->
+
+
+{% block content %}
+
+{% endblock %}
+
+      </div>
+
+      <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery-migrate.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/scrollUp.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/waypoints.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery.counterup.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/lucide.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/magnific-popup.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/aos.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/datatables.min.js') }}" type="text/javascript" charset="utf8"></script>
+      <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/nice-toast.min.js') }}"></script>
+
+
+
+     <script>
+
+        function copyRef() {
+             var inputField = $('#refLink')[0];
+            // Select the text inside the input field
+            inputField.select();
+            // Execute the copy command
+            document.execCommand('copy');
+            // Deselect the text
+            window.getSelection().removeAllRanges();
+            // Provide feedback or perform any additional actions
+            notify('info', 'Copied!')
+      }
+
+        var overlay= $("#overlay");
+        var loader= $("#loader");
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+        function getCSRFToken() {
+            return $('meta[name=csrf-token]').attr('content');
+        }
+
+        function notify(status, msg){
+            if(status === "success"){
+                $.niceToast.success(msg);
+            }else if(status === "error"){
+                $.niceToast.error(msg);
+            }else if(status === "warning"){
+                $.niceToast.warning(msg);
+            }else if(status === "info"){
+                $.niceToast.info(msg);
+            }
+        }
+
+        function open_modal(id){
+            var $this = $('#'+id),
+                 $dialog = $this.closest('.auto-popup-dialog');
+             $this.removeClass('close');
+             $this.css('top', 0)
+             $dialog.addClass('fadeInUp').removeClass('fadeOutUp');
+        }
+
+        function close_modal(id){
+            var $this = $('#'+id),
+                 $popup = $this.closest('.auto-popup-section');
+             $popup.addClass('close');
+        }
+
+        function open_bottom_modal(id){
+            var $this = $('#'+id)
+            $this.slideToggle()
+        }
+
+        function close_bottom_modal(id){
+            var $this = $("#"+id)
+            $this.slideUp()
+        }
+
+        function copy(id, message="Copied!"){
+            var inputField = $('#'+id)[0];
+            inputField.select();
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            notify('info', message)
+        }
+
+        function copy_data(textToCopy, message="Copied to clipboard") {
+            var tempInput = $("<input>");
+            $("body").append(tempInput);
+            tempInput.val(textToCopy).select();
+            document.execCommand("copy");
+            tempInput.remove();
+            notify('info', message)
+        }
+
+
+        function togglePasswordVisibility(element) {
+          const eyeIcon = element.closest('.eye-icon');
+          const input = element.closest('input')
+
+          const type = input.attr('type') === 'password' ? 'text' : 'password';
+          input.attr('type', type);
+          console.log(type)
+
+          // Toggle eye icon color
+          const iconClass = type === 'password' ? 'fa-eye' : 'fa-eye-slash';
+          eyeIcon.removeClass().addClass(`fa ${iconClass}`);
+        }
+
+        $('.toggle-password').click(function (){
+            togglePasswordVisibility($(this))
+        })
+
+        var timerInterval;
+
+        function startCountdown(id, durationInMinutes, callback) {
+            if (timerInterval) {
+              clearInterval(timerInterval);
+            }
+            var countdown = durationInMinutes * 60; // Convert minutes to seconds
+            var timerElement = $('#'+id);
+
+            function updateTimer() {
+              var minutes = Math.floor(countdown / 60);
+              var seconds = countdown % 60;
+
+              var formattedTime = padZero(minutes) + ':' + padZero(seconds);
+              timerElement.text(formattedTime);
+
+              countdown--;
+
+              if (countdown < 0) {
+                clearInterval(timerInterval);
+                if (typeof callback === 'function') {
+                  callback();
+                }
+              }
+            }
+
+            function padZero(num) {
+              return (num < 10 ? '0' : '') + num;
+            }
+
+            updateTimer(); // Initial update
+
+            timerInterval = setInterval(updateTimer, 1000);
+          }
+
+
+        function startEarning(player) {
+            var timerElement = $('#watch-timer');
+            var total_sec = player.duration
+            player.speed = 1
+
+            player.on('timeupdate', event => {
+                $('.video-alert').hide()
+                var reward = Number(timerElement.data('reward'))
+                var each_sec_reward = reward/total_sec
+
+                var currentTime = player.currentTime;
+                var rewarded = currentTime * each_sec_reward
+                timerElement.text('$'+parseFloat(rewarded).toFixed(4));
+                timerElement.data({'rewarded': rewarded})
+                if(player.muted){
+                    $('.video-alert').css('display', 'block').text('Please turn up volume to continue')
+                    player.pause()
+                }
+                $('#stop-watch-timer').css('display', 'none')
+            });
+
+          }
+
+
+
+
+         function calculate_earning(){
+            var earning = $('#watch-timer').data('rewarded')
+            var videoId = $('#watch-timer').data('videoId')
+             if(Number(earning) > 0){
+                 loadOn()
+                $.ajax({
+                    url: "{{ url_for('user_videos') }}",
+                    data: {'action': 'reward', 'reward': earning, 'videoId': videoId},
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        notify(data.status, data.message)
+                        close_bottom_modal('watchModal')
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'An error occurred. Please try again later')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+             }
+         }
+
+
+        function number_format(number, dp) {
+            // Truncate to 2 decimal places
+            var truncatedNumber = parseFloat(number).toFixed(dp);
+            // Format with commas
+            var formattedNumber = truncatedNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+            return formattedNumber;
+        }
+
+        $('body').on('click', '.open-modal', function (){
+            var which = $(this).data('modal')
+            var $this = $('#'+which),
+                 $dialog = $this.closest('.auto-popup-dialog');
+             $this.removeClass('close');
+             $this.css('top', 0)
+             $dialog.addClass('fadeInUp').removeClass('fadeOutUp');
+        })
+
+        $('body').on('click', '.open-bottom-modal', function (){
+            $('.bottom-modal').each(function (){
+                $(this).slideUp()
+            })
+            var which = $(this).data('modal')
+            var $this = $('#'+which)
+            $this.slideToggle()
+        })
+
+        $('body').on('click', '.close-bottom-modal', function(event) {
+            var $this = $(this).closest('.bottom-modal')
+            $this.slideUp()
+         });
+
+
+
+        // Load More
+        $('.moreless-button').click(function () {
+            $('.moretext').slideToggle();
+            if ($('.moreless-button').text() == "Load more") {
+                $(this).text("Load less")
+            } else {
+                $(this).text("Load more")
+            }
+        });
+
+        $('.moreless-button-2').click(function () {
+            $('.moretext-2').slideToggle();
+            if ($('.moreless-button-2').text() == "Load more") {
+                $(this).text("Load less")
+            } else {
+                $(this).text("Load more")
+            }
+        });
+
+
+        {#NOTIFICATIONS#}
+        var new_notif = "{{ new_notif.value }}"
+        if(new_notif === "true"){
+            $('.bell-ring').addClass('bell-ringing')
+        }
+        $('.notif-mark-all').click(function (){
+            loadOn()
+            $.ajax({
+                url: "{{ url_for('user_notifications') }}",
+                data: {'action': 'read_all'},
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+                    loadOff()
+                   $('.bell-ring').removeClass('bell-ringing')
+                    $('.notif-badge').addClass('d-none')
+                },
+                error: function(err1, err2){
+                    loadOff()
+                    notify('error', 'An error occurred. Please try again later')
+                },
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+            })
+        })
+
+    </script>
+
+
+      <script>
+         'use strict';
+         // Auto Popup
+         $('.auto-popup-close-now').on('click', function () {
+             var $this = $(this),
+                 $popup = $this.closest('.auto-popup-section');
+             $popup.addClass('close');
+         });
+      </script>
+
+
+
+
+
+{% block script %}
+
+{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="canonical" href="{{ site_domain }}"/>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/datatables.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"/>
+    <link href="{{ url_for('static', filename='css/nice-toast.min.css') }}" rel="stylesheet" />
+
+    <title>Earn For Free on {{ site_name }} By Watching And Creating Videos!</title>
+       <meta name="description" content="Showing::{{ target_video.title }}">
+       <link rel="shortcut icon" href="{{ url_for('static', filename='uploads/images/{}'.format(target_video.image_name)) }}" type="image/x-icon"/>
+       <link rel="icon" href="{{ url_for('static', filename='uploads/images/{}'.format(target_video.image_name)) }}" type="image/x-icon"/>
+
+    <style>
+.site-head-tag {
+	margin: 0;
+  	padding: 0;
+}
+.hd{
+    font-size: 30px;
+    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+    </style>
+
+</head>
+
+
+<body class="dark-theme">
+
+<!--Header Area-->
+<header class="header">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home_page') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt=""/></a>
+        </div>
+    </nav>
+</header>
+<!--/Header Area End-->
+
+
+
+
+<section class="white-bg section-style d-flex align-items-center justify-content-center min-vh-100">
+    <div class="container align-items-center justify-content-center">
+        <div id="carouselExample" class="carousel slide" data-ride="carousel">
+            <div class="slider-thumb" style="z-index: -1;"></div>
+            <div class="carousel-inner">
+                <!-- Container 1 -->
+                <div class="carousel-item active">
+                    <div class="row justify-content-center">
+                        <div class="col-10 p-0">
+                            <div class="single-investment-plan text-center">
+                                <div class="feature-plan skip">SKIP</div>
+                                <h2 class="hd">Welcome To MetsoWatch</h2>
+                                <h4 class="primary-color text-lg">We're thrilled to have you on board!</h4>
+                                <h5 class="yellow-color">Get ready for an exciting journey of watching and creating videos while earning rewards. <br>Enjoy the experience! </h5>
+                                <a href="#" class="site-btn grad-btn w-100 next-slide">Next 1/3<i
+                                        class="anticon anticon-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Container 2 -->
+                <div class="carousel-item">
+
+                    <div class="row justify-content-center">
+                        <div class="col-10 p-0">
+                            <div class="single-investment-plan text-center">
+                                <div class="feature-plan skip">SKIP</div>
+                                <h2 class="hd">Earning Upgrade</h2>
+                                <h4 class="primary-color text-lg">Your earning potentials can soar!</h4>
+                                <h5 class="yellow-color">Unlock bigger rewards with our premium subscription packages. You can upgrade anytime to earn more</h5>
+                                <a href="#" class="site-btn grad-btn w-100 next-slide">Next 2/3<i
+                                        class="anticon anticon-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- Container 3 -->
+                <div class="carousel-item">
+                    <div class="row justify-content-center">
+                        <div class="col-10 p-0">
+                            <div class="single-investment-plan text-center">
+                                <div class="feature-plan skip">SKIP</div>
+                                <h2 class="hd">Referral Bonus</h2>
+                                <h4 class="primary-color text-lg">Get Bonuses up to $1,000 daily</h4>
+                                <h5 class="yellow-color">Spread the joy and boost your earnings daily by referring your friends to create and watch videos for free on {{ site_name }}</h5>
+                                <a href="#" class="site-btn grad-btn w-100 skip">Let's Go!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery-migrate.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/scrollUp.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/waypoints.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery.counterup.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/lucide.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/magnific-popup.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/aos.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/datatables.min.js') }}" type="text/javascript" charset="utf8"></script>
+      <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/nice-toast.min.js') }}"></script>
+
+
+<script>
+    // Custom JavaScript for handling Next button click
+    $(document).ready(function () {
+        $('.next-slide').on('click', function () {
+            $('#carouselExample').carousel('next');
+        });
+    });
+
+    $('.skip').click(function (){
+        window.location.href = "{{ url_for('home_videos', target=target) }}"
+    })
+
+    function notify(status, msg){
+            if(status === "success"){
+                $.niceToast.success(msg);
+            }else if(status === "error"){
+                $.niceToast.error(msg);
+            }else if(status === "warning"){
+                $.niceToast.warning(msg);
+            }else if(status === "info"){
+                $.niceToast.info(msg);
+            }
+        }
+
+</script>
+
+
+
+</body>
+
+</html>
+

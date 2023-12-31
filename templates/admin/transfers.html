@@ -1,0 +1,305 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+    <title>Transfers - We Digital</title>
+{% endblock %}
+
+{% block search_block %}
+
+    <div class="position-relative search-bar-box">
+        <input id="order_search" type="text" class="form-control" placeholder="Type to search...">
+        <span class="position-absolute top-50 search-show translate-middle-y">
+            <button class="btn btn-primary search_btn">Search</button>
+        </span>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+
+
+<!--start page wrapper -->
+		<div class="page-wrapper">
+			<div class="page-content">
+
+				<!--end row-->
+
+				<div class="card radius-10">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div>
+								<h5 class="mb-0">Transfers History</h5>
+							</div>
+
+							<div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
+							</div>
+						</div>
+						<hr/>
+						<div class="table-responsive">
+							<table class="table align-middle mb-0">
+								<thead class="table-light">
+									<tr>
+									            <th>S/N</th>
+										        <th>Username</th>
+												<th>Amount</th>
+												<th>From</th>
+												<th>To</th>
+												<th>Created</th>
+												<th>Details</th>
+                                                <th>Action</th>
+									</tr>
+								</thead>
+								<tbody id="tf_history" style="padding-bottom: 4em !important">
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--end page wrapper -->
+
+
+
+    <div id="TfModal2" tabindex="-1" class="modal fade" aria-hidden="true" style="display: none;">
+			        <div class="modal-dialog modal-lg">
+			            <div class="modal-content">
+			                <div class="modal-header">
+			                    <h5 class="mb-0 text-primary">Transaction Details</h5>
+			                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+			                 </div>
+			                 <div class="modal-body">
+
+
+            			    <div class="card border-top border-0 border-4 border-primary">
+                           <div class="card-body p-5">
+
+                              <form class="row g-3">
+                                  <div class="col-md-6">
+                                     <label for="inputFirstName" class="form-label">Username</label>
+                                     <input readonly class="form-control details_username" data-key="username" data-id="">
+                                 </div>
+
+                                  <div class="col-12">
+                                     <label for="inputFirstName" class="form-label">Transaction Detail</label>
+                                     <input readonly type="text" class="form-control details_detail" >
+                                 </div>
+
+
+                                 <div class="col-md-6">
+                                     <label for="inputFirstName" class="form-label">Amount</label>
+                                     <input type="text" class="form-control details_amt" data-key="amt" data-id="" readonly>
+                                 </div>
+
+
+
+                                 <div class="col-md-6">
+                                     <label for="inputLastName" class="form-label">Transaction Date</label>
+                                     <input type='datetime-local' class='form-control details_time date' data-key="time" data-id="">
+                                 </div>
+
+
+                                </form>
+
+                           </div>
+                        </div>
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+   <script>
+	    $(function(){
+
+            var overlay= $("#overlay");
+        var loader= $("#loader");
+
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+
+
+	        $.post('{{ url_for('admin_get_tf_history') }}', {
+        	    key: '*'
+        	 }, function(data, status){
+        	     $("#tf_history").html(data);
+        	 })
+
+
+
+
+	        $("#order_search").keyup(function(){
+	            var key= $(this).val().toLowerCase();
+	            if(key !== ""){
+	                $('.tf_trs').each(function (){
+                        const name = $(this).data('username').toLowerCase()
+                        const method = $(this).data('method').toLowerCase()
+                        const detail = $(this).data('detail').toLowerCase()
+                        if(name.startsWith(key) || method.startsWith(key) || detail.startsWith(key)){
+                            $(this).show();
+                         }else{
+                            $(this).hide();
+                         }
+                    })
+	            }else{
+                    $('.tf_trs').show()
+                }
+	        })
+
+
+
+	        $("body").on('click', '.tf_actions', function(){
+	            var id= $(this).data('id');
+	            var action= $(this).data('action');
+	            loadOn();
+
+                $.ajax({
+                    url: "{{ url_for('admin_tf_actions') }}",
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        id: id,
+                        action: action
+                    },
+                    error: function (){
+                        loadOff()
+                        notify('error', 'An error occurred. Try again')
+                    },
+                    success: function (data){
+                        if(data.err === 1){
+                            loadOff();
+                            toastr['warning'](data.msg)
+                        }else if(data.err === 2){
+                            loadOff();
+                            toastr['error'](data.msg)
+                        }else{
+                            toastr['success'](data.msg)
+                            $.post('{{ url_for('admin_get_tf_history') }}', {
+                                key: '*'
+                            }, function(data, status){
+                                loadOff();
+                                $("#tf_history").html(data);
+                            })
+                        }
+                    }
+                })
+	        })
+
+
+
+	        $("body").on('change', '.date', function(){
+	            var id= $(this).data('id');
+	            var key= $(this).data('key');
+	            var new_date= $(this).val();
+	            {#loadOn();#}
+	            $.post('{{ url_for('admin_save_actions') }}', {
+	                save_actions: "set",
+	                id: id,
+	                table: "program_history",
+	                value: new_date,
+	                key: key,
+                    username: $(".details_username").val()
+	            }, function(data, status){
+	                if(data.err === 1){
+	                    toastr['warning'](data.msg)
+	                }else if(data.err === 2){
+	                    toastr['error'](data.msg)
+	                }else{
+                        if(data.msg !== ""){
+                            toastr['success'](data.msg)
+                            $.post('{{ url_for('admin_get_tf_history') }}', {
+                                get_deposit_history: "set",
+                                key: '*'
+                            }, function(data, status){
+                                $("#tf_history").html(data);
+                            })
+                        }
+	                }
+	                {#loadOn();#}
+
+	            }, "JSON")
+	        })
+
+
+
+            $("body").on('blur', '.edit', function()    {
+	            var id= $(this).data('id');
+	            var key= $(this).data('key');
+	            var value= $(this).val();
+	            {#loadOn();#}
+	            $.post('{{ url_for('admin_save_actions') }}', {
+	                save_actions: "set",
+	                id: id,
+	                table: "program_history",
+	                value: value,
+	                key: key,
+                    username: $(".details_username").val()
+	            }, function(data, status){
+	                if(data.err === 1){
+	                    toastr['warning'](data.msg)
+	                }else if(data.err === 2){
+	                    toastr['error'](data.msg)
+	                }else{
+                        if(data.msg !== ""){
+                            toastr['success'](data.msg)
+                            $.post('{{ url_for('admin_get_tf_history') }}', {
+                                key: '*'
+                            }, function(data, status){
+                                $("#tf_history").html(data);
+                            })
+                        }
+	                }
+
+
+	            }, "JSON")
+	        })
+
+
+
+
+            $('body').on('click', '.tf_trs', function(){
+                var row= $(this);
+                var username= row.data('username');
+                var amt= row.data('amt');
+                var time= row.data('date');
+                var detail= row.data('detail');
+                var id= row.data('id');
+
+                $(".details_amt").val(amt);
+                $(".details_username").val(username);
+                $(".details_detail").val(detail);
+                $(".details_time").val(time);
+
+                $(".details_time").data('id', id)
+                $(".details_amt").data('id', id)
+                $(".details_method").data('id', id)
+                $(".details_username").data('id', id)
+
+            })
+
+
+
+            $('body').on('mouseover', '.tf_trs', function(){
+	            $(this).css({'background':'#E2EDFF', 'color':'#267DFD', 'cursor':'pointer'})
+	        })
+	        $('body').on('mouseout', '.tf_trs', function(){
+	            $(this).css({'background':'white', 'color':'black', 'cursor':'pointer'})
+	        })
+
+
+	    })
+	</script>
+
+{% endblock %}

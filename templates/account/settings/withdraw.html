@@ -1,0 +1,199 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+    .user-ranking::after {
+        opacity: 0.93;
+    }
+    .info-button {
+      position: fixed;
+      top: 25%; /* Adjust as needed */
+      right: 0;
+      transform: translateY(-50%);
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+        z-index: 999;
+    }
+</style>
+
+
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+
+
+
+                     <!--Page Content-->
+
+                     <div class="row">
+                        <div class="col-xl-12">
+                           <div class="site-card">
+                              <div class="site-card-header">
+                                 <h3 class="title">Withdrawal Account</h3>
+                                 <div class="card-header-links">
+                                    <a href="#0" class="card-header-link open-modal" data-modal="addModal">Add New</a>
+                                 </div>
+                              </div>
+                              <div class="site-card-body">
+                                 <div class="site-transactions">
+                                     {% for acct in current_user.payout_accounts|reverse %}
+                                    <div class="single" data-id="{{ acct.account_id }}" onclick="window.location.href='{{ url_for("user_withdraw") }}'">
+                                       <div class="left">
+                                          <div class="icon">
+                                             <i icon-name="clipboard-check"></i>
+                                          </div>
+                                          <div class="content">
+                                             <div class="title">{{ acct.label }} - ({{ acct.wallet[:8] }}...{{ acct.wallet[-4:] }})</div>
+                                             <div class="date">USDT Account </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                     {% endfor %}
+
+                                 {% if not current_user.payout_accounts %}
+                                    <div style="text-align: center !important;">
+                                        <img style="width: 30%; display: inline-block;" src="{{ url_for('static', filename='images/none.png') }}" alt="">
+                                    </div>
+                                 {% endif %}
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+
+                     <!--Page Content-->
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+<style>
+   .my-input{
+        background: #003049;
+        color: white;
+        border-color: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+    }
+    .my-input:focus{
+        background: #003049;
+        color: white;
+    }
+</style>
+
+
+
+
+    <div id="addModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto;">
+                           <h2>New Account</h2>
+                            <div class="mb-5 summary-block" style="text-align: left;">
+
+                                <form id="add-form">
+                                    <div class="col-xl-6 col-md-12 progress-steps-form mb-0">
+                                      <label for="method" class="form-label fw-bold" style="color: #003049">Select Method</label>
+                                      <div class="input-group">
+                                         <select id="method" name="method" class="nice-select site-nice-select" required="">
+                                            <option selected value="usdt">USDT TRC20</option>
+                                         </select>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-12 ">
+                                        <label for="" class="form-label fw-bold" style="color: #003049">Method Name:</label>
+                                        <div class="input-group">
+                                            <input type="text" name="name" class="form-control my-input" placeholder="eg. My Withdraw Account 1" id="add-name">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-12 mt-3">
+                                        <label for="" class="form-label fw-bold" style="color: #003049">USDT TRC20 Wallet:</label>
+                                        <div class="input-group">
+                                            <input type="text" name="wallet" class="form-control my-input" placeholder="Wallet Address" id="add-wallet">
+                                            <input name="action" value="add" type="hidden">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <button class="site-btn btn-danger auto-popup-close-now"><i
+                              class="anticon anticon-close"></i> Close</button>
+                           <button class="site-btn grad-btn proceed"><i
+                              class="anticon anticon-check"></i> Add Wallet</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+    $(function(){
+
+        {#open_modal('payModal')#}
+
+       $('.proceed').click(function (){
+           var name = $('#add-name').val()
+           var wallet = $('#add-wallet').val()
+           if(name !== "" && wallet !== ""){
+               loadOn()
+               var formData = $('#add-form').serialize()
+                $.ajax({
+                    url: "{{ url_for('user_settings_withdraw') }}",
+                    data: formData,
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        notify(data.status, data.message)
+                       if(data.status === "success"){
+                           close_modal('addModal')
+                           setTimeout(function (){
+                               window.location.reload()
+                           }, 3000)
+                       }
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'An error occurred. Please try again later')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+           }else{
+               notify('warning', 'All fields are required')
+           }
+
+       })
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

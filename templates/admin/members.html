@@ -1,0 +1,220 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+    <title>Members - QTradePro</title>
+{% endblock %}
+
+{% block search_block %}
+
+
+{% endblock %}
+
+{% block content %}
+
+  <script>
+        var overlay= $("#overlay");
+        var loader= $("#loader");
+
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+    </script>
+
+    <style>
+    .user-online:after, .user-offline:after {
+        content: "";
+        position: absolute;
+        bottom: 1px;
+        right: 1px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px #fff;
+    }
+    .user-online:after{
+        background: #16e15e;
+    }
+    .user-offline:after{
+        background: #6C757D;
+    }
+    .user-online, .user-offline{
+        position: relative;
+    }
+    </style>
+		<!--start page wrapper -->
+		<div class="page-wrapper">
+			<div class="page-content">
+
+				<!--end row-->
+
+				<div class="card radius-10">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div>
+								<h5 class="mb-0">All Members</h5>
+							</div>
+
+							<div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
+							</div>
+						</div>
+						<hr/>
+						<div class="table-responsive">
+							<table class="table align-middle mb-0" id="example2">
+								<thead class="table-light">
+									<tr>
+									            <th>S/N</th>
+										        <th>Email</th>
+                                                <th>Level</th>
+                                                <th>Upline</th>
+										        <th>Country</th>
+										        <th>Reg Date</th>
+												<th>Fullname</th>
+												<th>Last Login</th>
+												<th>Earnings Wallet</th>
+												<th>Promotion Wallet</th>
+												<th>Ref Bonus Wallet</th>
+												<th>Total Ref Earning</th>
+												<th>Total Deposit</th>
+                                                <th>Total Withdrawn</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+
+									</tr>
+								</thead>
+								<tbody id="members">
+								    <tr><td colspan="12" style="font-weight: bold">Fetching all members, PLEASE WAIT ...</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--end page wrapper -->
+
+		<input type="hidden" id="general_username">
+        <input type="hidden" id="general_hash">
+
+
+
+	<script>
+	    $(function(){
+	        const success_audio = new Audio("{{ url_for('static', filename='admin/audio/correct.mp3') }}");
+	        const error_audio = new Audio("{{ url_for('static', filename='admin/audio/wrong.mp3') }}");
+
+	         var overlay= $("#overlay");
+            var loader= $("#loader");
+            var loader_trans= $("#loader-trans");
+
+            function loadOn(){
+                overlay.css('display', 'block');
+                loader.css('display', 'block');
+            }
+            function loadOff(){
+                overlay.css('display', 'none');
+                loader.css('display', 'none');
+            }
+
+            function notify(status, message){
+                if(status === "success" || status === "info"){
+                    success_audio.play();
+                }else{
+                    error_audio.play();
+                }
+                toastr[status](message)
+            }
+
+
+            function start(refresh=false){
+                $.ajax({
+                    url: "{{ url_for('admin_get_members') }}",
+                    type: "POST",
+                    data: {'action': 'fetch'},
+                    dataType: "json",
+                    async: false,
+                    success: function (data){
+                        if(refresh){
+                            $('#example2').DataTable().destroy()
+                        }
+                        setTimeout(function(){
+                            $("#members").html(data.content);
+                            var table = $('#example2').DataTable( {
+                                    lengthChange: false,
+                                    buttons: [ 'copy', 'excel', 'pdf', 'print']
+                                } );
+                                table.buttons().container().appendTo( '#example2_wrapper .col-md-6:eq(0)' );
+                        }, 10)
+                    },
+                    error: function (jqXHR, errorThrown){
+                        notify('error', 'An error occurred. Page will be refreshed in 3s')
+                        setTimeout(function(){
+                            {#window.location.update()#}
+                        }, 3000)
+                    },
+                   headers: {
+                       'X-CSRFToken': getCSRFToken()
+                   }
+                })
+            }
+
+            start()
+
+
+            $("body").on('click', '.member_actions', function(){
+	            var id= $(this).data('id');
+	            var action= $(this).data('action');
+	            loadOn();
+                $.ajax({
+                    url: "{{ url_for('admin_get_members') }}",
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        id: id,
+                        action: action
+                    },
+                    error: function (){
+                        loadOff()
+                        notify('error', 'An error occurred. Try again')
+                    },
+                    success: function (data){
+                        notify(data.status, data.message)
+                        loadOff()
+                        if(data.status === 'success'){
+                            start(true)
+                        }
+                    },
+                   headers: {
+                       'X-CSRFToken': getCSRFToken()
+                   }
+                })
+	        })
+
+
+
+
+
+	        $('body').on('mouseover', '.trs, .tax_trs, .transfer_trs, .deposit_trs, .with_trs, .agents_trs, .invest_trs .tf_trs', function(){
+	            $(this).css({'background':'#E2EDFF', 'color':'#267DFD', 'cursor':'pointer'})
+	        })
+	        $('body').on('mouseout', '.trs, .tax_trs, .transfer_trs, .deposit_trs, .with_trs, .agents_trs, .invest_trs .tf_trs', function(){
+	            $(this).css({'background':'white', 'color':'black', 'cursor':'pointer'})
+	        })
+
+
+	    })
+	</script>
+
+
+
+
+
+	<!--SCRIPT FOR CRYPTO TRADE-->
+
+
+
+{% endblock %}

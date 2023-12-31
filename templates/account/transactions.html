@@ -1,0 +1,249 @@
+{% extends 'account/layout.html' %}
+
+{% block content %}
+<style>
+
+    .nav-pills .nav-link {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .nav-pills .nav-link i {
+    margin-right: 5px; /* Adjust the margin as needed */
+  }
+</style>
+
+
+         <div class="page-container">
+            <div class="main-content">
+               <div class="section-gap">
+                  <div class="container-fluid">
+
+
+
+                     <!--Page Content-->
+
+                     <div class="row">
+                        <div class="col-xl-12">
+
+
+
+                        <div class="col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                <div class="site-tab-bars overflow-auto">
+                                   <ul class="nav nav-pills flex-nowrap" id="pills-tab" role="tablist">
+                                      <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link name {% if name == "all" %}active{% endif %}"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-1"
+                                            type="button"
+                                            data-item="all"
+                                            ><i class="fas fa-receipt"></i>All</a>
+                                      </li>
+                                      <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link name {% if name == "earning" %}active{% endif %}"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-2"
+                                            type="button"
+                                            data-item="earning"
+                                            ><i class="fas fa-play-circle"></i>Video Earnings</a>
+                                      </li>
+
+                                       <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link name {% if name == "ref_earning" %}active{% endif %}"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-3"
+                                            type="button"
+                                            data-item="ref_earning"
+                                            ><i class="fas fa-gifts"></i>Ref Bonus</a>
+                                      </li>
+
+                                       <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link name {% if name == "deposit" %}active{% endif %}"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-3"
+                                            type="button"
+                                            data-item="deposit"
+                                            ><i class="fas fa-cloud-download-alt"></i>Deposits</a>
+                                      </li>
+
+
+                                      <li class="nav-item" role="presentation">
+                                         <a
+                                            href="#0"
+                                            class="nav-link name {% if name == "withdraw" %}active{% endif %}"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-4"
+                                            type="button"
+                                            data-item="withdraw"
+                                            ><i class="fas fa-credit-card"></i>Payouts</a>
+                                      </li>
+
+                                   </ul>
+                                </div>
+
+                        </div>
+
+
+
+
+                           <div class="site-card">
+                              <div class="site-card-header">
+                                 <h3 class="title">All Transactions</h3>
+                                 <div class="card-header-links">
+                                    <a href="#0" class="card-header-link count-details" style="text-transform: lowercase">
+                                        {% if current_user.history|count < tx_per_page %}
+                                            {{ current_user.history|count }}
+                                        {% else %}
+                                            {{ tx_per_page }}
+                                        {% endif %}
+                                        of {{ current_user.history|count }}
+                                    </a>
+                                 </div>
+                              </div>
+                              <div class="site-card-body">
+                                  <!-- Recent Transactions -->
+                              <div class="all-feature-mobile mobile-transactions mb-3 mobile-screen-show">
+                                 <div class="contents">
+
+
+                                 </div>
+                              </div>
+
+                              <div class="centered mb-5">
+                                <button class="site-btn-sm grad-btn load-more" data-page="1" data-name="all">Load more</button>
+                            </div>
+
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+
+                     <!--Page Content-->
+
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+
+
+    <div id="searchModal" class="auto-popup-section">
+            <div class="auto-popup-dialog animated fadeInUp">
+                <button class="auto-popup-close auto-popup-close-now"><i icon-name="x"></i></button>
+               <div class="auto-popup-dialog-inner dark-blue-bg">
+                  <div class="row">
+                     <div class="col-md-12 col-12">
+                        <div class="auto-pop-content" style="overflow-y: auto;">
+                           <h2>Search Transaction</h2>
+                            <div class="mb-3 summary-block" style="text-align: left;">
+
+                                <form id="add-form">
+                                    <div class="col-xl-6 col-md-12 ">
+
+                                        <div class="site-input-groups">
+                                            <div class="input-group joint-input">
+                                                <input id="search-input" type="number" class="form-control" placeholder="Search by ID" >
+                                                <span class="input-group-text site-btn grad-btn" id="search-btn"><i class="anticon anticon-search"></i></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+    $(function(){
+
+        {#open_modal('payModal')#}
+
+        $('.name').click(function (){
+            var name = $(this).data('item')
+            fetch(0, name, false)
+        })
+
+        fetch(0, '{{ name }}', false, '')
+
+        function fetch(page, name, more, q=''){
+            loadOn()
+            $.ajax({
+                    url: "{{ url_for('user_transactions') }}",
+                    data: {'page': page, 'name': name, 'action': 'fetch', 'q': q},
+                    dataType: "json",
+                    type: "POST",
+                    success: function(data){
+                        loadOff()
+                        if(more){
+                            $('.contents').append(data.content)
+                        }else{
+                            $('.contents').html(data.content)
+                        }
+                        $('.title').text(data.header)
+                        $('.load-more').data({'page': data.page, 'name': name, 'q': q}).css('display', data.load_more)
+                        $('.count-details').text(data.count_details)
+                        if(data['status'] === "error"){
+                            notify(data.status, data.message)
+                        }
+                    },
+                    error: function(err1, err2){
+                        loadOff()
+                        notify('error', 'End of list')
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                })
+        }
+
+        $('.load-more').click(function (){
+            var name = $(this).data('name')
+            var page = $(this).data('page')
+            var q = $(this).data('q')
+            fetch(page, name, true, q)
+        })
+
+        $('#search-btn').click(function (){
+            var key = $('#search-input').val()
+            fetch(0, 'search', false, key)
+            close_modal('searchModal')
+        })
+
+
+
+        $(window).on('beforeunload', function(){
+            loadOn();
+        });
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+

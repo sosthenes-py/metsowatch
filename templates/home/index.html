@@ -1,0 +1,331 @@
+{% extends 'home/layout.html' %}
+
+{% block content %}
+    <body class="dark-theme">
+      <!--Header Area-->
+      <header class="header">
+         <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+               <a class="navbar-brand" href="{{ url_for('home_page') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt=""/></a>
+            </div>
+         </nav>
+      </header>
+      <!--/Header Area End-->
+      <section class="banner light-blue-bg">
+         <div class="slider-thumb"></div>
+         <div class="container">
+            <div class="row">
+               <div class="col-xl-7 col-lg-7 col-md-12 col-12">
+                  <div class="banner-content">
+                     <h2 data-aos="fade-right" data-aos-duration="1000">
+                        Unlock Your Earnings, One Video at a Time!
+                     </h2>
+                     <p data-aos="fade-up" data-aos-duration="1500">
+                        Create, Watch, Earn, Repeat - Your Gateway to Rewarded Video Experience
+                     </p>
+                     <div class="banner-anchors">
+                        <a href="{{ url_for('register') }}" class="site-btn grad-btn mb-2" data-aos="fade-up"
+                           target="_self" data-aos-duration="2000"><i
+                           class="anticon anticon-user-add"></i>Get Started
+                        </a>
+                        <a href="#0" class="site-btn white-btn go-to-package" data-aos="fade-up" data-aos-duration="2500"><i
+                           class="anticon anticon-fire"></i>Our Packages
+                        </a>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-xl-5 col-lg-5 col-md-12 col-12">
+                  <div class="banner-right">
+                     <img src="{{ url_for('static', filename='images/4qoa67GxVECLruiLaAl5.png') }}" alt="" class="banner-img" data-aos="fade-left"
+                        data-aos-duration="2000"/>
+                     <div class="dots" style="background: url({{ url_for('static', filename='images/lLJT3xQhVp4mkOyxtRC3.png') }}) repeat;"
+                        data-aos="fade-down-left" data-aos-duration="1500"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+
+      <style>
+         /* Styles for the container */
+         .container-custom {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 40vh;
+         }
+         /* Styles for the laptop mockup */
+         .laptop {
+         position: relative;
+         width: 600px; /* Adjust the width as needed */
+         height: 350px; /* Adjust the height as needed */
+         background: #2a9d8f;
+         border-radius: 15px 15px 28px 28px;
+         overflow: hidden;
+         box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+         }
+         .screen {
+         position: absolute;
+         top: 20px;
+         left: 20px;
+         right: 20px;
+         bottom: 40px;
+         background: #fff;
+         overflow: hidden;
+         border-radius: 5px;
+         }
+         .screen img {
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+         }
+         .bottom-bar {
+         position: absolute;
+         bottom: -4px;
+         left: -2px;
+         right: -2px;
+         height: 30px;
+         background: #001219;
+         border-bottom-left-radius: 10px;
+         border-bottom-right-radius: 10px;
+         transform: perspective(20px) rotateX(-2deg);
+         }
+         .camera-cutout {
+         position: absolute;
+         top: 4px;
+         left: 50%;
+         transform: translateX(-50%);
+         width: 40px;
+         height: 20px;
+         background: #000;
+         border-top-left-radius: 10px;
+         border-top-right-radius: 10px;
+         }
+
+         .special-text{
+            background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+      </style>
+
+
+
+      <section class="white-bg section-style-2">
+         <div class="container-custom">
+            <div class="laptop">
+               <div class="camera-cutout"></div>
+               <div class="screen">
+                  <!-- Placeholder for the image -->
+                  <img src="{{ url_for('static', filename='images/laptop-screen.png') }}" alt="Placeholder Image">
+               </div>
+               <div class="bottom-bar"></div>
+            </div>
+         </div>
+      </section>
+
+
+      <section class="white-bg section-style-2">
+         <div class="bat-left" style="background: url({{ url_for('static', filename='images/UHm2cfbMPGZmbZNT2bVC.png') }}) repeat;" data-aos="fade-down-right"
+            data-aos-duration="2000"></div>
+         <div class="container black-bg p-3">
+            <div class="row justify-content-center">
+               <div class="col-xl-7 col-lg-12 mt-3">
+                  <div class="section-title text-center">
+                     <h4 data-aos="fade-down" data-aos-duration="2000">Our Services</h4>
+                     <h2 data-aos="fade-down" data-aos-duration="1500">What we do</h2>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+                <h4 class="green-color">
+                    We're pioneering a new era where users can create, watch, and earn seamlessly.
+                    </h4>
+
+                <h4 class="green-color mt-3">
+                    Here, you have the unique opportunity to earn for free while engaging with contents. For those seeking even greater rewards, we offer <u><span class="special-text go-to-package">premium packages</span></u> that unlock enhanced earning potentials. <br><br>
+                    Upgrade at your own pace and elevate your earning experience with our premium offerings.
+                </h4>
+
+
+                <h4 class="green-color mt-3">Please bear in mind that this web version is a prototype, paving the way for our upcoming app launch that will redefine your digital journey.
+                </h4>
+
+                <h4 class="red-color mt-5"><u>DISCLAIMER:</u> While our curated contents are sourced from YouTube, it's essential to note that we are an independent entity, not in any way affiliated with YouTube.</h4>
+
+            </div>
+         </div>
+      </section>
+
+
+      <section class="white-bg section-style-2" id="packages">
+         <div class="bat-left" style="background: url({{ url_for('static', filename='images/UHm2cfbMPGZmbZNT2bVC.png') }}) repeat;" data-aos="fade-down-right"
+            data-aos-duration="2000"></div>
+         <div class="container">
+            <div class="row justify-content-center">
+               <div class="col-xl-7 col-lg-12 mt-3">
+                  <div class="section-title text-center">
+                     <h4 data-aos="fade-down" data-aos-duration="2000">Our Packages</h4>
+                     <h2 data-aos="fade-down" data-aos-duration="1500">Our free & premium packages.</h2>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+
+{#            FREE PACKAGE#}
+          <div class="site-card-body">
+      <div class="row justify-content-center">
+         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="single-badge ">
+               <div class="badge">
+                  <div class="img"><img src="{{ url_for('static', filename='images/rank0.svg') }}" alt=""></div>
+               </div>
+               <div class="content">
+                  <h3 class="title">Free Access</h3>
+                  <p class="description">Earning per video: $0.01</p>
+                   <p class="description">Total Videos: {{ plans[0]['videos'] }}/day</p>
+               </div>
+            </div>
+         </div>
+
+
+          {% for plan in plans[1:] %}
+            {% if plan['id'] > 3 %}
+              {% set rank_img = 'rank0.svg' %}
+            {% else %}
+              {% set rank_img = 'rank{}.svg'.format(plan['id']) %}
+            {% endif %}
+         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="single-badge locked">
+               <div class="badge">
+                  <div class="img"><img src="{{ url_for('static', filename='images/') }}{{ rank_img }}" alt=""></div>
+               </div>
+               <div class="content">
+                  <h3 class="title"> Level {{ plan['id'] }}</h3>
+                   <p class="description">Entry Cost: ${{ "{:,}".format(plan['price']) }}</p>
+                  <p class="description">Earning per video: ${{ "{:,.2f}".format(((profit/100)*plan['price'])/plan['videos']) }}</p>
+                   <p class="description">Total Videos: {{ plan['videos'] }}/day</p>
+               </div>
+            </div>
+         </div>
+
+          {% endfor %}
+
+
+      </div>
+   </div>
+
+
+
+            </div>
+         </div>
+      </section>
+
+
+
+      <section class="how-it-works section-style-3">
+         <div class="container">
+            <div class="row justify-content-center">
+               <div class="col-xl-7 col-lg-12">
+                  <div class="section-title text-center">
+                     <h4 data-aos="fade-down" data-aos-duration="2000">How It Works</h4>
+                     <h2 data-aos="fade-down" data-aos-duration="1500">
+                        Unleash Your Journey: From Registration to Rewards
+                     </h2>
+                  </div>
+               </div>
+            </div>
+            <div class="row justify-content-center">
+
+               <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                  <div class="how-it-works-single" data-aos="fade-left" data-aos-duration="1000">
+                     <div class="icon-box">
+                        <img class="icon-box-icon" src="{{ url_for('static', filename='images/GUe7aa3wR048JtwDTNum.png') }}" alt=""><span><i
+                           class="anticon anticon-check"></i></span>
+                     </div>
+                     <h4>Create Account</h4>
+                     <p>
+                        Begin your journey by registering an account with us. Your personalized experience awaits!
+                     </p>
+                  </div>
+               </div>
+
+               <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                  <div class="how-it-works-single" data-aos="fade-left" data-aos-duration="1000">
+                     <div class="icon-box">
+                        <img class="icon-box-icon" src="{{ url_for('static', filename='images/VQ6BURZon0q6bC0JaUmp.png') }}" alt=""><span><i
+                           class="anticon anticon-check"></i></span>
+                     </div>
+                     <h4>Start Watching Videos</h4>
+                     <p>
+                        The more you watch, the more you earn. Sit back, relax, and let the rewards roll in as you enjoy the content you love.
+                     </p>
+                  </div>
+               </div>
+
+               <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                  <div class="how-it-works-single" data-aos="fade-left" data-aos-duration="1000">
+                     <div class="icon-box">
+                        <img class="icon-box-icon" src="{{ url_for('static', filename='images/DJr551o3d9Rbnvi0K6MM.png') }}" alt=""><span><i
+                           class="anticon anticon-check"></i></span>
+                     </div>
+                     <h4>Earn Seamlessly</h4>
+                     <p>
+                        Every minute spent watching videos adds up to real rewards. For those seeking an even more rewarding experience, explore our <u><span class="special-text go-to-package">premium packages</span></u> for enhanced earning opportunities
+                     </p>
+                  </div>
+               </div>
+
+
+            </div>
+         </div>
+      </section>
+
+
+
+      <section class="section-style-2 site-overlay"
+         >
+         <div class="container">
+            <div class="row justify-content-center">
+               <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
+                  <div class="single-stat" data-aos="fade-down" data-aos-duration="1000">
+                     <img src="{{ url_for('static', filename='images/cxq0OgALCgYjCCcoI6f2.png') }}" alt=""/>
+                     <h3 class="count">10</h3>
+                     <h4>Total Packages</h4>
+                  </div>
+               </div>
+               <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
+                  <div class="single-stat" data-aos="fade-down" data-aos-duration="1000">
+                     <img src="{{ url_for('static', filename='images/4IbFwZ2PZa8nLudMHzSt.png') }}" alt=""/>
+                     <h3 class="count">501149</h3>
+                     <h4>Total Videos</h4>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+
+      <script>
+          $(function (){
+              $('.go-to-package').click(function (){
+                  $('html, body').animate({
+                    scrollTop: $('#packages').offset().top
+                  }, 1000);
+              })
+          })
+      </script>
+   </body>
+
+{% endblock %}
+
+</html>

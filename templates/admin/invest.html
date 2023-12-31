@@ -1,0 +1,309 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+    <title>Investments - We Digital</title>
+{% endblock %}
+
+{% block search_block %}
+
+    <div class="position-relative search-bar-box">
+        <input id="order_search" type="text" class="form-control" placeholder="Type to search...">
+        <span class="position-absolute top-50 search-show translate-middle-y">
+            <button class="btn btn-primary search_btn">Search</button>
+        </span>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div class="page-wrapper">
+			<div class="page-content">
+
+				<!--end row-->
+
+				<div class="card radius-10">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div>
+								<h5 class="mb-0">Investment History</h5>
+							</div>
+
+							<div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
+							</div>
+						</div>
+						<hr/>
+						<div class="table-responsive">
+							<table class="table align-middle mb-0">
+								<thead class="table-light">
+									<tr>
+									            <th>S/N</th>
+										        <th>Username</th>
+												<th>Amount</th>
+												<th>Duration (mo)</th>
+												<th>Plan</th>
+												<th>Start</th>
+												<th>End</th>
+												<th>Status</th>
+												<th>Details</th>
+												<th>Action</th>
+									</tr>
+								</thead>
+								<tbody id="investment_history" style="padding-bottom: 4em !important">
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--end page wrapper -->
+
+
+
+        <div  id="InvestModal2" tabindex="-1" class="modal fade" aria-hidden="true" style="display: none;">
+			        <div  class="modal-dialog modal-lg">
+			            <div  class="modal-content bg-warning">
+			                <div  class="modal-header">
+			                    <h5  class="mb-0 text-light">Investment Details</h5>
+			                    <button  type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+			                 </div>
+			                 <div  class="modal-body">
+
+
+            			    <div  class="card border-top border-0 border-4 border-primary">
+                           <div  class="card-body p-5">
+
+                              <form  class="row g-3">
+                                  <div  class="col-md-6">
+                                     <label  for="inputFirstName" class="form-label">Username</label>
+                                     <input  readonly class="form-control details_username" data-key="username" data-id="">
+                                 </div>
+
+
+                                 <div  class="col-md-6">
+                                     <label  for="inputFirstName" class="form-label">Amount</label>
+                                     <input  type="number" class="form-control details_invest_amt edit_profile" data-key="amt" data-id="" data-table="investments"  data-table2="invest_history">
+                                 </div>
+
+
+
+                                 <div  class="col-md-6">
+                                     <label  for="inputLastName" class="form-label">Investment Start</label>
+                                     <input  type='datetime-local' class='form-control details_invest_time date' data-key="time" data-id="" data-table="investments"  data-table2="invest_history">
+                                 </div>
+
+
+                                 <div  class="col-md-6">
+                                     <label  for="inputLastName" class="form-label">Investment End</label>
+                                     <input  readonly type='text' class='form-control' value="AUTO CALCULATED PER PLAN">
+                                 </div>
+
+
+                                </form>
+
+                           </div>
+                        </div>
+
+
+			    </div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+   <script>
+	    $(function(){
+
+            var overlay= $("#overlay");
+        var loader= $("#loader");
+
+        function loadOn(){
+            overlay.css('display', 'block');
+            loader.css('display', 'block');
+        }
+        function loadOff(){
+            overlay.css('display', 'none');
+            loader.css('display', 'none');
+        }
+
+        function notify(status, message){
+            toastr[status](message)
+        }
+
+
+	        $.post('{{ url_for('admin_get_invest_history') }}', {
+        	    key: '*'
+        	 }, function(data, status){
+        	     $("#investment_history").html(data);
+        	 })
+
+
+
+
+	        $("#order_search").keyup(function(){
+	            var key= $(this).val().toLowerCase();
+	            if(key !== ""){
+	                $('.invest_trs').each(function (){
+                        const name = $(this).data('username').toLowerCase()
+                        if(name.startsWith(key)){
+                            $(this).show();
+                         }else{
+                            $(this).hide();
+                         }
+                    })
+	            }else{
+                    $('.invest_trs').show()
+                }
+	        })
+
+
+
+            $("body").on('blur', '.edit_profile', function(){
+	            var id= $(this).data('id');
+	            var key= $(this).data('key');
+	            var table= $(this).data('table');
+	            var username= $(".details_username").val();
+	            var table2= $(this).data('table2');
+	            var value= $(this).val();
+
+	            $.post('{{ url_for('admin_save_actions') }}', {
+	                save_actions: "set",
+	                id: id,
+	                table: table,
+	                value: value,
+	                key: key,
+	                username: username
+	            }, function(data, status){
+	                if(data.err === 1){
+	                    notify('warning', data.msg)
+	                }else if(data.err === 2){
+	                    notify('error', data.msg)
+	                }else{
+	                    if (data.msg !== ""){
+                            notify('success', data.msg)
+                        }
+	                }
+
+	                if(table2 === "invest_history" && data.err === 0){
+    	                $.post('{{ url_for('admin_get_invest_history') }}', {
+            	            username: username
+            	        }, function(data, status){
+            	            loadOff();
+            	            $("#investment_history").html(data);
+            	        })
+    	            }
+
+	            }, "JSON")
+	        })
+
+
+	        $("body").on('change', '.date', function(){
+	            var id= $(this).data('id');
+	            var key= $(this).data('key');
+	            var value= $(this).val();
+	            var table= $(this).data('table');
+	            var table2= $(this).data('table2');
+	            var username= $(".details_username").val();
+	            {#loadOn();#}
+	            $.post('{{ url_for('admin_save_actions') }}', {
+	                save_actions: "set",
+	                id: id,
+	                table: table,
+	                value: value,
+	                key: key,
+                    username: username
+	            }, function(data, status){
+	                if(data.err === 1){
+	                    notify('warning', data.msg)
+	                }else if(data.err === 2){
+	                    notify('error', data.msg)
+	                }else{
+	                    if (data.msg !== ""){
+                            notify('success', data.msg)
+                        }
+	                }
+	                //loadOn();
+	                if(table2 === "invest_history"){
+    	                $.post('{{ url_for('admin_get_invest_history') }}', {
+            	            get_invest_history2: "set",
+            	            username: username
+            	        }, function(data, status){
+            	            //loadOff();
+            	            $("#investment_history").html(data);
+            	        })
+    	            }
+
+	            }, "JSON")
+	        })
+
+
+
+
+
+            // INVESTMENT BLOCK
+
+	       $('body').on('click', '.invest_trs', function(){
+                var row= $(this);
+                var username= row.data('username');
+                var amt= row.data('amt');
+                var time= row.data('date');
+                var id= row.data('id');
+
+                $(".details_invest_amt").val(amt);
+                $(".details_username").val(username);
+                $(".details_invest_time").val(time);
+
+                $(".details_invest_time").data('id', id)
+                $(".details_invest_amt").data('id', id)
+
+            })
+
+
+	       $("body").on('click', '.invest_actions', function(){
+	            var id= $(this).data('id');
+	            var action= $(this).data('action');
+	            var username= $(".details_username").val();
+	            loadOn();
+	            $.post('{{ url_for('admin_get_invest_actions') }}', {
+	                id: id,
+	                action: action
+	            }, function(data, status){
+                    loadOff()
+	                if(data.err === 1){
+	                    toastr['warning'](data.msg)
+	                }else if(data.err === 2){
+	                    toastr['error'](data.msg)
+	                }else{
+	                    toastr['success'](data.msg)
+	                }
+	                $.post('{{ url_for('admin_get_invest_history') }}', {
+                	    username: username
+                	 }, function(data, status){
+                	     $("#investment_history").html(data);
+                	 })
+
+	            }, "JSON")
+	        })
+
+
+
+
+
+
+            $('body').on('mouseover', '.invest_trs', function(){
+	            $(this).css({'background':'#E2EDFF', 'color':'#267DFD', 'cursor':'pointer'})
+	        })
+	        $('body').on('mouseout', '.invest_trs', function(){
+	            $(this).css({'background':'white', 'color':'black', 'cursor':'pointer'})
+	        })
+
+
+	    })
+	</script>
+
+{% endblock %}
