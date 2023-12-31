@@ -38,9 +38,9 @@ SITE_NAME = "METSOWATCH"
 SITE_DOMAIN = "192.168.210.231:5000"
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "gfdcvbkjiuhygtfdcgvhjk541564bvgcvbjhg"
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com/metsowatch'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com/metsowatch'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi'}
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = {'jpg', 'png', 'jpeg'}
 app.config['IMAGE_UPLOAD_FOLDER'] = 'static/uploads/images'
@@ -1499,12 +1499,11 @@ def grab_save_yt_video(url, category, yt_id):
         yt = YouTube(url)
         filtered_streams = yt.streams.filter(res='720p', file_extension='mp4')
         video_stream = filtered_streams.first()
-        title = yt.title
-        description = yt.description
-        duration = yt.length
-        size_mb = video_stream.filesize_mb
-        image_url = yt.thumbnail_url
-        if size_mb <= 150:
+        if video_stream:
+            title = yt.title
+            description = yt.description
+            duration = yt.length
+            image_url = yt.thumbnail_url
             video_id = str(uuid.uuid4())
             video_stream.download(app.config['VIDEO_UPLOAD_FOLDER'], filename=f'{video_id}.mp4')
             new_video_name = f'{video_id}.mp4'
@@ -1520,13 +1519,13 @@ def grab_save_yt_video(url, category, yt_id):
                 duration = 60
             new_video = Video(video_id=video_id, category=category, title=title,
                               description=description, length=duration,
-                              time=get_timestamp(), status=1, image_name=new_cover_name,
+                              time='1704063600', status=1, image_name=new_cover_name,
                               video_name=new_video_name, yt_id=yt_id)
             db.session.add(new_video)
             db.session.commit()
             return {'status': 'success', 'message': 'Success'}
         else:
-            return {'status': 'error', 'message': 'Video size is over 150 MB'}
+            return {'status': 'error', 'message': 'Success'}
     except RegexMatchError:
         return {'status': 'error', 'message': 'Invalid YouTube link format'}
     except VideoUnavailable:
