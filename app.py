@@ -42,8 +42,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUD
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi'}
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = {'jpg', 'png', 'jpeg'}
-app.config['IMAGE_UPLOAD_FOLDER'] = 'static/uploads/images'
-app.config['VIDEO_UPLOAD_FOLDER'] = 'static/uploads/videos'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['IMAGE_UPLOAD_FOLDER'] = f'{app.config["UPLOAD_FOLDER"]}/images'
+app.config['VIDEO_UPLOAD_FOLDER'] = f'{app.config["UPLOAD_FOLDER"]}/videos'
 
 db.init_app(app)
 login_manager = LoginManager(app)
@@ -2501,11 +2502,12 @@ def daily_update():
 @csrf.exempt
 @app.route('/execute', methods=['POST'])
 def execute():
-    videos = Video.query.all()
-    for video in videos:
-        video.creator = 1
-    db.session.commit()
-    return jsonify({'status': 'success'})
+    # videos = Video.query.all()
+    # for video in videos:
+    #     video.creator = 1
+    # db.session.commit()
+    message = f"Current Working Directory: {os.path.join(os.getcwd(), app.static_folder, 'uploads')}"
+    return jsonify({'status': 'success', 'message': message})
 
 
 if __name__ == '__main__':
