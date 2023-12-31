@@ -16,13 +16,13 @@ import requests
 
 import pyotp
 import qrcode
+import youtube_dl
 from flask import Flask, render_template, session, redirect, url_for, request, jsonify, flash, abort, send_from_directory, make_response
 from flask_wtf.csrf import CSRFProtect
 import datetime as dt
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from sqlalchemy import func
-from sqlalchemy.testing.pickleable import User
 
 from db_models import db, Member, Session, ProgramHistory, Downline, Address, Notification, PayoutAccount, Video, VideoWatched, AdminMember, Task, Visit
 from flask_limiter import Limiter
@@ -1499,10 +1499,11 @@ def grab_save_yt_video(url, category, yt_id):
         yt = YouTube(url)
         filtered_streams = yt.streams.filter(res='720p', file_extension='mp4')
         video_stream = filtered_streams.first()
-        if video_stream:
+        duration = yt.length
+        if video_stream and duration <= 60:
             title = yt.title
             description = yt.description
-            duration = yt.length
+
             image_url = yt.thumbnail_url
             video_id = str(uuid.uuid4())
             video_stream.download(app.config['VIDEO_UPLOAD_FOLDER'], filename=f'{video_id}.mp4')
@@ -1515,12 +1516,10 @@ def grab_save_yt_video(url, category, yt_id):
             with open(cover_file, 'wb') as file:
                 file.write(cover.content)
 
-            if duration < 60:
-                duration = 60
             new_video = Video(video_id=video_id, category=category, title=title,
                               description=description, length=duration,
                               time='1704063600', status=1, image_name=new_cover_name,
-                              video_name=new_video_name, yt_id=yt_id)
+                              video_name=new_video_name, yt_id=yt_id, creator=current_user.id)
             db.session.add(new_video)
             db.session.commit()
             return {'status': 'success', 'message': 'Success'}
@@ -2492,6 +2491,16 @@ def daily_update():
         watch = PLANS[member.level]['videos']
         member.today_watch = watch
         member.video_views = []
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+
+@csrf.exempt
+@app.route('/execute', methods=['POST'])
+def execute():
+    videos = Video.query.all()
+    for video in videos:
+        video.creator = 1
     db.session.commit()
     return jsonify({'status': 'success'})
 
