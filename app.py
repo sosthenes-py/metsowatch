@@ -31,7 +31,6 @@ from forms import LoginForm, RegisterForm, AddWithdrawAccountForm, WithdrawForm,
 import api
 from moviepy.editor import VideoFileClip
 from pytube import YouTube
-from pytube.request import Request
 from pytube.exceptions import RegexMatchError, VideoUnavailable, PytubeError
 
 
@@ -39,9 +38,9 @@ SITE_NAME = "METSOWATCH"
 SITE_DOMAIN = "192.168.210.231:5000"
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "gfdcvbkjiuhygtfdcgvhjk541564bvgcvbjhg"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com/metsowatch'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com/metsowatch'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi'}
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = {'jpg', 'png', 'jpeg'}
 app.config['IMAGE_UPLOAD_FOLDER'] = 'static/uploads/images'
@@ -1495,15 +1494,9 @@ def user_create():
 
 
 def grab_save_yt_video(url, category, yt_id):
-    # Set a user agent
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
-
-    # Create a request object with the custom headers
-    request_ = Request(url, headers=headers)
 
     try:
-        yt = YouTube(url, request_)
+        yt = YouTube(url)
         filtered_streams = yt.streams.filter(res='720p', file_extension='mp4')
         video_stream = filtered_streams.first()
         title = yt.title
