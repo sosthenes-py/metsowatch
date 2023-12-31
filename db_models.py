@@ -131,7 +131,7 @@ class Video(db.Model):
 class VideoWatched(db.Model):
     __tablename__ = "videos_watched"
     id = db.Column(db.Integer, primary_key=True)
-    video_id = db.Column(db.String(250), db.ForeignKey('videos.video_id', name="video_video_watched_fk"), nullable=False)
+    vid_id = db.Column(db.String(250), db.ForeignKey('videos.video_id', name="video_video_watched_fk"), nullable=False)
     member_id = db.Column(db.String(250), db.ForeignKey('members.id', name="member_video_watched_fk"), nullable=False)
     time = db.Column(db.String(250), nullable=False)
 

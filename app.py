@@ -38,7 +38,8 @@ SITE_NAME = "METSOWATCH"
 SITE_DOMAIN = "192.168.210.231:5000"
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "gfdcvbkjiuhygtfdcgvhjk541564bvgcvbjhg"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a/metsowatch'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a/metsowatch'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
 app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi'}
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = {'jpg', 'png', 'jpeg'}
 app.config['IMAGE_UPLOAD_FOLDER'] = 'static/uploads/images'
@@ -1103,7 +1104,7 @@ def user_videos():
                 return jsonify(
                     {'status': 'error', 'message': 'This video has been deleted by the author'})
 
-            if video_result.video_id in [vv.video_id for vv in current_user.video_views]:
+            if video_result.video_id in [vv.vid_id for vv in current_user.video_views]:
                 return jsonify({'status': 'error', 'message': 'You already earned on this video today. Come back tomorrow'})
 
             if current_user.level == 0:
@@ -1128,7 +1129,7 @@ def user_videos():
             current_user.today_watch -= 1
 
             # ADD VIDEO VIEW
-            new_video_view = VideoWatched(member_id=current_user.id, video_id=video_id, time=get_timestamp())
+            new_video_view = VideoWatched(member_id=current_user.id, vid_id=video_id, time=get_timestamp())
             db.session.add(new_video_view)
 
             # INCREMENT VIDEO COUNT
