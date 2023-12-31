@@ -9,7 +9,9 @@ from googleapiclient.discovery import build
 from isodate import parse_duration
 import datetime as dt
 
-
+# WESTWALLET_PUBLIC_KEY = 'GEjTaBvmhquSJajg_EJu0tTM_LCoHuzx7hnJR5B5'
+# WESTWALLET_PRIVATE_KEY = 'gnnrHyy7gri2an4lAJ3h7a6dyjDqzNLLZp2rRGRVGXWcj_KuMnayOQ'
+# GOOGLE_API_KEY = 'AIzaSyC2UYEdKp5G-0NU25YRSewC2pvJuXzX7nQ'
 WESTWALLET_PUBLIC_KEY = os.environ['WESTWALLET_PUBLIC_KEY']
 WESTWALLET_PRIVATE_KEY = os.environ['WESTWALLET_PRIVATE_KEY']
 GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
@@ -271,7 +273,7 @@ def search_videos(search_term, page_token='', ads="any"):
     if page_token == "":
         response = youtube.search().list(
             part="snippet",
-            maxResults=25,
+            maxResults=100,
             q=search_term,
             type="video",
             videoDuration="short",
@@ -282,7 +284,7 @@ def search_videos(search_term, page_token='', ads="any"):
     else:
         response = youtube.search().list(
             part="snippet",
-            maxResults=25,
+            maxResults=100,
             q=search_term,
             type="video",
             videoDuration="short",

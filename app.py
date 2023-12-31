@@ -16,7 +16,6 @@ import requests
 
 import pyotp
 import qrcode
-import youtube_dl
 from flask import Flask, render_template, session, redirect, url_for, request, jsonify, flash, abort, send_from_directory, make_response
 from flask_wtf.csrf import CSRFProtect
 import datetime as dt
@@ -1500,7 +1499,7 @@ def grab_save_yt_video(url, category, yt_id):
         filtered_streams = yt.streams.filter(res='720p', file_extension='mp4')
         video_stream = filtered_streams.first()
         duration = yt.length
-        if video_stream and duration <= 60:
+        if video_stream and duration <= 130:
             title = yt.title
             description = yt.description
 
