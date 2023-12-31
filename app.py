@@ -480,6 +480,8 @@ def login():
         if result:
             if check_password_hash(result.password, password):
                 if not result.suspend:
+                    if session.get('role') == 'admin' and current_user.is_authenticated:
+                        logout_user()
                     session['role'] = 'user'
                     login_user(result)
                     session_id = str(uuid.uuid4())
@@ -1686,6 +1688,8 @@ def admin_login():
         result = db.session.query(AdminMember).filter(AdminMember.email == form.email.data).first()
         if result is not None:
             if check_password_hash(result.password, form.password.data):
+                if session.get('role') == 'user' and current_user.is_authenticated:
+                    logout_user()
                 session['role'] = 'admin'
                 login_user(result)
                 time = int(dt.datetime.now().timestamp())
