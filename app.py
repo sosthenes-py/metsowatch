@@ -1518,7 +1518,7 @@ def grab_save_yt_video(url, category, yt_id):
             if duration < 60:
                 duration = 60
             new_video = Video(video_id=video_id, category=category, title=title,
-                              description=description, creator=current_user.id, length=duration,
+                              description=description, length=duration,
                               time=get_timestamp(), status=1, image_name=new_cover_name,
                               video_name=new_video_name, yt_id=yt_id)
             db.session.add(new_video)
