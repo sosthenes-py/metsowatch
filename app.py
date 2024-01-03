@@ -31,6 +31,8 @@ import api
 from moviepy.editor import VideoFileClip
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError, VideoUnavailable, PytubeError
+from io import BytesIO
+from PIL import Image
 
 
 SITE_NAME = "METSOWATCH"
@@ -40,9 +42,10 @@ app.config['SECRET_KEY'] = "gfdcvbkjiuhygtfdcgvhjk541564bvgcvbjhg"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com/metsowatch'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
-app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi'}
+app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi', 'mov'}
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = {'jpg', 'png', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['TEMP_FOLDER'] = f'{app.config["UPLOAD_FOLDER"]}/temp'
 app.config['IMAGE_UPLOAD_FOLDER'] = f'{app.config["UPLOAD_FOLDER"]}/images'
 app.config['VIDEO_UPLOAD_FOLDER'] = f'{app.config["UPLOAD_FOLDER"]}/videos'
 
@@ -376,9 +379,12 @@ def allowed_file(filename, type_):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_IMAGE_EXTENSIONS']
 
 
-@app.route('/static/<path:filename>')
-def static_file(filename):
-    return send_from_directory('static', filename, cache_timeout=86400*30)
+@app.route('/static/uploads/<path:filename>')
+def uploaded_files(filename):
+    # Assuming the files are publicly accessible in your DigitalOcean Space
+    space_url = 'https://metsowatch.fra1.cdn.digitaloceanspaces.com/metso/'
+    full_url = space_url + filename
+    return redirect(full_url)
 
 
 @login_manager.user_loader
@@ -1465,30 +1471,53 @@ def user_create():
                             if cover_size <= 3 * 1024 * 1024:
                                 # Processing logic here
                                 video_id = str(uuid.uuid4())
-                                new_video_name = f'{video_id}.{video.filename.rsplit(".", 1)[1]}'
-                                new_cover_name = f'{video_id}.{cover.filename.rsplit(".", 1)[1]}'
-                                video.save(os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], new_video_name))
-                                cover.save(os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], new_cover_name))
+                                video_extension = video.filename.rsplit(".", 1)[1]
+                                cover_extension = cover.filename.rsplit(".", 1)[1]
+
+                                new_video_name = f'{video_id}.{video_extension}'
+                                new_cover_name = f'{video_id}.{cover_extension}'
+
+                                # Save the files to a temporary directory
+                                temp_video_path = os.path.join(app.config['TEMP_FOLDER'], new_video_name)
+                                temp_cover_path = os.path.join(app.config['TEMP_FOLDER'], new_cover_name)
+
+                                video.save(temp_video_path)
+                                cover.save(temp_cover_path)
+
+                                # Upload video to DigitalOcean Spaces
+                                api.upload_to_space('videos', open(temp_video_path, 'rb'), new_video_name)
+
+                                # Upload cover image to DigitalOcean Spaces
+                                api.upload_to_space('images', open(temp_cover_path, 'rb'), new_cover_name)
 
                                 # Get the duration of the video using moviepy
-                                clip = VideoFileClip(os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], new_video_name))
-                                duration = clip.duration if clip.duration >= 60 else 60
-                                new_video = Video(video_id=video_id, category=category, title=title, description=description, creator=current_user.id, length=duration, time=get_timestamp(), status=0, image_name=new_cover_name, video_name=new_video_name)
+                                clip = VideoFileClip(temp_video_path)
+                                duration = clip.duration
+                                clip.close()
+
+                                new_video = Video(video_id=video_id, category=category, title=title,
+                                                  description=description,
+                                                  creator=current_user.id, length=duration, time=get_timestamp(),
+                                                  status=0,
+                                                  image_name=new_cover_name, video_name=new_video_name)
                                 db.session.add(new_video)
                                 db.session.commit()
+
+                                # Clean up temporary files
+                                os.remove(temp_video_path)
+                                os.remove(temp_cover_path)
+
                                 return jsonify({'status': 'success', 'message': 'Success', 'type': 'create'})
                             else:
                                 return jsonify({'status': 'error', 'message': 'Max cover image size is 3 MB'})
                         else:
                             return jsonify({'status': 'error', 'message': 'Max video file size is 150 MB'})
                     else:
-                        return jsonify(
-                            {'status': 'error', 'message': 'Only .MP4, .MKV, and .AVI video files are allowed'})
+                        return jsonify({'status': 'error', 'message': 'Invalid video file format or missing files'})
                 else:
                     return jsonify({'status': 'error', 'message': 'Only .JPG, .JPEG, and .PNG image files are allowed'})
             else:
-                return jsonify({'status': 'error', 'message': 'Both video and cover image are required'})
-
+                return jsonify({'status': 'error', 'message': 'Only .MP4, .MKV, and .AVI video files are allowed'})
         return jsonify(
             {'status': 'error', 'message': form.title.errors or form.description.errors or form.category.errors})
 
@@ -1496,7 +1525,6 @@ def user_create():
 
 
 def grab_save_yt_video(url, category, yt_id):
-
     try:
         yt = YouTube(url)
         filtered_streams = yt.streams.filter(res='720p', file_extension='mp4')
@@ -1506,22 +1534,36 @@ def grab_save_yt_video(url, category, yt_id):
             title = yt.title
             description = yt.description
 
-            image_url = yt.thumbnail_url
             video_id = str(uuid.uuid4())
-            video_stream.download(app.config['VIDEO_UPLOAD_FOLDER'], filename=f'{video_id}.mp4')
-            new_video_name = f'{video_id}.mp4'
 
-            cover = requests.get(image_url)
-            cover_ext = image_url.rsplit('.', 1)[1].split('?')[0]
-            new_cover_name = f'{video_id}.{cover_ext}'
-            cover_file = os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], f'{video_id}.{cover_ext}')
-            with open(cover_file, 'wb') as file:
-                file.write(cover.content)
+            # Download video stream to a temporary file
+            video_temp_filename = f'{video_id}.temp.mp4'
+            video_stream.download(output_path=app.config['TEMP_FOLDER'], filename=video_temp_filename)
+            video_temp_path = os.path.join(app.config['TEMP_FOLDER'], video_temp_filename)
+            with open(video_temp_path, 'rb') as video_temp_file:
+                video_stream_content = BytesIO(video_temp_file.read())
+
+            # Download image
+            image_url = yt.thumbnail_url
+            image_content = requests.get(image_url).content
+            image = Image.open(BytesIO(image_content))
+            image_format = image.format.lower()
+
+            # Upload video stream to DigitalOcean Spaces
+            video_stream_name = f'{video_id}.mp4'
+            api.upload_to_space('videos', video_stream_content, video_stream_name)
+
+            # Upload image to DigitalOcean Spaces
+            image_name = f'{video_id}.{image_format}'
+            api.upload_to_space('images', BytesIO(image_content), image_name)
+
+            # REMOVE TEMP VIDEO FILE
+            os.remove(video_temp_path)
 
             new_video = Video(video_id=video_id, category=category, title=title,
                               description=description, length=duration,
-                              time='1704063600', status=1, image_name=new_cover_name,
-                              video_name=new_video_name, yt_id=yt_id, creator=current_user.id)
+                              time='1704063600', status=1, image_name=image_name,
+                              video_name=video_stream_name, yt_id=yt_id, creator=current_user.id)
             db.session.add(new_video)
             db.session.commit()
             return {'status': 'success', 'message': 'Success'}

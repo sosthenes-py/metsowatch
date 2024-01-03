@@ -8,13 +8,19 @@ import random
 from googleapiclient.discovery import build
 from isodate import parse_duration
 import datetime as dt
+import boto3
+from botocore.exceptions import NoCredentialsError
 
-# WESTWALLET_PUBLIC_KEY = 'GEjTaBvmhquSJajg_EJu0tTM_LCoHuzx7hnJR5B5'
-# WESTWALLET_PRIVATE_KEY = 'gnnrHyy7gri2an4lAJ3h7a6dyjDqzNLLZp2rRGRVGXWcj_KuMnayOQ'
-# GOOGLE_API_KEY = 'AIzaSyC2UYEdKp5G-0NU25YRSewC2pvJuXzX7nQ'
-WESTWALLET_PUBLIC_KEY = os.environ['WESTWALLET_PUBLIC_KEY']
-WESTWALLET_PRIVATE_KEY = os.environ['WESTWALLET_PRIVATE_KEY']
-GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
+WESTWALLET_PUBLIC_KEY = 'GEjTaBvmhquSJajg_EJu0tTM_LCoHuzx7hnJR5B5'
+WESTWALLET_PRIVATE_KEY = 'gnnrHyy7gri2an4lAJ3h7a6dyjDqzNLLZp2rRGRVGXWcj_KuMnayOQ'
+GOOGLE_API_KEY = 'AIzaSyC2UYEdKp5G-0NU25YRSewC2pvJuXzX7nQ'
+# WESTWALLET_PUBLIC_KEY = os.environ['WESTWALLET_PUBLIC_KEY']
+# WESTWALLET_PRIVATE_KEY = os.environ['WESTWALLET_PRIVATE_KEY']
+# GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
+SPACE_ACCESS_KEY = 'DO00KRM36BX88RHRK7ZD'
+SPACE_SECRET_KEY = 'JHlgNfaTJnT5rrKUR9cyiSXhFOT4KvJvBB0v8JYWFnA'
+SPACE_NAME = 'metso'
+
 
 ALPHABETS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
@@ -168,6 +174,28 @@ def get_all_tickers():
         our_dict[res['symbol'][:-4].lower()] = res['price']
     our_dict['usdttrc'] = 1
     return our_dict
+
+
+def upload_to_space(file_type, file_content, file_name, space_name=SPACE_NAME, aws_access_key_id=SPACE_ACCESS_KEY, aws_secret_access_key=SPACE_SECRET_KEY):
+    try:
+        # Create an S3 client
+        s3 = boto3.client('s3', endpoint_url='https://metsowatch.fra1.digitaloceanspaces.com',
+                          aws_access_key_id=aws_access_key_id,
+                          aws_secret_access_key=aws_secret_access_key)
+
+        object_key = f'{file_type}/{file_name}' if file_type else file_name
+        # Upload the file
+        s3.upload_fileobj(file_content, space_name, object_key, ExtraArgs={'ACL': 'public-read'})
+
+        print(f"File {file_name} uploaded to {space_name} successfully.")
+        return True
+
+    except NoCredentialsError:
+        print("Credentials not available.")
+        return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
 
 
 youtube = build('youtube', 'v3', developerKey=GOOGLE_API_KEY)
