@@ -1429,16 +1429,11 @@ def user_creator():
         video_id = request.form['video_id']
         result = Video.query.filter_by(video_id=video_id).first()
         if result:
-            video_path = os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], result.video_name)
-            image_path = os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], result.image_name)
-            try:
-                os.remove(video_path)
-                os.remove(image_path)
+            if api.delete_from_space('images', result.image_name) and api.delete_from_space('videos', result.video_name):
                 db.session.delete(result)
                 db.session.commit()
                 return jsonify({'status': 'success', 'message': 'Content deleted successfully'})
-            except OSError:
-                return jsonify({'status': 'error', 'message': f'Error deleting content'})
+            return jsonify({'status': 'error', 'message': f'Error deleting content'})
         return jsonify({'status': 'error', 'message': 'Content does not exist'})
 
 
@@ -2336,14 +2331,9 @@ def admin_videos():
                 elif request.form['action'] == "pend":
                     video.status = 0
                 elif request.form['action'] == "erase":
-                    video_path = os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], video.video_name)
-                    image_path = os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], video.image_name)
-                    try:
-                        os.remove(image_path)
-                        os.remove(video_path)
+                    if api.delete_from_space('images', video.image_name) and api.delete_from_space('videos', video.video_name):
                         db.session.delete(video)
-                        db.session.commit()
-                    except OSError:
+                    else:
                         return jsonify({'status': 'error', 'message': f'Error deleting content'})
                 db.session.commit()
             return jsonify({'status': 'success', 'message': 'Action success'})

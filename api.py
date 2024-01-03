@@ -198,6 +198,29 @@ def upload_to_space(file_type, file_content, file_name, space_name=SPACE_NAME, a
         return False
 
 
+def delete_from_space(file_type, file_name, space_name=SPACE_NAME, aws_access_key_id=SPACE_ACCESS_KEY, aws_secret_access_key=SPACE_SECRET_KEY):
+    try:
+        # Create an S3 client
+        s3 = boto3.client('s3', endpoint_url='https://metsowatch.fra1.digitaloceanspaces.com',
+                          aws_access_key_id=aws_access_key_id,
+                          aws_secret_access_key=aws_secret_access_key)
+
+        object_key = f'{file_type}/{file_name}' if file_type else file_name
+
+        # Delete the file from the space
+        s3.delete_object(Bucket=space_name, Key=object_key)
+
+        print(f"File {file_name} deleted from {space_name} successfully.")
+        return True
+
+    except NoCredentialsError:
+        print("Credentials not available.")
+        return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+
 youtube = build('youtube', 'v3', developerKey=GOOGLE_API_KEY)
 
 
@@ -305,8 +328,8 @@ def search_videos(search_term, page_token='', ads="any"):
             q=search_term,
             type="video",
             videoPaidProductPlacement=ads,
-            videoSyndicated="true",
-            safeSearch="moderate"
+            videoSyndicated="any",
+            safeSearch="none"
         ).execute()
     else:
         response = youtube.search().list(
@@ -315,8 +338,8 @@ def search_videos(search_term, page_token='', ads="any"):
             q=search_term,
             type="video",
             videoPaidProductPlacement=ads,
-            videoSyndicated="true",
-            safeSearch="moderate",
+            videoSyndicated="any",
+            safeSearch="none",
             pageToken=page_token
         ).execute()
 
