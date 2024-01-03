@@ -1530,7 +1530,7 @@ def grab_save_yt_video(url, category, yt_id):
         filtered_streams = yt.streams.filter(res='720p', file_extension='mp4')
         video_stream = filtered_streams.first()
         duration = yt.length
-        if video_stream and duration <= 130:
+        if video_stream and duration <= 250:
             title = yt.title
             description = yt.description
 
