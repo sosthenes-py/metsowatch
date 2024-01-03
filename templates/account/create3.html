@@ -47,15 +47,15 @@
                                                 <label for="category" class="form-label">Video Category</label>
                                                 <div class="input-group">
                                                     <select id="category" name="category" class="site-nice-select">
-                                                        <option {% if video and not video.category %}selected{% endif %} value="">None</option>
-                                                        <option {% if video and video.category == "music" %}selected{% endif %} value="music">Music</option>
-                                                        <option {% if video and video.category == "sports" %}selected{% endif %} value="sports">Sports</option>
-                                                        <option {% if video and video.category == "comedy" %}selected{% endif %} value="comedy">Comedy</option>
-                                                        <option {% if video and video.category == "gaming" %}selected{% endif %} value="gaming">Gaming</option>
-                                                        <option {% if video and video.category == "lifestyle" %}selected{% endif %} value="lifestyle">Lifestyle</option>
-                                                        <option {% if video and video.category == "science and tech" %}selected{% endif %} value="science and tech">Science & Tech</option>
-                                                        <option {% if video and video.category == "politics" %}selected{% endif %} value="politics">Politics</option>
-                                                        <option {% if video and video.category == "fashion" %}selected{% endif %} value="fashion">Fashion</option>
+                                                        <option value="">None</option>
+                                                        <option value="music|song|rap battle|rap|top hits|hip hop music|indie music|classic rock">Music</option>
+                                                        <option value="sports|athlete interviews|sports documentary|football highlights|best sport moments">Sports</option>
+                                                        <option value="comedy|laugh challenge|funny sketches|funny cat videos|standup comedy|funny moments">Comedy</option>
+                                                        <option value="gaming|game reviews|lets play|gaming challenges|gaming tutorials">Gaming</option>
+                                                        <option value="lifestyle|daily vlogs|travel vlogs|diy projects|fitness routines|product reviews">Lifestyle</option>
+                                                        <option value="science and tech|coding tutorials|tech reviews|gadgets unboxing|space exploration|innovations in tech">Science & Tech</option>
+                                                        <option value="politics|world affairs|political satire|election coverage|political debates|government policies">Politics</option>
+                                                        <option value="fashion|fashion haul|">Fashion</option>
                                                     </select>
                                                 </div>
                                             </div>

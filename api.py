@@ -329,7 +329,7 @@ def search_videos(search_term, page_token='', ads="any"):
             type="video",
             videoPaidProductPlacement=ads,
             videoSyndicated="any",
-            safeSearch="none"
+            safeSearch="moderate"
         ).execute()
     else:
         response = youtube.search().list(
@@ -339,7 +339,7 @@ def search_videos(search_term, page_token='', ads="any"):
             type="video",
             videoPaidProductPlacement=ads,
             videoSyndicated="any",
-            safeSearch="none",
+            safeSearch="moderate",
             pageToken=page_token
         ).execute()
 
