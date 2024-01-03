@@ -304,10 +304,9 @@ def search_videos(search_term, page_token='', ads="any"):
             maxResults=100,
             q=search_term,
             type="video",
-            videoDuration="short",
             videoPaidProductPlacement=ads,
             videoSyndicated="true",
-            safeSearch="strict"
+            safeSearch="moderate"
         ).execute()
     else:
         response = youtube.search().list(
@@ -315,10 +314,9 @@ def search_videos(search_term, page_token='', ads="any"):
             maxResults=100,
             q=search_term,
             type="video",
-            videoDuration="short",
             videoPaidProductPlacement=ads,
             videoSyndicated="true",
-            safeSearch="strict",
+            safeSearch="moderate",
             pageToken=page_token
         ).execute()
 
