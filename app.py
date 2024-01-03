@@ -1091,14 +1091,16 @@ def user_videos():
         if action == "search":
             search_term = request.form.get('search_term')
             data = Video.query.filter(
-                (Video.title.like(f'%{search_term}%') & Video.status == 1) |
-                (Video.description.like(f'%{search_term}%') & Video.status == 1) |
-                (Video.video_id.like(f'{search_term}') & Video.status == 1)
+                db.or_(
+                    db.and_(Video.title.like(f'%{search_term}%'), Video.status == 1),
+                    db.and_(Video.description.like(f'%{search_term}%'), Video.status == 1),
+                    db.and_(Video.video_id.like(f'{search_term}'), Video.status == 1)
+                )
             ).order_by(func.random()).paginate(page=page_token, per_page=25, error_out=False)
         elif action == "cat":
             category = request.form.get('category', '')
             if category == "":
-                data = Video.query.filter_by(status=1).order_by(func.random()).all()
+                data = Video.query.filter_by(status=1).order_by(func.random()).paginate(page=page_token, per_page=25)
             else:
                 data = Video.query.filter_by(category=category, status=1).order_by(func.random()).paginate(page=page_token, per_page=25)
         elif action == "reward":
