@@ -320,7 +320,7 @@ def get_video_stats(video_list: list):
     return response_list
 
 
-def search_videos(search_term, page_token='', ads="any", count=25):
+def search_videos(search_term, page_token='CMgBEAA', ads="any", count=25):
     """
     :param search_term: string
     :param ads: 'true' or (default: 'any')
@@ -364,7 +364,8 @@ def search_videos(search_term, page_token='', ads="any", count=25):
             page_token = response['nextPageToken']
         except KeyError:
             id_list.append('')
+    return id_list
     return get_video_stats(id_list)
 
 
-# print(len(search_videos('music', count=200)))
+# print(search_videos('music', count=50))
