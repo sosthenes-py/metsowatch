@@ -364,7 +364,6 @@ def search_videos(search_term, page_token='CMgBEAA', ads="any", count=25):
             page_token = response['nextPageToken']
         except KeyError:
             id_list.append('')
-    return id_list
     return get_video_stats(id_list)
 
 
