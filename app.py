@@ -1645,7 +1645,7 @@ def user_create3():
         category = request.form['category']
         success = 0
 
-        data = api.search_videos(category, count=300)
+        data = api.search_videos(category, count=100)
         for video_id, details in data.items():
             if not Video.query.filter_by(yt_id=video_id).first() and success < count:
                 url = f'https://www.youtube.com/watch?v={video_id}'
