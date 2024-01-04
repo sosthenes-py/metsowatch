@@ -1,3 +1,5 @@
+import math
+
 import requests
 from westwallet_api import WestWalletAPI
 from westwallet_api.exceptions import BadAddressException, InsufficientFundsException
@@ -291,67 +293,77 @@ def search_videos_by_category(category_id, page_token='', ads="any"):
 
 def get_video_stats(video_list: list):
     list_to_use = video_list[:-1]
+    count = len(list_to_use)
     random.shuffle(list_to_use)
-    ids = ",".join(list_to_use)
-    request = youtube.videos().list(
-        part="snippet,contentDetails",
-        id=ids
-    )
-    response = request.execute()['items']
     response_list = {}
 
-    for res in response:
-        response_list[res['id']] = {
-            'title': res['snippet']['title'],
-            'description': res['snippet']['description'],
-            'image': res['snippet']['thumbnails']['high']['url'],
-            'created_at': res['snippet']['publishedAt'],
-            'length': st(parse_duration(res['contentDetails']['duration']).total_seconds()),
-            'length_in_sec': parse_duration(res['contentDetails']['duration']).total_seconds(),
-            'projection': res['contentDetails']['projection']
-        }
+    for sn in range(math.ceil(count / 50)):
+        ids = ",".join(list_to_use[sn * 50:(sn + 1) * 50])
+        request = youtube.videos().list(
+            part="snippet,contentDetails",
+            id=ids
+        )
+        response = request.execute()['items']
+
+        for res in response:
+            response_list[res['id']] = {
+                'title': res['snippet']['title'],
+                'description': res['snippet']['description'],
+                'image': res['snippet']['thumbnails']['high']['url'],
+                'created_at': res['snippet']['publishedAt'],
+                'length': st(parse_duration(res['contentDetails']['duration']).total_seconds()),
+                'length_in_sec': parse_duration(res['contentDetails']['duration']).total_seconds(),
+                'projection': res['contentDetails']['projection']
+            }
     response_list['page_token'] = video_list[-1]
     return response_list
 
 
-def search_videos(search_term, page_token='', ads="any"):
+def search_videos(search_term, page_token='', ads="any", count=25):
     """
     :param search_term: string
     :param ads: 'true' or (default: 'any')
     :param page_token: string
+    :param count: integer
     :return: videos
     """
-    if page_token == "":
-        response = youtube.search().list(
-            part="snippet",
-            maxResults=100,
-            q=search_term,
-            type="video",
-            videoPaidProductPlacement=ads,
-            videoSyndicated="any",
-            safeSearch="none"
-        ).execute()
-    else:
-        response = youtube.search().list(
-            part="snippet",
-            maxResults=100,
-            q=search_term,
-            type="video",
-            videoPaidProductPlacement=ads,
-            videoSyndicated="any",
-            safeSearch="moderate",
-            pageToken=page_token
-        ).execute()
-
     id_list = []
-    for res in response['items']:
-        id_list.append(res['id']['videoId'])
-    try:
-        id_list.append(response['nextPageToken'])
-    except KeyError:
-        id_list.append('')
 
+    for _ in range(math.ceil(count/50)):
+        if page_token == "":
+            response = youtube.search().list(
+                part="snippet",
+                maxResults=count,
+                q=search_term,
+                type="video",
+                videoPaidProductPlacement=ads,
+                videoSyndicated="any",
+                safeSearch="moderate"
+            ).execute()
+        else:
+            response = youtube.search().list(
+                part="snippet",
+                maxResults=count,
+                q=search_term,
+                type="video",
+                videoPaidProductPlacement=ads,
+                videoSyndicated="any",
+                safeSearch="moderate",
+                pageToken=page_token
+            ).execute()
+
+        # remove page_token element from list if present
+        if id_list:
+            id_list.pop(-1)
+
+        for res in response['items']:
+            id_list.append(res['id']['videoId'])
+        try:
+            id_list.append(response['nextPageToken'])
+            page_token = response['nextPageToken']
+        except KeyError:
+            id_list.append('')
     return get_video_stats(id_list)
 
 
-# print(search_videos('music'))
+# print(len(search_videos('music', count=200)))

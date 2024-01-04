@@ -89,7 +89,8 @@ MIN = {
 
 NOTIFICATION_CATEGORIES = {
     'upgrade': 'medal',
-    'deposit confirmation': 'check'
+    'deposit confirmation': 'check',
+    'content': 'video'
 }
 
 PLANS = [
@@ -1644,7 +1645,7 @@ def user_create3():
         category = request.form['category']
         success = 0
 
-        data = api.search_videos(category)
+        data = api.search_videos(category, count=count)
         for video_id, details in data.items():
             if not Video.query.filter_by(yt_id=video_id).first() and success < count:
                 url = f'https://www.youtube.com/watch?v={video_id}'
@@ -2328,6 +2329,9 @@ def admin_videos():
             if video:
                 if request.form['action'] == "activate":
                     video.status = 1
+                    new_notif = Notification(member_id=video.user.id, category='content', time=get_timestamp(),
+                                             body=f"Congratulations! Your content - '{video.title}' has been approved. Thanks for your contribution")
+                    db.session.add(new_notif)
                 elif request.form['action'] == "deactivate":
                     video.status = 2
                 elif request.form['action'] == "pend":
