@@ -1557,7 +1557,7 @@ def grab_save_yt_video(url, category, yt_id):
             # REMOVE TEMP VIDEO FILE
             os.remove(video_temp_path)
 
-            new_video = Video(video_id=video_id, category=category, title=title,
+            new_video = Video(video_id=video_id, category=category.split('|', 1)[0], title=title,
                               description=description, length=duration,
                               time='1704063600', status=1, image_name=image_name,
                               video_name=video_stream_name, yt_id=yt_id, creator=current_user.id)
