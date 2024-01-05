@@ -722,7 +722,7 @@ def user_notifications():
             return jsonify({'status': 'success', 'message': 'Action success'})
 
 
-@limiter.limit('4 per minute', error_message='You are rate limited. Try again after a minute')
+@limiter.limit('6 per minute', error_message='You are rate limited. Try again after a minute')
 @app.route('/user/withdraw', methods=['POST', 'GET'])
 @login_required
 @session_validate
@@ -766,10 +766,10 @@ def user_withdraw():
                     current_user.earning, current_user.ref_earning = float(bal), 0
 
                 # ADD TO HISTORY
-                transaction = api.make_withdrawal(token='usdttrc', qty=float(amt)-WITHDRAWAL_FEE, addr=acct_result.wallet)
+                transaction = api.make_withdrawal(token=acct_result.token, qty=float(amt)-WITHDRAWAL_FEE, addr=acct_result.wallet)
                 if transaction['status'] == "completed":
                     new_history = ProgramHistory(member_id=current_user.id, name='withdraw', amt=float(amt),
-                                                 method='usdt', time=get_timestamp(), wallet=acct_result.wallet,
+                                                 method=acct_result.token, time=get_timestamp(), wallet=acct_result.wallet,
                                                  fee=WITHDRAWAL_FEE, tx_id=transaction['id'], status=1)
                     db.session.add(new_history)
                     db.session.commit()
@@ -778,7 +778,7 @@ def user_withdraw():
                 else:
                     db.session.rollback()
                     new_history = ProgramHistory(member_id=current_user.id, name='withdraw', amt=float(amt),
-                                                 method='usdt', time=get_timestamp(), wallet=acct_result.wallet, tx_id=generate_tx_id(), status=2)
+                                                 method=acct_result.token, time=get_timestamp(), wallet=acct_result.wallet, tx_id=generate_tx_id(), status=2)
                     db.session.add(new_history)
                     db.session.commit()
                     status = 'error'
@@ -800,10 +800,11 @@ def user_settings_withdraw():
         form = AddWithdrawAccountForm(request.form)
         if form.validate():
             action = request.form['action']
-            if action == 'add':
+            method = request.form['method']
+            if action == 'add' and method in ['trx', 'usdt']:
                 if not re.match("^[T][a-km-zA-HJ-NP-Z1-9]{25,34}$", form.wallet.data):
-                    return jsonify({'status': 'error', 'message': 'Invalid USDT TRC20 Wallet'})
-                new_acct = PayoutAccount(member_id=current_user.id, token='usdt', wallet=form.wallet.data, time=get_timestamp(), account_id=generate_tx_id(4), label=form.name.data)
+                    return jsonify({'status': 'error', 'message': 'Invalid TRC20 Wallet'})
+                new_acct = PayoutAccount(member_id=current_user.id, token=method, wallet=form.wallet.data, time=get_timestamp(), account_id=generate_tx_id(4), label=form.name.data)
                 db.session.add(new_acct)
                 db.session.commit()
                 return jsonify({'status': 'success', 'message': 'Wallet added successfully'})
@@ -1340,7 +1341,7 @@ def user_transactions_name(name):
 @session_validate
 def user_referral():
     if request.method == 'GET':
-        upline = Member.query.filter_by(id=int(current_user.upline)).first() if current_user.upline != "" else None
+        upline = Member.query.filter_by(id=int(current_user.upline)).first() if current_user.upline != "" and current_user.upline else None
         return render_template('account/referral.html', page='referral', upline=upline)
     elif request.method == 'POST':
         action = request.form['action']

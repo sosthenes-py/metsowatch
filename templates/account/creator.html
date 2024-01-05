@@ -27,7 +27,7 @@
                         <div class="col-xl-12">
                            <div class="site-card">
                               <div class="site-card-header">
-                                  <h3 class="title"><a href="{{ url_for('user_create2') }}">My Contents</a></h3>
+                                  <h3 class="title">My Contents {{ '({})'.format(current_user.contents|count) if current_user.contents|count > 0 else '' }}</h3>
                                  <div class="card-header-links">
                                     <a href="{{ url_for('user_create') }}" class="card-header-link">Upload New Content</a>
                                  </div>

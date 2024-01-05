@@ -470,7 +470,9 @@
                     $('.video-alert').css('display', 'block').text('Please turn up volume to continue')
                     player.pause()
                 }
-                $('#stop-watch-timer').css('display', 'none')
+                if(currentTime <= 2){
+                    $('#stop-watch-timer').css('display', 'none')
+                }
             });
 
           }

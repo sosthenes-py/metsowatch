@@ -39,14 +39,14 @@
                                  <div class="one">
                                     <div class="balance">
                                         <span class="symbol">$</span><span class="count">{{ "{:,.2f}".format(current_user.earning).split('.')[0] }}</span>.<span
-                                          class="after-dot count">{{ "{:,.2f}".format(current_user.earning).split('.')[1] }} </span>
+                                          class="after-dot">{{ "{:.2f}".format(current_user.earning).split('.')[1] }} </span>
                                     </div>
                                     <div class="wallet">Earnings Wallet</div>
                                  </div>
                                  <div class="one p-wal">
                                     <div class="balance">
                                         <span class="symbol">$</span><span class="count">{{ "{:,.2f}".format(current_user.promotion).split('.')[0] }}</span>.<span
-                                          class="after-dot count">{{ "{:,.2f}".format(current_user.promotion).split('.')[1] }} </span>
+                                          class="after-dot">{{ "{:,.2f}".format(current_user.promotion).split('.')[1] }} </span>
                                     </div>
                                     <div class="wallet">Promotion Wallet</div>
                                  </div>

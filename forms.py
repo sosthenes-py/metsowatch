@@ -23,6 +23,8 @@ class TwoFaForm(FlaskForm):
 
 class AddWithdrawAccountForm(FlaskForm):
     name = StringField(validators=[DataRequired(message="Please enter method name"), Length(max=20, message="Name accepts max of 20 characters")])
+    method = StringField(validators=[DataRequired(message="Please select a method"),
+                                   Length(max=10, message="Too long")])
     wallet = StringField(validators=[DataRequired(message="Enter wallet address for this method"), Length(max=100, message="Wallet too long")])
     submit = SubmitField(label="")
 
