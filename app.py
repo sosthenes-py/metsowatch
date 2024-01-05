@@ -477,7 +477,6 @@ def login():
         form = LoginForm()
         next_ = request.args.get('next')
         return render_template('home/login.html', form=form, next=next_)
-
     form = LoginForm(request.form)
     if form.validate():
         email = form.email.data
@@ -954,29 +953,20 @@ def home_videos(target):
         page_token = request.form.get('page_token', 1, type=int)
 
         if action == "search":
-
             search_term = request.form.get('search_term')
-
             data = Video.query.filter(
-
-                (Video.title.like(f'%{search_term}%') & Video.status == 1) |
-
-                (Video.description.like(f'%{search_term}%') & Video.status == 1) |
-
-                (Video.video_id.like(f'{search_term}') & Video.status == 1)
-
+                db.or_(
+                    db.and_(Video.title.like(f'%{search_term}%'), Video.status == 1),
+                    db.and_(Video.description.like(f'%{search_term}%'), Video.status == 1),
+                    db.and_(Video.video_id.like(f'{search_term}'), Video.status == 1)
+                )
             ).order_by(func.random()).paginate(page=page_token, per_page=25, error_out=False)
 
         elif action == "cat":
-
             category = request.form.get('category', '')
-
             if category == "":
-
-                data = Video.query.filter_by(status=1).order_by(func.random()).all()
-
+                data = Video.query.filter_by(status=1).order_by(func.random()).paginate(page=page_token, per_page=25)
             else:
-
                 data = Video.query.filter_by(category=category, status=1).order_by(func.random()).paginate(
                     page=page_token, per_page=25)
 
@@ -1011,25 +1001,16 @@ def home_videos(target):
             return response
 
         if action == "search" or action == "cat":
-
             html_content = ''
-
             page_token += 1
-
             if data:
-
                 status = "success"
-
                 message = ""
-
                 for video in data:
                     reward = PLANS[current_user.level]['profit'] / PLANS[current_user.level][
                         'videos'] if current_user.is_authenticated else NEW_USER_VIDEO_REWARD
-
                     html_content += f"""
-
                         <div class="mb-5 video-cards">
-
                             <div class="user-balance-card video-card-img" style="background: url('{url_for('static', filename='uploads/images/{}'.format(video.image_name))}'); background-position: center; background-size: cover;">
                             <!-- Play button -->
                             <div class="play-button special-bg open-bottom-modal watch-video" data-modal="watchModal" data-id="{video.video_id}" data-video_name="{video.video_name}" data-sec="{video.length}">
@@ -1037,73 +1018,40 @@ def home_videos(target):
                             </div>
 
                                 <div class="wallet-name">
-
                                     <div class="default reward">{st(video.length, video=True)}</div>
-
                                     <div class="default2">${reward:,.2f}</div>
-
                                         </div>
-
                                     </div>
-
                                     <h6 class="title" style="overflow: hidden">{video.title}</h6>
-
                                     <div class="actions">
-
                                           <a href="#0" class="user-sidebar-btn open-bottom-modal video-details" data-id="{video.video_id}" data-modal="videoDetailModal" data-sec="{st(video.length, video=True)}" data-title="{video.title}" data-description="{video.description}" data-category="{video.category}" data-created="{format_date(video.time, '%d %b, %Y', 86400)}"><i
-
                                              class="anticon anticon-eye"></i>Video Details</a>
-
-                                          <a href="#0" onclick="copy_data('http://{SITE_DOMAIN}{url_for('home_videos', target=video.video_id)}', 'Video link copied to clipboard!')" class="user-sidebar-btn red-btn share">
-
+                                          <a href="#0" onclick="copy_data('http://{SITE_DOMAIN}{url_for('home_videos_start', target=video.video_id)}', 'Video link copied to clipboard!')" class="user-sidebar-btn red-btn share">
                                           <i class="anticon anticon-share-alt"></i>Share</a>
-
                                        </div>
-
                                     </div>
-
                         """
 
-
             else:
-
                 status = "error"
-
                 message = "No results found"
-
                 for _ in range(25):
                     html_content += f"""
-
                     <div class="mb-5 video-cards">
-
                                    <div class="user-balance-card video-card-img" style="background-position: center; background-size: cover;">
-
                                       <div class="wallet-name">
-
                                          <div class="default reward">00:00</div>
-
                                           <div class="default2">$0.00</div>
-
                                       </div>
-
                                    </div>
-
                                   <h6 class="title"></h6>
-
                                    <div class="actions">
-
                                       <a href="#0" class="user-sidebar-btn"><i
-
                                          class="anticon anticon-eye"></i>Video Details</a>
-
                                       <a href="#0" class="user-sidebar-btn red-btn share"><i
-
                                          class="anticon anticon-share-alt"></i>Share</a>
-
                                    </div>
-
                                 </div>
-
                     """
 
             return jsonify(

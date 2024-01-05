@@ -497,7 +497,11 @@
                     },
                     error: function(err1, err2){
                         loadOff()
+                        if(err1.status === 400){
+                        notify('error', 'An error occurred. Please refresh and try again')
+                    }else{
                         notify('error', 'An error occurred. Please try again later')
+                    }
                     },
                     headers: {
                         'X-CSRFToken': getCSRFToken()
@@ -580,7 +584,11 @@
                 },
                 error: function(err1, err2){
                     loadOff()
-                    notify('error', 'An error occurred. Please try again later')
+                    if(err1.status === 400){
+                        notify('error', 'An error occurred. Please refresh and try again')
+                    }else{
+                        notify('error', 'An error occurred. Please try again later')
+                    }
                 },
                 headers: {
                     'X-CSRFToken': getCSRFToken()
