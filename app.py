@@ -35,8 +35,8 @@ from io import BytesIO
 from PIL import Image
 
 
-SITE_NAME = "METSOWATCH"
-SITE_DOMAIN = "192.168.210.231:5000"
+SITE_NAME = "Jomovi"
+SITE_DOMAIN = "jomovi.com"
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "gfdcvbkjiuhygtfdcgvhjk541564bvgcvbjhg"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com/metsowatch'
