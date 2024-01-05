@@ -94,7 +94,102 @@
 </style>
 
 
-</style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+          if (typeof Plyr !== 'undefined') {
+              const player = new Plyr('#my-video');
+              player.speed = 1
+              if (player) {
+                // Add event listeners, customize settings, etc.
+
+                  // Add event listeners
+                player.on('play', event => {
+                  startEarning(player)
+                });
+
+                player.on('seeking', event => {
+                  $('#watch-timer').data('reward', '0')
+                });
+
+                player.on('ratechange', event => {
+                    if(player.currentTime > 1){
+                        player.pause()
+                        $('.video-alert').css('display', 'block').text('Player speed has been reset to normal')
+                    }
+                });
+
+                player.on('enterpictureinpicture', event => {
+                    $('.video-alert').css('display', 'block').text('Please exit Picture in Picture mode to continue')
+                });
+
+
+                player.on('ended', event => {
+                    $('#stop-watch-timer').css('display', 'block')
+                    calculate_earning()
+                });
+
+                function changeVideo(newVideoSource) {
+                    player.source = {
+                        type: 'video',
+                        sources: [
+                            {
+                                src: newVideoSource,
+                                type: 'video/mp4',
+                            },
+                        ],
+                    };
+                }
+
+
+              } else {
+                notify('error', 'Failed to initialize Player. Please try using a different browser')
+              }
+            } else {
+              notify('error', 'Player library not found. Please try using a different browser')
+            }
+
+
+          {#FIRST CHECK IF THERES TARGET#}
+          var target = "{{ target }}"
+          if (target !== "None") {
+              var target_name = "{{ target_video.video_name }}"
+              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
+
+              $('#watch-timer').data({
+                  'total_sec': 0,
+                  'sec_left': 0,
+                  'rewarded': 0,
+                  'reward': reward,
+                  'videoId': target
+              }).text('$0.000')
+              var new_video_source = '{{ url_for('static', filename='uploads/videos/') }}' + target_name
+              changeVideo(new_video_source)
+              $('#watchModal').slideToggle()
+          }
+
+
+          $('body').on('click', '.watch-video', function () {
+              var videoId = $(this).data('id')
+              var video_name = $(this).data('video_name')
+              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
+
+              $('#watch-timer').data({
+                  'total_sec': 0,
+                  'sec_left': 0,
+                  'rewarded': 0,
+                  'reward': reward,
+                  'videoId': videoId
+              }).text('$0.000')
+              var new_video_source = '{{ url_for('static', filename='uploads/videos/') }}' + video_name
+              changeVideo(new_video_source)
+          })
+
+      });
+
+    </script>
+
+
 
 
          <div class="page-container">
@@ -539,103 +634,6 @@
     })
 </script>
 
-
-
-
-   <script>
-      document.addEventListener('DOMContentLoaded', function() {
-
-          if (typeof Plyr !== 'undefined') {
-              const player = new Plyr('#my-video');
-              player.speed = 1
-              if (player) {
-                // Add event listeners, customize settings, etc.
-
-                  // Add event listeners
-                player.on('play', event => {
-                  startEarning(player)
-                });
-
-                player.on('seeking', event => {
-                  $('#watch-timer').data('reward', '0')
-                });
-
-                player.on('ratechange', event => {
-                    if(player.currentTime > 1){
-                        player.pause()
-                        $('.video-alert').css('display', 'block').text('Player speed has been reset to normal')
-                    }
-                });
-
-                player.on('enterpictureinpicture', event => {
-                    $('.video-alert').css('display', 'block').text('Please exit Picture in Picture mode to continue')
-                });
-
-
-                player.on('ended', event => {
-                    $('#stop-watch-timer').css('display', 'block')
-                    calculate_earning()
-                });
-
-                function changeVideo(newVideoSource) {
-                    player.source = {
-                        type: 'video',
-                        sources: [
-                            {
-                                src: newVideoSource,
-                                type: 'video/mp4',
-                            },
-                        ],
-                    };
-                }
-
-
-              } else {
-                notify('error', 'Failed to initialize Player. Please try using a different browser')
-              }
-            } else {
-              notify('error', 'Player library not found. Please try using a different browser')
-            }
-
-
-          {#FIRST CHECK IF THERES TARGET#}
-          var target = "{{ target }}"
-          if (target !== "None") {
-              var target_name = "{{ target_video.video_name }}"
-              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
-
-              $('#watch-timer').data({
-                  'total_sec': 0,
-                  'sec_left': 0,
-                  'rewarded': 0,
-                  'reward': reward,
-                  'videoId': target
-              }).text('$0.000')
-              var new_video_source = '{{ url_for('static', filename='uploads/videos/') }}' + target_name
-              changeVideo(new_video_source)
-              $('#watchModal').slideToggle()
-          }
-
-
-          $('body').on('click', '.watch-video', function () {
-              var videoId = $(this).data('id')
-              var video_name = $(this).data('video_name')
-              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
-
-              $('#watch-timer').data({
-                  'total_sec': 0,
-                  'sec_left': 0,
-                  'rewarded': 0,
-                  'reward': reward,
-                  'videoId': videoId
-              }).text('$0.000')
-              var new_video_source = '{{ url_for('static', filename='uploads/videos/') }}' + video_name
-              changeVideo(new_video_source)
-          })
-
-      });
-
-    </script>
 
 
 
