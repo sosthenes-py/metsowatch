@@ -559,21 +559,38 @@ def user_packages():
         if current_user.level >= level:
             raise "Error3"
 
-        # CHECK FOR PREVIOUS PENDING UPGRADE
+        # CHECK FOR PREVIOUS PENDING UPGRADE - IF EXISTS
         result = db.session.query(Address).filter(Address.member_id == current_user.id, Address.label == "complete", Address.upgrade_level > 0).first()
         if result:
             level = result.upgrade_level
             message = f'You have a pending upgrade to level {level}'
-            amt_to_pay = result.amt_to_pay
             current_level_price = PLANS[current_user.level]['price']
             next_level_price = PLANS[level]['price']
+
+            # Check if user acquired more funds
+            current_bal = current_user.earning + current_user.ref_earning + current_user.promotion
+            result.hold_amt += current_bal
+            result.amt_to_pay -= current_bal
+
+            if result.amt_to_pay < 0:
+                result.leftover = abs(result.amt_to_pay)
+                result.amt_to_pay = 0
+
             bal = result.hold_amt
             leftover = result.leftover
+            amt_to_pay = result.amt_to_pay
+
+
 
             if action == "verify":
                 info = f"""
                         Click <span class="special-text">Proceed</span> to continue with a payment of <b>${amt_to_pay:,.2f}</b> for the purchase of this subscription.
                         """
+                # if user acquired more funds and is eligible for upgrade
+                if amt_to_pay == 0:
+                    info = f"""
+                                No extra deposits! Just click <span class="special-text">Proceed</span> to upgrade now. <br>A left over sum of ${leftover:,.2f} will be returned into your earnings wallet.
+                                """
 
                 math = f"""
                             <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -609,7 +626,27 @@ def user_packages():
                                 'level_fee': f'{next_level_price:,}', 'math': math, 'math_left': math_left, 'info': info, 'message': message, 'bal': f'{bal:,.2f}', 'level': level})
 
             elif action == "finish":
-                return jsonify({'status': 'success', 'message': 'Previous upgrade fetched', 'type': 'pay', 'amt_to_pay': f'{amt_to_pay:,.2f}', 'amt': amt_to_pay})
+                if amt_to_pay > 0:
+                    current_user.earning, current_user.ref_earning, current_user.promotion = 0, 0, 0
+                    db.session.commit()
+                    return jsonify({'status': 'success', 'message': 'Previous upgrade fetched', 'type': 'pay', 'amt_to_pay': f'{amt_to_pay:,.2f}', 'amt': amt_to_pay})
+                else:
+                    # if user acquired more funds and is eligible for upgrade
+                    new_notif = Notification(member_id=current_user.id, category='upgrade', time=get_timestamp(),
+                                             body=f'Successfully upgraded from level {current_user.level} to level {level}')
+                    db.session.add(new_notif)
+                    current_user.level, current_user.earning, current_user.ref_earning, current_user.promotion = level, leftover, 0, 0
+                    reward_upline(current_user, next_level_price)
+                    Address.query.filter(Address.member_id == current_user.id, Address.label == 'complete').update({'upgrade_level': 0, 'amt_to_pay': 0, 'leftover': 0})
+                    db.session.commit()
+
+                    if level > 3:
+                        rank_img = 'rank0.svg'
+                    else:
+                        rank_img = f'rank{level}.svg'
+                    return jsonify(
+                        {'status': 'success', 'message': 'Upgrade successful', 'type': 'done', 'rank_img': rank_img})
+
 
             elif action == "fetch_wallet":
                 # FETCH WALLET DETAILS
@@ -690,6 +727,7 @@ def user_packages():
                     db.session.add(new_notif)
                     db.session.commit()
                     return jsonify({'status': 'success', 'message': 'Balance deducted accordingly', 'type': 'pay', 'amt_to_pay': f'{amt_to_pay:,.2f}', 'amt': amt_to_pay})
+
                 else:
                     new_notif = Notification(member_id=current_user.id, category='upgrade', time=get_timestamp(), body=f'Successfully upgraded from level {current_user.level} to level {level}')
                     db.session.add(new_notif)
