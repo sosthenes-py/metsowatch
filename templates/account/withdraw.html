@@ -60,7 +60,7 @@
                                              <div class="input-group">
                                                 <input type="number" name="amt" id="amt"
                                                    oninput=""
-                                                   class="form-control withdrawAmount" placeholder="Minimum: $10">
+                                                   class="form-control withdrawAmount" placeholder="Minimum: ${{ '10' if current_user.level > 2 else '5' }}">
                                              </div>
                                               <div class="input-info-text withdrawAmountRange"><i class="anticon anticon-info-circle"></i> A withdrawal charge of ${{ withdrawal_fee }} applies.</div>
                                           </div>
@@ -204,11 +204,8 @@
             event.preventDefault();
             var acct_id = $('#acct_id').val()
             var amt = $('#amt').val()
-            var with_fee = Number("{{ withdrawal_fee }}")
             if(acct_id === "" || amt === "" || amt === 0){
                 notify('warning', 'Please check your input')
-            }else if(amt < 10) {
-                notify('warning', 'Minimum you can withdraw is $'+(with_fee+1))
             }else{
                 loadOn()
                var formData = $('#withdrawForm').serialize()
@@ -222,7 +219,7 @@
                         notify(data.status, data.message)
                        if(data.status === "success"){
                            open_modal('doneModal')
-                           $('.info').html('A net total of <span class="special-text fw-bold">$'+data.amt+'</span> is on its way to your wallet! Should arrive within minutes.')
+                           $('.info').html('A net amount of <span class="special-text fw-bold">$'+data.amt+'</span> is on its way to your wallet! Should arrive within minutes.')
                        }
                     },
                     error: function(err1, err2){

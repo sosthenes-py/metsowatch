@@ -271,14 +271,14 @@ def hash_string(string):
     return f'{string[:int(len(string)/2)]}***'
 
 
-def register_upline(user: Member, upline_id):
+def register_upline(user: Member, upline_id, req: request):
     for x in range(1, 7):
         if upline_id:
             result = db.session.query(Member).filter_by(id=int(upline_id)).first()
             if x == 1:
-                if len([dn for dn in result.downlines if dn.level == 1]) < 10:
+                if len([dn for dn in result.downlines if dn.level == 1]) < 10 and not req.cookies.get('register', None):
                     result.promotion += PROMOTION_BONUS
-                    new_history = ProgramHistory(name='ref_earning', time=get_timestamp(), amt=PROMOTION_BONUS, tx_id=generate_tx_id(), member_id=result.id, detail=user.id, label=1)
+                    new_history = ProgramHistory(name='ref_earning', time=get_timestamp(), amt=PROMOTION_BONUS, tx_id=generate_tx_id(), member_id=result.id, detail=user.id, label=1, status=1)
                     db.session.add(new_history)
             new_down = Downline(level=x, upline_id=result.id, downline_id=user.id, time=get_timestamp(), downline_name=user.email.split('@')[0])
             db.session.add(new_down)
@@ -466,8 +466,10 @@ def register():
         db.session.commit()
 
         if upline:
-            register_upline(new_user, upline.id)
-        return jsonify({'status': 'success', 'message': 'Your account has been created'})
+            register_upline(new_user, upline.id, request)
+        response = make_response(jsonify({'status': 'success', 'message': 'Your account has been created'}))
+        response.set_cookie('register', 'set', expires=(86400*30))
+        return response
     return jsonify({'status': 'error', 'message': form.email.errors or form.password.errors})
 
 
@@ -783,6 +785,13 @@ def user_withdraw():
                 raise 'Error'
 
             bal = Decimal(deducts[form.deduct_from.data])
+            if current_user.level <= 2:
+                min_with = Decimal(5)
+            else:
+                min_with = Decimal(10)
+
+            if amt < min_with:
+                return jsonify({'status': 'error', 'message': f'Minimum withdrawal for level {current_user.level} is ${int(min_with)}'})
             if bal < amt:
                 return jsonify({'status': 'error', 'message': 'Insufficient Balance'})
 
