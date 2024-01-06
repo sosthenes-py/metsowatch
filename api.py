@@ -124,6 +124,7 @@ def generate_wallet(coin, label=""):
         address = generate_random_wallet(coin)
         return address
     else:
+        print(f'----------------SUCCESS----------------')
         return address.address
 
 
