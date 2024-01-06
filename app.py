@@ -453,7 +453,6 @@ def register():
             promotion = NEW_USER_VIDEO_REWARD
         else:
             promotion = 0
-        request.cookies.pop('bonus')
 
         code = generate_tx_id(6)
         new_user = Member(email=email, password=generate_password_hash(password), code=code,
@@ -470,6 +469,7 @@ def register():
             register_upline(new_user, upline.id, request)
         response = make_response(jsonify({'status': 'success', 'message': 'Your account has been created'}))
         response.set_cookie('register', 'set', expires=(86400*30))
+        response.set_cookie('bonus', '', expires=0)
         return response
     return jsonify({'status': 'error', 'message': form.email.errors or form.password.errors})
 
