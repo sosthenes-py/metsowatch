@@ -120,7 +120,7 @@ def generate_wallet(coin, label=""):
     try:
         address = client.generate_address(currency=coin.upper(), ipn_url="https://jomovi.com/webhook", label=label)
     except WestWalletAPIException as e:
-        print(str(e))
+        print(f'----------------{str(e)}----------------')
         address = generate_random_wallet(coin)
         return address
     else:
