@@ -453,6 +453,7 @@ def register():
             promotion = NEW_USER_VIDEO_REWARD
         else:
             promotion = 0
+        request.cookies.pop('bonus')
 
         code = generate_tx_id(6)
         new_user = Member(email=email, password=generate_password_hash(password), code=code,
