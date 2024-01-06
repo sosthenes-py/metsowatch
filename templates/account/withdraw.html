@@ -49,7 +49,7 @@
                                                 <select name="acct_id" id="acct_id" class="site-nice-select">
                                                    <option selected disabled>Withdraw Method</option>
                                                    {% for acct in current_user.payout_accounts %}
-                                                    <option data-addr="{{ acct.wallet[:10] }}...{{ acct.wallet[-4:] }}" value="{{ acct.account_id }}">{{ acct.token|upper }}-{{ acct.label }}</option>
+                                                    <option data-token="{{ acct.token|upper }}" data-addr="{{ acct.wallet[:10] }}...{{ acct.wallet[-4:] }}" value="{{ acct.account_id }}">{{ acct.token|upper }}-{{ acct.label }}</option>
                                                     {% endfor %}
                                                 </select>
                                              </div>
@@ -106,7 +106,7 @@
 
                                                 <tr class="detailsCol">
                                                    <td><strong>Currency</strong></td>
-                                                   <td><span class="withdrawAmount"></span> USDT TRC20</td>
+                                                   <td class="detail-method"> </td>
                                                 </tr>
                                              </tbody>
                                           </table>
@@ -187,6 +187,7 @@
             var selected = $('#acct_id option:selected')
             if(selected.val() !== ""){
                 $('.detail-addr').text(selected.data('addr'))
+                $('.detail-method').text(selected.data('token'))
                 $('.with_details').css('display', 'block')
             }else{
                 $('.method-block').css('display', 'none')

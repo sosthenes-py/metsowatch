@@ -151,7 +151,7 @@ PLANS = [
     'videos': 5
 }]
 
-WITHDRAWAL_FEE = 2
+WITHDRAWAL_FEE = 1.5
 
 
 TX_PER_PAGE = 10
@@ -544,6 +544,13 @@ def user_wallet():
 @session_validate
 def user_packages():
     if request.method == "GET":
+        if not current_user.addresses:
+            for token in DEPOSIT_WALLETS:
+                new_addr = Address(member_id=current_user.id, label='complete',
+                                   wallet=api.generate_wallet(token, f'{current_user.id}=complete'), token=token,
+                                   time=get_timestamp())
+                db.session.bulk_save_objects([new_addr])
+            db.session.commit()
         return render_template('account/packages.html', page='packages')
 
     elif request.method == "POST":

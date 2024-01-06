@@ -2,14 +2,12 @@ import math
 
 import requests
 from westwallet_api import WestWalletAPI
-from westwallet_api.exceptions import BadAddressException, InsufficientFundsException
+from westwallet_api.exceptions import BadAddressException, InsufficientFundsException, WestWalletAPIException
 import os
 import re
-import socket
 import random
 from googleapiclient.discovery import build
 from isodate import parse_duration
-import datetime as dt
 import boto3
 from botocore.exceptions import NoCredentialsError
 
@@ -120,8 +118,9 @@ def generate_random_wallet(token):
 def generate_wallet(coin, label=""):
     client = WestWalletAPI(WESTWALLET_PUBLIC_KEY, WESTWALLET_PRIVATE_KEY)
     try:
-        address = client.generate_address(currency=coin.upper(), ipn_url="", label=label)
-    except:
+        address = client.generate_address(currency=coin.upper(), ipn_url="https://jomovi.com/webhook", label=label)
+    except WestWalletAPIException as e:
+        print(str(e))
         address = generate_random_wallet(coin)
         return address
     else:
