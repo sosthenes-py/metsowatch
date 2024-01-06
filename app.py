@@ -2529,10 +2529,10 @@ def daily_update():
 def execute():
     # videos = Video.query.all()
     # for video in videos:
-    #     video.creator = 1
+    #     video.creator = None
+    #     video.time = '1706050800'
     # db.session.commit()
-    message = f"Current Working Directory: {os.path.join(os.getcwd(), app.static_folder, 'uploads')}"
-    return jsonify({'status': 'success', 'message': message})
+    return jsonify({'status': 'success', 'message': 'success'})
 
 
 if __name__ == '__main__':

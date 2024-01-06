@@ -23,7 +23,7 @@
          padding: 0;
          }
 
-         #loader{
+         .loader{
       position: fixed;
       text-align:center;
       width: 100%;
@@ -39,7 +39,7 @@
       margin-top:-50px;
     }
 
-     #overlay{
+     .overlay{
       position: fixed;
       text-align:center;
       width: 100%;
@@ -103,10 +103,15 @@
    </head>
 
 <body class="dark-theme">
-     <div id="loader">
+     <div id="loader" class="loader">
          <img src="{{ url_for('static', filename='images/loader.gif') }}" alt="" width="100em">
      </div>
-    <div id="overlay"></div>
+    <div id="overlay" class="overlay"></div>
+
+     <div id="loader2" class="loader">
+         <img src="{{ url_for('static', filename='images/loader.gif') }}" alt="" width="100em">
+     </div>
+    <div id="overlay2" class="overlay"></div>
 
 
       <!--Full Layout-->
@@ -238,6 +243,8 @@
 
         var overlay= $("#overlay");
         var loader= $("#loader");
+        var overlay2= $("#overlay2");
+        var loader2= $("#loader2");
         function loadOn(){
             overlay.css('display', 'block');
             loader.css('display', 'block');
@@ -246,6 +253,16 @@
             overlay.css('display', 'none');
             loader.css('display', 'none');
         }
+
+        function loadOn2(){
+            overlay2.css('display', 'block');
+            loader2.css('display', 'block');
+        }
+        function loadOff2(){
+            overlay2.css('display', 'none');
+            loader2.css('display', 'none');
+        }
+
         function getCSRFToken() {
             return $('meta[name=csrf-token]').attr('content');
         }

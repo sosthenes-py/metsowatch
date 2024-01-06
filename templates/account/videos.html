@@ -103,6 +103,10 @@
               if (player) {
                 // Add event listeners, customize settings, etc.
 
+                player.on('canplay', function (event) {
+                    loadOff2()
+                });
+
                   // Add event listeners
                 player.on('play', event => {
                   startEarning(player)
@@ -153,6 +157,7 @@
           {#FIRST CHECK IF THERES TARGET#}
           var target = "{{ target }}"
           if (target !== "None") {
+              loadOn2()
               var target_name = "{{ target_video.video_name }}"
               var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
 
@@ -170,6 +175,7 @@
 
 
           $('body').on('click', '.watch-video', function () {
+              loadOn2()
               var videoId = $(this).data('id')
               var video_name = $(this).data('video_name')
               var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}

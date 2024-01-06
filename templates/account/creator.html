@@ -23,7 +23,16 @@
 
                      <!--Page Content-->
 
-                     <div class="row">
+                      <div class="special-bg alert mt-4 info" style="display: none">
+                          <p>When you upload contents to {{ site_name }}, your content (video) will be reviewed. Once review is passed, your video will start showing publicly on the videos page. </p>
+                          <p>Users can either search for your video using the search option on the page, or you can share them a link to your video.</p>
+                          <p>Anytime a user clicks the link to watch your video, at the end of the video you will receive {{ video_creator_bonus }}% of any amount they earned for watching the video.</p>
+                          <p>This happens endlessly so far your content is active on the platform.</p>
+
+                          <button class="site-btn btn-dark mt-3 start">Start Creator Session</button>
+                      </div>
+
+                     <div class="row content" style="display: none">
                         <div class="col-xl-12">
                            <div class="site-card">
                               <div class="site-card-header">
@@ -231,8 +240,20 @@
         })
     })
 
+
+    $('.start').click(function(){
+        localStorage.setItem('creator_session', 'set')
+        window.location.reload()
+    })
+
     $(function(){
         {#open_modal('payModal')#}
+
+        if(localStorage.getItem('creator_session') != null){
+            $('.content').css('display', 'block')
+        }else{
+            $('.info').css('display', 'block')
+        }
 
         $(window).on('beforeunload', function(){
             loadOn();
