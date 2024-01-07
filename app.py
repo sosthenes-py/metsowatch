@@ -855,7 +855,7 @@ def user_settings_withdraw():
         if form.validate():
             action = request.form['action']
             method = request.form['method']
-            if action == 'add' and method in ['trx', 'usdt']:
+            if action == 'add' and method in ['trx', 'usdttrc']:
                 if not re.match("^[T][a-km-zA-HJ-NP-Z1-9]{25,34}$", form.wallet.data):
                     return jsonify({'status': 'error', 'message': 'Invalid TRC20 Wallet'})
                 new_acct = PayoutAccount(member_id=current_user.id, token=method, wallet=form.wallet.data, time=get_timestamp(), account_id=generate_tx_id(4), label=form.name.data)
@@ -1192,7 +1192,7 @@ def user_videos():
                             
                                 <div class="wallet-name">
                                     <div class="default reward">{st(video.length, video=True)}</div>
-                                    <div class="default2">${reward:,.2f}</div>
+                                    <div class="default2">${reward:,.3f}</div>
                                         </div>
                                     </div>
                                     <h6 class="title" style="overflow: hidden">{video.title}</h6>
@@ -2104,6 +2104,8 @@ def admin_get_deposit_history():
                 new_notif = Notification(member_id=history.user.id, category='upgrade', time=get_timestamp(), body=f'Upgrade to level {history.label} completed. Enjoy the experience!')
                 db.session.add(new_notif)
                 Address.query.filter(Address.member_id == history.user.id, Address.label == 'complete').update({'upgrade_level': 0, 'amt_to_pay': 0, 'qty_to_pay': 0, 'hold_amt': 0, 'rate_time': None, 'leftover': 0})
+                next_level_price = PLANS[int(history.label)]['price']
+                reward_upline(history.user, next_level_price)
                 history.status = 1
                 db.session.commit()
             elif action == "erase":

@@ -59,10 +59,9 @@
                                              <label for="exampleFormControlInput1" class="form-label">Amount</label>
                                              <div class="input-group">
                                                 <input type="number" name="amt" id="amt"
-                                                   oninput=""
-                                                   class="form-control withdrawAmount" placeholder="Minimum: ${{ '10' if current_user.level > 2 else '5' }}">
+                                                   oninput="" class="form-control withdrawAmount" placeholder="Minimum: ${{ '10' if current_user.level > 2 else '5' }}">
                                              </div>
-                                              <div class="input-info-text withdrawAmountRange"><i class="anticon anticon-info-circle"></i> A withdrawal charge of ${{ withdrawal_fee }} applies.</div>
+                                              <div style="display: none" class="input-info-text withdrawAmountRange fee"></div>
                                           </div>
 
 
@@ -97,7 +96,7 @@
                                              <tbody class="selectDetailsTbody">
                                                 <tr class="detailsCol">
                                                    <td><strong>Amount</strong></td>
-                                                   <td><span class="withdrawAmount detail-amt">0</span> USD</td>
+                                                   <td><span class="withdrawAmount detail-amt">0 USD</span></td>
                                                 </tr>
                                                 <tr class="detailsCol">
                                                    <td><strong>Wallet Address</strong></td>
@@ -189,16 +188,27 @@
                 $('.detail-addr').text(selected.data('addr'))
                 $('.detail-method').text(selected.data('token'))
                 $('.with_details').css('display', 'block')
+                $('#amt').val('')
+                $('.detail-amt').text('0 USD')
+                if(selected.data('token') === "TRX"){
+                    $('.fee').css('display', 'block').html('<i class="anticon anticon-info-circle"></i> A withdrawal charge of $0.6 applies.')
+                    selected.data('fee', '0.6')
+                }else{
+                    $('.fee').css('display', 'block').html('<i class="anticon anticon-info-circle"></i> A withdrawal charge of $1.5 applies.')
+                    selected.data('fee', '1.5')
+                }
             }else{
                 $('.method-block').css('display', 'none')
+                $('#amt').val('')
             }
 
         })
 
         $('#amt').keyup(function (){
             var amt = validateDouble($(this).val())
+            var selected = $('#acct_id option:selected')
             $(this).val(amt)
-            $('.detail-amt').text(number_format(amt, 2))
+            $('.detail-amt').html('$'+number_format(amt, 2)+ ' <span class="yellow-color">- $'+selected.data('fee')+' fee</span>')
         })
 
         $('#proceed').click(function (){

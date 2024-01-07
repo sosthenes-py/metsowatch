@@ -106,7 +106,7 @@
                                          <div class="content">
                                             <h3 class="title"> Level {{ plan['id'] }} {{ pass|safe }}</h3>
                                            <p class="description">Entry Cost: ${{ "{:,}".format(plan['price']) }}</p>
-                                          <p class="description">Earning per video: ${{ "{:,.2f}".format(((profit/100)*plan['price'])/plan['videos']) }}</p>
+                                          <p class="description">Earning per video: ${{ "{:,.3f}".format(((profit/100)*plan['price'])/plan['videos']) }}</p>
                                            <p class="description">Total Videos: {{ plan['videos'] }}/day</p>
                                              <button class="site-btn grad-btn p-2 py-1 mt-2 subscribe {{ sub }} open-modal" data-level="{{ plan['id'] }}" data-modal="subModal">Subscribe</button>
                                          </div>
