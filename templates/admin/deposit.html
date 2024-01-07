@@ -46,6 +46,7 @@
                                         <th>Method</th>
                                         <th>Created</th>
                                         <th>Status</th>
+                                        <th>Action</th>
 									</tr>
 								</thead>
 								<tbody id="deposit_history" style="padding-bottom: 4em !important">
@@ -58,58 +59,6 @@
 		</div>
 		<!--end page wrapper -->
 
-
-
-
-
-		<div id="DepositModal2" tabindex="-1" class="modal fade" aria-hidden="true" style="display: none;">
-			        <div class="modal-dialog modal-lg">
-			            <div class="modal-content">
-			                <div class="modal-header">
-			                    <h5 class="mb-0 text-primary">Transaction Details</h5>
-			                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
-			                 </div>
-			                 <div class="modal-body">
-
-
-            			    <div class="card border-top border-0 border-4 border-primary">
-                           <div class="card-body p-5">
-
-                              <form class="row g-3">
-                                  <div class="col-md-6">
-                                     <label for="inputFirstName" class="form-label">Username</label>
-                                     <input readonly class="form-control details_username" data-key="username" data-id="">
-                                 </div>
-
-                                  <div class="col-12">
-                                     <label for="inputFirstName" class="form-label">Payment Method</label>
-                                     <input readonly type="text" class="form-control details_method" data-key="method" data-id="">
-                                 </div>
-
-
-                                 <div class="col-md-6">
-                                     <label for="inputFirstName" class="form-label">Amount</label>
-                                     <input type="number" class="form-control details_amt edit" data-key="amt" data-id="">
-                                 </div>
-
-
-
-                                 <div class="col-md-6">
-                                     <label for="inputLastName" class="form-label">Transaction Date</label>
-                                     <input type='datetime-local' class='form-control details_time date' data-key="time" data-id="">
-                                 </div>
-
-
-                                </form>
-
-                           </div>
-                        </div>
-
-
-			    </div>
-			</div>
-		</div>
-	</div>
 
 
 
@@ -129,49 +78,71 @@
             loader.css('display', 'none');
         }
 
+        function notify(status, message){
+            toastr[status](message)
+        }
 
+
+        function refresh(re) {
             $.ajax({
                 url: "{{ url_for('admin_get_deposit_history') }}",
                 type: "POST",
-                data: {'key': '*'},
+                data: {'action': 'fetch'},
                 dataType: "",
-                success: function (data){
-                    $("#deposit_history").html(data);
-                    var table = $('#deposit-table').DataTable( {
-                        lengthChange: false,
-                        buttons: [ 'copy', 'excel', 'pdf', 'print']
-                    });
-                    table.buttons().container().appendTo( '#example2_wrapper .col-md-6:eq(0)' );
+                success: function (data) {
+                    if(re){
+                        $('#deposit-table').DataTable().destroy()
+                    }
+                    setTimeout(function() {
+                        $("#deposit_history").html(data);
+                        var table = $('#deposit-table').DataTable({
+                            lengthChange: false,
+                            buttons: ['copy', 'excel', 'pdf', 'print']
+                        });
+                        table.buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
+                    }, 10)
                 },
-                error: function (jqXHR, errorThrown){
-                    alert(JSON.stringify(jqXHR)+', Err: -'+errorThrown)
+                error: function (jqXHR, errorThrown) {
+                    alert(JSON.stringify(jqXHR) + ', Err: -' + errorThrown)
                 },
-               headers: {
-                   'X-CSRFToken': getCSRFToken()
-               }
-            })
-
-
-
-
-	        $("#order_search").keyup(function(){
-	            var key= $(this).val().toLowerCase();
-	            if(key !== ""){
-	                $('.deposit_trs').each(function (){
-                        const name = $(this).data('username').toLowerCase()
-                        const method = $(this).data('method').toLowerCase()
-                        const status = $(this).data('status').toLowerCase()
-                        if(name.startsWith(key) || method.startsWith(key) || status.startsWith(key)){
-                            $(this).show();
-                         }else{
-                            $(this).hide();
-                         }
-                    })
-	            }else{
-                    $('.deposit_trs').show()
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
                 }
-	        })
+            })
+        }
 
+        refresh(false)
+
+
+
+            $("body").on('click', '.deposit_actions', function(){
+	            var id= $(this).data('id');
+	            var action= $(this).data('action');
+	            loadOn();
+                $.ajax({
+                    url: "{{ url_for('admin_get_deposit_history') }}",
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        id: id,
+                        action: action
+                    },
+                    error: function (){
+                        loadOff()
+                        notify('error', 'An error occurred. Try again')
+                    },
+                    success: function (data){
+                        notify(data.status, data.message)
+                        loadOff()
+                        if(data.status === 'success'){
+                            refresh(true)
+                        }
+                    },
+                   headers: {
+                       'X-CSRFToken': getCSRFToken()
+                   }
+                })
+	        })
 
 
 

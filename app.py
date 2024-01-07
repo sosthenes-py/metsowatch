@@ -2003,7 +2003,25 @@ def create_deposit_table(row, content, sn):
                         <td>
                             <div class='badge rounded-pill w-100 text-bg-{status_class}'>{status_text}</div>
                         </td>
+                        <td>
+                            <div class='dropdown ms-auto'>
+                            <div data-bs-toggle='dropdown' class='dropdown-toggle dropdown-toggle-nocaret cursor-pointer' aria-expanded='false'>
+                                <i class='bx bx-dots-vertical-rounded font-22'></i>
+                            </div>
+                            <ul class='dropdown-menu' style='cursor: pointer'>
                     """
+    if row.status == 0:
+        content += f"""
+            <li data-id='{row.id}' data-action='confirm' class='deposit_actions'><a class='dropdown-item'><i class='bx bx-check font-22'></i> Confirm</a></li>
+            <li><hr class='dropdown-divider'></li>
+        """
+    content += f"""
+        <li data-id='{row.id}' data-action='erase' class='deposit_actions'><a class='dropdown-item' style='color: red; font-weight: bold'><i class='bx bx-trash font-22'></i> Erase</a></li>
+                                </ul>
+                                </div>
+                            </td>
+                            </tr>
+    """
 
     return [content, sn]
 
@@ -2067,13 +2085,32 @@ def create_tf_table(row, content, sn, by):
 @app.route('/admin/get_deposit_history', methods=['POST'])
 @login_required
 def admin_get_deposit_history():
-    programs = db.session.query(ProgramHistory).filter_by(name="deposit").order_by(ProgramHistory.id.desc()).all()
-    content = ''
-    sn = 0
-    for program in programs:
-        if current_user.has_access_to(program.user):
-            content, sn = create_deposit_table(program, content, sn)
-    return content
+    if request.form['action'] == "fetch":
+        programs = db.session.query(ProgramHistory).filter_by(name="deposit").order_by(ProgramHistory.id.desc()).all()
+        content = ''
+        sn = 0
+        for program in programs:
+            if current_user.has_access_to(program.user):
+                content, sn = create_deposit_table(program, content, sn)
+        return content
+    else:
+        action = request.form['action']
+        history = ProgramHistory.query.filter_by(id=request.form['id']).first()
+        if history:
+            if action == "confirm":
+                if history.user.today_watch == PLANS[history.user.level]['videos']:
+                    history.user.today_watch = PLANS[int(history.label)]['videos']
+                history.user.level = int(history.label)
+                new_notif = Notification(member_id=history.user.id, category='upgrade', time=get_timestamp(), body=f'Upgrade to level {history.label} completed. Enjoy the experience!')
+                db.session.add(new_notif)
+                Address.query.filter(Address.member_id == history.user.id, Address.label == 'complete').update({'upgrade_level': 0, 'amt_to_pay': 0, 'qty_to_pay': 0, 'hold_amt': 0, 'rate_time': None, 'leftover': 0})
+                history.status = 1
+                db.session.commit()
+            elif action == "erase":
+                db.session.delete(history)
+                db.session.commit()
+            return jsonify({'status': 'success', 'message': 'Action successful'})
+        return jsonify({'status': 'error', 'message': 'History does not exist'})
 
 
 @app.route('/admin/get_tf_history', methods=['POST'])
@@ -2513,18 +2550,18 @@ def webhook():
                     new_notif = Notification(member_id=user_id, category='upgrade', time=get_timestamp(),
                                              body=f'Upgrade to level {address_result.upgrade_level} completed. Enjoy the experience!')
                     db.session.add(new_notif)
-                    Address.query.filter(Address.member_id == user_id, Address.label == 'complete').update(
-                        {'upgrade_level': 0})
+                    Address.query.filter(Address.member_id == user_id, Address.label == 'complete').update({'upgrade_level': 0, 'amt_to_pay': 0, 'qty_to_pay': 0, 'hold_amt': 0, 'rate_time': None, 'leftover': 0})
                     tx_status = 1
                 else:
                     # PAYMENT INCOMPLETE, JUST SAVE TO HISTORY WITH STATUS 0
                     tx_status = 0
-            # SAVE HISTORY
-            new_tx = ProgramHistory(name="deposit", amt=amt_usd, method=currency, status=tx_status,
-                                    qty=qty, time=get_timestamp(), member_id=user.id, tx_id=tx_id, wallet=address)
-            db.session.add(new_tx)
-            db.session.commit()
-            return jsonify({'status': 'success'})
+                # SAVE HISTORY
+                new_tx = ProgramHistory(name="deposit", amt=amt_usd, method=currency, status=tx_status,
+                                        qty=qty, time=get_timestamp(), member_id=user.id, tx_id=tx_id, wallet=address, detail=qty_to_pay, label=address_result.upgrade_level)
+                db.session.add(new_tx)
+                db.session.commit()
+                return jsonify({'status': 'success'})
+            return jsonify({'status': 'success', 'message': 'Not found'})
         return jsonify({'err': 'An error occurred'}), 404
     return jsonify({'status': 'OK'}), 200
 
