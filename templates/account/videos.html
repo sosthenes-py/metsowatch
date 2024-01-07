@@ -159,7 +159,7 @@
           if (target !== "None") {
               loadOn2()
               var target_name = "{{ target_video.video_name }}"
-              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
+              var reward = {{ "{:,.3f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
 
               $('#watch-timer').data({
                   'total_sec': 0,
@@ -178,7 +178,7 @@
               loadOn2()
               var videoId = $(this).data('id')
               var video_name = $(this).data('video_name')
-              var reward = {{ "{:,.2f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
+              var reward = {{ "{:,.3f}".format(plans[current_user.level]['profit']/plans[current_user.level]['videos']) }}
 
               $('#watch-timer').data({
                   'total_sec': 0,

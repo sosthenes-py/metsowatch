@@ -330,7 +330,7 @@
                                  <div class="title">Recent Activities</div>
                                  <div class="contents">
 
-                                     {% for history in current_user.history[-7:]|reverse %}
+                                     {% for history in all_history %}
                                      {% set sign = "+" %}
                                      {% set fee_class = "d-none" %}
                                      {% if history.name == "withdraw" %}

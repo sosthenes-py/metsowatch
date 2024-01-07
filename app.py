@@ -532,11 +532,12 @@ def user_wallet():
     today = dt.datetime.now()
     start_of_the_week = today - dt.timedelta(days=today.weekday())
     this_week_earning = 0
-    for history in current_user.history:
+    all_history = ProgramHistory.query.filter_by(member_id=current_user.id).order_by(ProgramHistory.id.desc()).all()
+    for history in all_history:
         if history.name == "earning":
             if today >= dt.datetime.fromtimestamp(int(history.time)) >= start_of_the_week:
                 this_week_earning += history.amt
-    return render_template('account/wallet.html', page='wallet', this_week_earning=this_week_earning)
+    return render_template('account/wallet.html', page='wallet', this_week_earning=this_week_earning, all_history=all_history[:7])
 
 
 @app.route('/user/packages', methods=['POST', 'GET'])
@@ -1036,7 +1037,7 @@ def home_videos(target):
 
                                 <div class="wallet-name">
                                     <div class="default reward">{st(video.length, video=True)}</div>
-                                    <div class="default2">${reward:,.2f}</div>
+                                    <div class="default2">${reward:,.3f}</div>
                                         </div>
                                     </div>
                                     <h6 class="title" style="overflow: hidden">{video.title}</h6>
