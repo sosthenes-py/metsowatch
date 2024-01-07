@@ -681,6 +681,7 @@ def user_packages():
             bal = current_user.earning + current_user.ref_earning + current_user.promotion
 
             amt_to_pay = next_level_price - current_level_price
+            amt_for_ref_bonus = amt_to_pay
             amt_to_pay -= bal
             leftover = 0
             if amt_to_pay < 0:
@@ -742,7 +743,7 @@ def user_packages():
                     new_notif = Notification(member_id=current_user.id, category='upgrade', time=get_timestamp(), body=f'Successfully upgraded from level {current_user.level} to level {level}')
                     db.session.add(new_notif)
                     current_user.level, current_user.earning, current_user.ref_earning, current_user.promotion = level, leftover, 0, 0
-                    reward_upline(current_user, next_level_price)
+                    reward_upline(current_user, amt_for_ref_bonus)
                     db.session.commit()
 
                     if level > 3:
@@ -2101,12 +2102,18 @@ def admin_get_deposit_history():
             if action == "confirm":
                 if history.user.today_watch == PLANS[history.user.level]['videos']:
                     history.user.today_watch = PLANS[int(history.label)]['videos']
+                current_level_price = PLANS[history.user.level]['price']
                 history.user.level = int(history.label)
                 new_notif = Notification(member_id=history.user.id, category='upgrade', time=get_timestamp(), body=f'Upgrade to level {history.label} completed. Enjoy the experience!')
                 db.session.add(new_notif)
                 Address.query.filter(Address.member_id == history.user.id, Address.label == 'complete').update({'upgrade_level': 0, 'amt_to_pay': 0, 'qty_to_pay': 0, 'hold_amt': 0, 'rate_time': None, 'leftover': 0})
                 next_level_price = PLANS[int(history.label)]['price']
-                reward_upline(history.user, next_level_price)
+
+                # Calculate ref bonus
+                next_level_price = PLANS[int(history.label)]['price']
+                amt_for_ref_bonus = next_level_price - current_level_price
+                reward_upline(history.user, amt_for_ref_bonus)
+
                 history.status = 1
                 db.session.commit()
             elif action == "erase":
