@@ -88,6 +88,24 @@ fees = {
 }
 
 
+class MyWestWalletApi(WestWalletAPI):
+    def __init__(self, api_key, secret_key):
+        super().__init__(api_key=api_key, secret_key=secret_key, base_url='https://api.westwallet.io')
+
+    def get_transactions(self, currency, tx_type):
+        data = {
+            "currency": currency.upper(),
+            "type": tx_type
+        }
+
+        method_url = "/wallet/transactions"
+        response = self._make_post_request(method_url, data)
+
+        response_json = response.json()
+        response_json.pop('error')
+        return response_json
+
+
 def get_ticker_from_binance(symbol: str, conversion=False, **kwargs):
     """
 
@@ -116,7 +134,7 @@ def generate_random_wallet(token):
 
 
 def generate_wallet(coin, label=""):
-    client = WestWalletAPI(WESTWALLET_PUBLIC_KEY, WESTWALLET_PRIVATE_KEY)
+    client = MyWestWalletApi(WESTWALLET_PUBLIC_KEY, WESTWALLET_PRIVATE_KEY)
     try:
         address = client.generate_address(currency=coin.upper(), ipn_url="https://jomovi.com/webhook", label=label)
     except WestWalletAPIException as e:
@@ -126,6 +144,18 @@ def generate_wallet(coin, label=""):
     else:
         print(f'----------------SUCCESS----------------')
         return address.address
+
+
+def get_transactions(coin, tx_type='receive'):
+    client = MyWestWalletApi(WESTWALLET_PUBLIC_KEY, WESTWALLET_PRIVATE_KEY)
+    try:
+        txs = client.get_transactions(coin, tx_type)
+    except WestWalletAPIException as e:
+        print(f'----------------{str(e)}----------------')
+        return None
+    else:
+        print(f'----------------SUCCESS----------------')
+        return txs['result'] or None
 
 
 def make_withdrawal(token, qty, addr):
@@ -368,3 +398,5 @@ def search_videos(search_term, page_token='CMgBEAA', ads="any", count=25):
 
 
 # print(search_videos('music', count=50))
+
+# print(get_transactions('btc'))

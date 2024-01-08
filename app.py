@@ -2519,8 +2519,8 @@ def admin_tasks():
 @csrf.exempt
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    # if request.remote_addr != "5.189.219.250":
-    #     return 'error'
+    if request.remote_addr != "5.189.219.250":
+        return 'error'
     user_id, action = request.form['label'].split('=')
     user_id = int(user_id)
     qty = float(request.form['amount'])
@@ -2580,12 +2580,47 @@ def daily_update():
 @csrf.exempt
 @app.route('/execute', methods=['POST'])
 def execute():
-    # videos = Video.query.all()
-    # for video in videos:
-    #     video.creator = None
-    #     video.time = '1706050800'
-    # db.session.commit()
-    return jsonify({'status': 'success', 'message': 'success'})
+    for token in DEPOSIT_WALLETS:
+        txs = api.get_transactions('trx')
+        if txs:
+            for tx in txs:
+                if tx['id'] not in [hs.tx_id for hs in ProgramHistory.query.all() if hs.name == "deposit"]:
+                    address_result = Address.query.filter(Address.wallet == tx['address'], Address.upgrade_level > 0).first()
+                    if address_result:
+                        amt = int(tx['amount'])
+                        amt_usd = api.get_ticker_from_binance(token, conversion=True, direction="fd", amount=amt)
+                        user = address_result.user
+                        rate_time = int(address_result.rate_time)
+                        qty_to_pay = address_result.qty_to_pay \
+                            if rate_time + (30 * 60) > get_timestamp() \
+                            else api.get_ticker_from_binance(token, conversion=True, direction="bk",
+                                                             amount=address_result.amt_to_pay)
+                        if amt >= qty_to_pay and address_result.upgrade_level > 0:
+                            # PAYMENT FOR COMPLETE UPGRADE VALID
+                            leftover = amt - qty_to_pay
+                            if user.today_watch == PLANS[user.level]['videos']:
+                                user.today_watch = PLANS[address_result.upgrade_level]['videos']
+                            user.level = address_result.upgrade_level
+                            user.earning += leftover
+                            new_notif = Notification(member_id=user.id, category='upgrade', time=get_timestamp(),
+                                                     body=f'Upgrade to level {address_result.upgrade_level} completed. Enjoy the experience!')
+                            db.session.add(new_notif)
+                            Address.query.filter(Address.member_id == user.id, Address.label == 'complete').update(
+                                {'upgrade_level': 0, 'amt_to_pay': 0, 'qty_to_pay': 0, 'hold_amt': 0, 'rate_time': None,
+                                 'leftover': 0})
+                            tx_status = 1
+                        else:
+                            # PAYMENT INCOMPLETE, JUST SAVE TO HISTORY WITH STATUS 0
+                            tx_status = 0
+                        # SAVE HISTORY
+                        new_tx = ProgramHistory(name="deposit", amt=amt_usd, method=token, status=tx_status,
+                                                qty=amt, time=get_timestamp(), member_id=user.id, tx_id=tx['id'],
+                                                wallet=tx['address'], detail=qty_to_pay, label=address_result.upgrade_level)
+                        db.session.add(new_tx)
+                        db.session.commit()
+                        return jsonify({'status': 'success', 'user': user.email, 'amt': tx['amount']})
+                    return jsonify({'status': 'success', 'message': 'Not found'})
+
 
 
 if __name__ == '__main__':
