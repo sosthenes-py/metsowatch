@@ -1481,23 +1481,14 @@ def user_create():
                                 new_video_name = f'{video_id}.{video_extension}'
                                 new_cover_name = f'{video_id}.{cover_extension}'
 
-                                # Save the files to a temporary directory
-                                temp_video_path = os.path.abspath(
-                                    os.path.join(app.config['TEMP_FOLDER'], new_video_name))
-                                temp_cover_path = os.path.abspath(
-                                    os.path.join(app.config['TEMP_FOLDER'], new_cover_name))
-
-                                video.save(temp_video_path)
-                                cover.save(temp_cover_path)
-
                                 # Upload video to DigitalOcean Spaces
-                                api.upload_to_space('videos', open(temp_video_path, 'rb'), new_video_name)
+                                api.upload_to_space('videos', video, new_video_name)
 
                                 # Upload cover image to DigitalOcean Spaces
-                                api.upload_to_space('images', open(temp_cover_path, 'rb'), new_cover_name)
+                                api.upload_to_space('images', cover, new_cover_name)
 
                                 # Get the duration of the video using moviepy
-                                clip = VideoFileClip(temp_video_path)
+                                clip = VideoFileClip(f'https://metsowatch.fra1.cdn.digitaloceanspaces.com/metso/videos/{new_video_name}')
                                 duration = clip.duration
                                 clip.close()
 
@@ -1508,10 +1499,6 @@ def user_create():
                                                   image_name=new_cover_name, video_name=new_video_name)
                                 db.session.add(new_video)
                                 db.session.commit()
-
-                                # Clean up temporary files
-                                os.remove(temp_video_path)
-                                os.remove(temp_cover_path)
 
                                 return jsonify({'status': 'success', 'message': 'Success', 'type': 'create'})
                             else:
