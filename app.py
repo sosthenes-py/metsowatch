@@ -1481,16 +1481,20 @@ def user_create():
                                 new_video_name = f'{video_id}.{video_extension}'
                                 new_cover_name = f'{video_id}.{cover_extension}'
 
+                                # Save the files to a temporary directory
+                                temp_video_path = os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], new_video_name)
+                                video.save(temp_video_path)
+
+                                # Get the duration of the video using moviepy
+                                clip = VideoFileClip(temp_video_path)
+                                duration = clip.duration
+                                clip.close()
+
                                 # Upload video to DigitalOcean Spaces
                                 api.upload_to_space('videos', video, new_video_name)
 
                                 # Upload cover image to DigitalOcean Spaces
                                 api.upload_to_space('images', cover, new_cover_name)
-
-                                # Get the duration of the video using moviepy
-                                clip = VideoFileClip(f'https://metsowatch.fra1.cdn.digitaloceanspaces.com/metso/videos/{new_video_name}')
-                                duration = clip.duration
-                                clip.close()
 
                                 new_video = Video(video_id=video_id, category=category, title=title,
                                                   description=description,
