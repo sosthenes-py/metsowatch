@@ -112,7 +112,7 @@ PLANS = [
 }, {
     'id': 3,
     'price': 120,
-    'profit': 3.5,
+    'profit': 4.2,
     'videos': 10
 }, {
     'id': 4,
@@ -122,32 +122,32 @@ PLANS = [
 }, {
     'id': 5,
     'price': 550,
-    'profit': 17.5,
+    'profit': 19.25,
     'videos': 10
 }, {
     'id': 6,
     'price': 1000,
-    'profit': 10.5,
+    'profit': 35,
     'videos': 9
 }, {
     'id': 7,
     'price': 3200,
-    'profit': 10.5,
+    'profit': 112,
     'videos': 8
 }, {
     'id': 8,
     'price': 5000,
-    'profit': 10.5,
+    'profit': 175,
     'videos': 7
 }, {
     'id': 9,
     'price': 12000,
-    'profit': 10.5,
+    'profit': 420,
     'videos': 6
 }, {
     'id': 10,
     'price': 25000,
-    'profit': 10.5,
+    'profit': 875,
     'videos': 5
 }]
 
