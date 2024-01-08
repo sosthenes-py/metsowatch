@@ -1482,8 +1482,10 @@ def user_create():
                                 new_cover_name = f'{video_id}.{cover_extension}'
 
                                 # Save the files to a temporary directory
-                                temp_video_path = os.path.join(app.config['TEMP_FOLDER'], new_video_name)
-                                temp_cover_path = os.path.join(app.config['TEMP_FOLDER'], new_cover_name)
+                                temp_video_path = os.path.abspath(
+                                    os.path.join(app.config['TEMP_FOLDER'], new_video_name))
+                                temp_cover_path = os.path.abspath(
+                                    os.path.join(app.config['TEMP_FOLDER'], new_cover_name))
 
                                 video.save(temp_video_path)
                                 cover.save(temp_cover_path)
