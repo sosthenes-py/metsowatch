@@ -219,7 +219,7 @@ def session_validate(func):
     def wrapper(*args, **kwargs):
         if session.get('session_id', 'None') not in [sess.token for sess in current_user.sessions] or current_user.suspend:
             flash('Session has ended. Login again', 'error')
-            # return redirect(url_for('login'))
+            return redirect(url_for('login'))
         return func(*args, **kwargs)
     return wrapper
 
