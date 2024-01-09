@@ -5,7 +5,7 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
       <meta name="csrf-token" content="{{ csrf_token() }}">
-      <meta name="keywords" content="METSOWATCH">
+      <meta name="keywords" content="JOMOVI">
       <link rel="canonical" href=""/>
       <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}"/>
       <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap.min.css') }}"/>
@@ -120,8 +120,8 @@
          <div class="panel-header">
             <div class="logo">
                <a href="#0">
-               <img class="logo-unfold" src="https://hyiprio.tdevs.co/assets/global/images/gfRumZOy2KeS4XHeuBFB.png" alt="Logo"/>
-               <img class="logo-fold" src="https://hyiprio.tdevs.co/assets/global/images/gfRumZOy2KeS4XHeuBFB.png" alt="Logo"/>
+               <img class="logo-unfold" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="Logo"/>
+               <img class="logo-fold" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="Logo"/>
                </a>
             </div>
             <div class="nav-wrap">
@@ -131,7 +131,7 @@
                   </button>
                   <div class="mob-logo">
                      <a href="#0">
-                     <img src="https://hyiprio.tdevs.co/assets/global/images/gfRumZOy2KeS4XHeuBFB.png" alt="Site Name"/>
+                     <img src="{{ url_for('static', filename='images/logo/logo.svg') }}" alt="Jomovi logo" />
                      </a>
                   </div>
                </div>

@@ -1,12 +1,13 @@
 {% extends 'home/layout.html' %}
 
 {% block content %}
+
     <body class="dark-theme">
       <!--Header Area-->
       <header class="header">
          <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-               <a class="navbar-brand" href="{{ url_for('home_page') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt=""/></a>
+            <div>
+               <a href="{{ url_for('home_page') }}"><img class="my-logo" src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="" style="width: 10em; margin-left: 15px"/></a>
             </div>
          </nav>
       </header>

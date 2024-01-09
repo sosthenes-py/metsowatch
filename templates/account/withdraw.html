@@ -230,7 +230,7 @@
                         notify(data.status, data.message)
                        if(data.status === "success"){
                            open_modal('doneModal')
-                           $('.info').html('A net amount of <span class="special-text fw-bold">$'+data.amt+'</span> is on its way to your wallet! Should arrive within minutes.')
+                           $('.info').html('A net amount of <span class="yellow-color fw-bold">$'+data.amt+'</span> is on its way to your wallet! Should arrive within minutes.')
                        }
                     },
                     error: function(err1, err2){

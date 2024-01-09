@@ -2,7 +2,7 @@ import math
 
 import requests
 from westwallet_api import WestWalletAPI
-from westwallet_api.exceptions import BadAddressException, InsufficientFundsException, WestWalletAPIException
+from westwallet_api.exceptions import BadAddressException, InsufficientFundsException, WestWalletAPIException, NotAllowedException, MinWithdrawException, WrongCredentialsException, CurrencyNotFoundException
 import os
 import re
 import random
@@ -161,13 +161,13 @@ def get_transactions(coin, tx_type='receive'):
 def make_withdrawal(token, qty, addr):
     client = WestWalletAPI(WESTWALLET_PUBLIC_KEY, WESTWALLET_PRIVATE_KEY)
     try:
-        response = client.create_withdrawal(currency=token, amount=qty, address=addr)
+        response = client.create_withdrawal(currency=token.upper(), amount=str(qty), address=addr)
     except InsufficientFundsException:
         return {'status': 'error', 'message': 'An error occurred (PRR099), please try again later'}
     except BadAddressException:
-        return {'status': 'error', 'message': 'Bad address provided, please try again later'}
-    except:
-        return {'status': 'error', 'message': 'An error occurred (PRR104), please try again later'}
+        return {'status': 'error', 'message': 'Bad address provided'}
+    except NotAllowedException:
+        return {'status': 'error', 'message': f'Not allowed'}
     else:
         return response.__dict__
 

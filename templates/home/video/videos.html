@@ -73,10 +73,12 @@
         justify-content: center;
         cursor: pointer;
         color: #fff; /* Example color */
+        background: url('{{ url_for('static', filename='images/logo/play-circle.png') }}');
+        background-position: center; background-size: cover;
     }
 
     .play-button:hover {
-        background: #3498db !important; /* Color on hover */
+        opacity: 0.5;
     }
 
     .play-button i {

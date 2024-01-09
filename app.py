@@ -219,7 +219,7 @@ def session_validate(func):
     def wrapper(*args, **kwargs):
         if session.get('session_id', 'None') not in [sess.token for sess in current_user.sessions] or current_user.suspend:
             flash('Session has ended. Login again', 'error')
-            return redirect(url_for('login'))
+            # return redirect(url_for('login'))
         return func(*args, **kwargs)
     return wrapper
 
@@ -821,12 +821,16 @@ def user_withdraw():
                     bal -= amt
                     current_user.earning, current_user.ref_earning = float(bal), 0
 
+                if acct_result.token == "trx":
+                    with_fee = 0.6
+                else:
+                    with_fee = 1.5
+
                 # ADD TO HISTORY
-                transaction = api.make_withdrawal(token=acct_result.token, qty=float(amt)-WITHDRAWAL_FEE, addr=acct_result.wallet)
-                if transaction['status'] == "completed":
-                    new_history = ProgramHistory(member_id=current_user.id, name='withdraw', amt=float(amt),
-                                                 method=acct_result.token, time=get_timestamp(), wallet=acct_result.wallet,
-                                                 fee=WITHDRAWAL_FEE, tx_id=transaction['id'], status=1)
+                amt_qty = api.get_ticker_from_binance(acct_result.token, conversion=True, direction='bk', amount=float(amt)-with_fee)
+                transaction = api.make_withdrawal(token=acct_result.token, qty=amt_qty, addr=acct_result.wallet)
+                if transaction['status'] == "pending":
+                    new_history = ProgramHistory(member_id=current_user.id, name='withdraw', amt=float(amt), method=acct_result.token, time=get_timestamp(), wallet=acct_result.wallet, fee=with_fee, tx_id=transaction['id'], status=1)
                     db.session.add(new_history)
                     db.session.commit()
                     status = 'success'
@@ -840,7 +844,7 @@ def user_withdraw():
                     status = 'error'
                     message = transaction['message']
 
-                return jsonify({'status': status, 'message': message, 'amt': f'{float(amt)-WITHDRAWAL_FEE:,.2f}'})
+                return jsonify({'status': status, 'message': message, 'amt': f'{float(amt)-with_fee:,.2f}'})
             return jsonify({'status': 'error', 'message': 'Account ID error'})
         return jsonify({'status': 'error', 'message': form.amt.errors or form.acct_id.errors or form.deduct_from.errors})
 
@@ -1032,7 +1036,7 @@ def home_videos(target):
                         <div class="mb-5 video-cards">
                             <div class="user-balance-card video-card-img" style="background: url('{url_for('static', filename='uploads/images/{}'.format(video.image_name))}'); background-position: center; background-size: cover;">
                             <!-- Play button -->
-                            <div class="play-button special-bg open-bottom-modal watch-video" data-modal="watchModal" data-id="{video.video_id}" data-video_name="{video.video_name}" data-sec="{video.length}">
+                            <div class="play-button open-bottom-modal watch-video" data-modal="watchModal" data-id="{video.video_id}" data-video_name="{video.video_name}" data-sec="{video.length}">
                                 <i class="fas fa-play"></i>
                             </div>
 
@@ -1188,8 +1192,8 @@ def user_videos():
                         <div class="mb-5 video-cards">
                             <div class="user-balance-card video-card-img" style="background: url('{url_for('static', filename='uploads/images/{}'.format(video.image_name))}'); background-position: center; background-size: cover;">
                             <!-- Play button -->
-                            <div class="play-button special-bg open-bottom-modal watch-video" data-modal="watchModal" data-id="{video.video_id}" data-video_name="{video.video_name}" data-sec="{video.length}">
-                                <i class="fas fa-play"></i>
+                            <div class="play-button open-bottom-modal watch-video" data-modal="watchModal" data-id="{video.video_id}" data-video_name="{video.video_name}" data-sec="{video.length}" >
+                                
                             </div>
                             
                                 <div class="wallet-name">

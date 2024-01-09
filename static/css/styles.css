@@ -4254,7 +4254,9 @@ a {
 }
 
 .header .navbar .navbar-brand img {
-    height: 40px;
+    /*height: 40px;*/
+    width: 12em;
+    padding: 0;
 }
 
 .header .navbar .navbar-toggler {
@@ -7230,10 +7232,6 @@ a:hover {
     }
 }
 
-.panel-layout .panel-header .nav-wrap .nav-left {
-    margin-left: 20px;
-}
-
 .panel-layout .panel-header .nav-wrap .nav-right {
     margin-right: 20px;
 }
@@ -9869,6 +9867,7 @@ i {
 
     .panel-layout .panel-header .nav-wrap .nav-left .mob-logo {
         display: block;
+        margin-top: 1em;
     }
 
     .mobile-screen-show .page-container {
@@ -10126,7 +10125,8 @@ i {
 }
 
 .mob-logo a img {
-    width: 30px;
+    width: 11em;
+
 }
 
 .all-cards-mobile .contents.row {
