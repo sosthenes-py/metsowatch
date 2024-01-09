@@ -121,9 +121,6 @@
 
                                       {% if not current_user.twofa_status %}
                                      <p style="font-weight: bold">Scan the QR code with your Google Authenticator App or Use the secret code below</p>
-                                     <div style="width: 100%; text-align: center;">
-                                          <img src="{{ url_for('static', filename='images/twofa/{}.png'.format(current_user.email)) }}" width="50%">
-                                     </div>
 
                                      <br><br>
                                      <div class="referral-link">

@@ -777,6 +777,15 @@ def user_notifications():
 @session_validate
 def user_withdraw():
     if request.method == "GET":
+        # TWOFA
+        if not current_user.twofa_secret:
+            current_user.twofa_secret = pyotp.random_base32()
+            uri = pyotp.totp.TOTP(current_user.twofa_secret).provisioning_uri(
+                name=current_user.email,
+                issuer_name=SITE_NAME)
+            qr_path = f'static/images/twofa/{current_user.email}.png'
+            qrcode.make(uri).save(qr_path)
+            db.session.commit()
         return render_template('account/withdraw.html', page='withdraw')
 
     elif request.method == "POST":
