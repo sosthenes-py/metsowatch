@@ -2356,6 +2356,8 @@ def admin_videos():
                     if video.status == 0:
                         content += f"""
                                 <li data-id='{video.id}' data-action='activate' class='video_actions'><a class='dropdown-item'><i class='bx bx-check font-22 '></i> Activate</a></li>
+                                <li><hr class='dropdown-divider'></li>
+                                <li data-id='{video.id}' data-action='reject' class='video_actions'><a class='dropdown-item'><i class='bx bx-check font-22 '></i> Reject</a></li>
                                 """
                     if video.status == 1:
                         content += f"""
