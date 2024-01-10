@@ -1504,7 +1504,7 @@ def user_create():
                                 clip.close()
 
                                 # Upload video to DigitalOcean Spaces
-                                api.upload_to_space('videos', video, new_video_name)
+                                api.upload_to_space('videos', open(temp_video_path, 'rb'), new_video_name)
 
                                 # Upload cover image to DigitalOcean Spaces
                                 api.upload_to_space('images', cover, new_cover_name)
@@ -1516,6 +1516,9 @@ def user_create():
                                                   image_name=new_cover_name, video_name=new_video_name)
                                 db.session.add(new_video)
                                 db.session.commit()
+
+                                # Remove temp file
+                                os.remove(temp_video_path)
 
                                 return jsonify({'status': 'success', 'message': 'Success', 'type': 'create'})
                             else:
