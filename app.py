@@ -2558,7 +2558,7 @@ def webhook():
         if user and address_result and not ProgramHistory.query.filter_by(tx_id=tx_id).first():
             if action == "complete":
                 rate_time = int(address_result.rate_time)
-                qty_to_pay = address_result.qty_to_pay \
+                qty_to_pay = round(address_result.qty_to_pay, 4) \
                     if rate_time + (30*60) > get_timestamp() \
                     else api.get_ticker_from_binance(currency, conversion=True, direction="bk", amount=address_result.amt_to_pay)
                 if qty >= qty_to_pay and address_result.upgrade_level > 0:
