@@ -97,7 +97,7 @@ PLANS = [
 {
     'id': 0,
     'price': 0,
-    'profit': 0.1,
+    'profit': 0.05,
     'videos': 10
 }, {
     'id': 1,
