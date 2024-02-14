@@ -805,7 +805,7 @@ def user_withdraw():
 
             bal = Decimal(deducts[form.deduct_from.data])
             if current_user.level <= 2:
-                min_with = Decimal(5)
+                min_with = Decimal(10)
             else:
                 min_with = Decimal(10)
 
