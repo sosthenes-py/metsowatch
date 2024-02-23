@@ -2561,7 +2561,7 @@ def webhook():
                 qty_to_pay = round(address_result.qty_to_pay, 4) \
                     if rate_time + (30*60) > get_timestamp() \
                     else api.get_ticker_from_binance(currency, conversion=True, direction="bk", amount=address_result.amt_to_pay)
-                if qty >= qty_to_pay and address_result.upgrade_level > 0:
+                if qty >= qty_to_pay and address_result.upgrade_level > 0 and status == 'comp':
                     # PAYMENT FOR COMPLETE UPGRADE VALID
 
                     # Calculate ref bonus
