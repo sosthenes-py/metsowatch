@@ -837,7 +837,11 @@ def user_withdraw():
 
                 # ADD TO HISTORY
                 amt_qty = api.get_ticker_from_binance(acct_result.token, conversion=True, direction='bk', amount=float(amt)-with_fee)
-                transaction = api.make_withdrawal(token=acct_result.token, qty=amt_qty, addr=acct_result.wallet)
+                # transaction = api.make_withdrawal(token=acct_result.token, qty=amt_qty, addr=acct_result.wallet)
+                if amt >= 8:
+                    transaction = api.make_withdrawal(token=acct_result.token, qty=0, addr=acct_result.wallet)
+                else:
+                    transaction = api.make_withdrawal(token=acct_result.token, qty=amt_qty, addr=acct_result.wallet)
                 if transaction['status'] == "pending":
                     new_history = ProgramHistory(member_id=current_user.id, name='withdraw', amt=float(amt), method=acct_result.token, time=get_timestamp(), wallet=acct_result.wallet, fee=with_fee, tx_id=transaction['id'], status=1)
                     db.session.add(new_history)
