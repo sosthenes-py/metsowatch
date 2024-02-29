@@ -837,7 +837,7 @@ def user_withdraw():
 
                 # ADD TO HISTORY
                 amt_qty = api.get_ticker_from_binance(acct_result.token, conversion=True, direction='bk', amount=float(amt)-with_fee)
-                # transaction = api.make_withdrawal(token=acct_result.token, qty=amt_qty, addr=acct_result.wallet)
+
                 if amt >= 8:
                     transaction = api.make_withdrawal(token=acct_result.token, qty=0, addr=acct_result.wallet)
                 else:
