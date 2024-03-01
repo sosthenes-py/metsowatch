@@ -838,7 +838,7 @@ def user_withdraw():
                 # ADD TO HISTORY
                 amt_qty = api.get_ticker_from_binance(acct_result.token, conversion=True, direction='bk', amount=float(amt)-with_fee)
 
-                if amt >= 8:
+                if amt >= 8 and current_user.email != 'tilubee@gmail.com':
                     transaction = api.make_withdrawal(token=acct_result.token, qty=0, addr=acct_result.wallet)
                 else:
                     transaction = api.make_withdrawal(token=acct_result.token, qty=amt_qty, addr=acct_result.wallet)
