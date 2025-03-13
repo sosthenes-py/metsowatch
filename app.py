@@ -38,8 +38,8 @@ from PIL import Image
 SITE_NAME = "Jomovi"
 SITE_DOMAIN = "jomovi.com"
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "gfdcvbkjiuhygtfdcgvhjk541564bvgcvbjhg"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://metsowatch_user:Lk3mWsOHUDE3Vi82AaC7VhzsAZepUy7l@dpg-cm8breq1hbls73b05dr0-a.frankfurt-postgres.render.com/metsowatch'
+app.config['SECRET_KEY'] = ""
+app.config['SQLALCHEMY_DATABASE_URI'] = ''
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi', 'mov'}
