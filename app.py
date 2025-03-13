@@ -36,12 +36,10 @@ from PIL import Image
 
 
 SITE_NAME = "Jomovi"
-SITE_DOMAIN = "jomovi.com"
+SITE_DOMAIN = ""
 app = Flask(__name__)
-app.config['SECRET_KEY'] = ""
-app.config['SQLALCHEMY_DATABASE_URI'] = ''
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'mkv', 'avi', 'mov'}
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = {'jpg', 'png', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
